@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 RUN apt-get update && apt-get install -y gcc make wget
-RUN apt-get install -y supervisor libreadline-dev zlib1g-dev
+RUN apt-get install -y supervisor libreadline-dev zlib1g-dev less
 
 #install postgresql server-client
 ENV PGSQL_VERSION 9.6.0
@@ -27,5 +27,7 @@ COPY conf/supervisor/ /etc/supervisor/conf.d
 #cleanup
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget
+
+EXPOSE 5432
 
 CMD ["supervisord", "-n"]

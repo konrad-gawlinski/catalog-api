@@ -54,7 +54,7 @@ COPY conf/php.ini /usr/local/php-fpm/lib/
 COPY src/ /usr/webapp/
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
-RUN && rm -rf /tmp/* \
+RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget
 
 EXPOSE 80
