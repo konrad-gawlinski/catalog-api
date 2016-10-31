@@ -252,7 +252,6 @@ INSERT INTO catalog (sku, properties) VALUES
     "attributes" : ["is_vegetarian"]                
 }'),
 
-Notice: Undefined offset: 70 in /shared/src/ProductJSONGenerator/NameGenerator.php on line 243
 ('nu3_22', '{
     "variety": "config",
     "type": "book",
@@ -470,7 +469,6 @@ Notice: Undefined offset: 70 in /shared/src/ProductJSONGenerator/NameGenerator.p
     "attributes" : ["is_vegetarian","is_gluten_free","no_artificial_flavours"]                
 }'),
 
-Notice: Undefined offset: 154 in /shared/src/ProductJSONGenerator/NameGenerator.php on line 243
 ('nu3_40', '{
     "variety": "config",
     "type": "voucher",
@@ -652,7 +650,6 @@ Notice: Undefined offset: 154 in /shared/src/ProductJSONGenerator/NameGenerator.
     "attributes" : ["is_vegetarian","is_sugar_free","no_artificial_flavours","only_natural_ingredients"]                
 }'),
 
-Notice: Undefined offset: 154 in /shared/src/ProductJSONGenerator/NameGenerator.php on line 243
 ('nu3_55', '{
     "variety": "config",
     "type": "book",
