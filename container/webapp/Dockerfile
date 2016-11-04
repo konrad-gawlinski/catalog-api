@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 RUN apt-get update && apt-get install -y gcc make wget
-RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev
+RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev git
 
 #install postgresql client
 ENV PGSQL_VERSION 9.6.0
@@ -47,15 +47,16 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
     && make && make install \
     && mkdir -p /usr/html \
-    && mkdir /var/log/php
+    && mkdir /var/log/php \
+    && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php \
+    && wget "https://getcomposer.org/download/1.2.2/composer.phar" -O "/usr/local/composer.phar"
 
 COPY conf/fpm/ /usr/local/php-fpm/etc/
 COPY conf/php.ini /usr/local/php-fpm/lib/
-COPY src/ /usr/webapp/
+COPY src/ /var/webapp/
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget
-
 
 CMD ["supervisord", "-n"]

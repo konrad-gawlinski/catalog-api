@@ -28,6 +28,4 @@ COPY conf/supervisor/ /etc/supervisor/conf.d
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget
 
-EXPOSE 5432
-
 CMD ["supervisord", "-n"]
