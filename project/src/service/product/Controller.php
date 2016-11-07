@@ -25,7 +25,8 @@ class Controller
     return <<<'PAYLOAD'
 {
  "sku": "nu3_1",
- "COMMON_properties": {
+ "target": "COMMON",
+ "properties": {
    "name": "silly_hodgkin",
    "type": "book",
    "price": 5172,
@@ -44,9 +45,6 @@ class Controller
      "it"
    ],
    "ingredient_list": 1
- },
- "DE_properties": {
-   "price": 430
  }
 }
 PAYLOAD;

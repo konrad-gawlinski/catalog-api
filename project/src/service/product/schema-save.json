@@ -5,10 +5,12 @@
     "sku": {
       "type": "string",
       "pattern": "^nu3_[1-9][0-9]{0,4}$"
-    }
-  },
-  "patternProperties": {
-    "[COMMON|DE|AT]_properties": {
+    },
+    "target": {
+      "type": "string",
+      "enum": ["COMMON", "DE", "AT"]
+    },
+    "properties": {
       "type": "object",
       "properties": {
         "name": {
@@ -58,5 +60,5 @@
     }
   },
   "additionalProperties": false,
-  "required": ["sku"]
+  "required": ["sku", "target", "properties"]
 }
