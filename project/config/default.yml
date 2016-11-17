@@ -1,0 +1,5 @@
+database:
+  username: user
+  password: pass
+  host: localhost
+  database: default

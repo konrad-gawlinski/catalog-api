@@ -1,11 +1,15 @@
 <?php
+
 namespace Nu3\Service\Product;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Nu3\Config as Nu3Config;
+use Nu3\Property;
 
 class Controller
 {
+  use Property\Config;
   /**
    * @return Response
    */
@@ -16,6 +20,7 @@ class Controller
 
     $schemaValidator->check($payload, $schema);
     var_dump($schemaValidator->getErrors());
+    var_dump($this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
 
     return new Response('Product save action', 200);
   }
