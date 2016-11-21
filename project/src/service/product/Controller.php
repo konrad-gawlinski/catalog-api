@@ -5,22 +5,17 @@ namespace Nu3\Service\Product;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nu3\Config as Nu3Config;
+use Nu3\Service\Product\Serializer as ProductSerializer;
 use Nu3\Property;
 
 class Controller
 {
   use Property\Config;
-  /**
-   * @return Response
-   */
-  function save(Request $request, \JsonSchema\Validator $schemaValidator): Response
-  {
-    $payload = json_decode($this->getInput());
-    $schema = $this->getSchema();
 
-    $schemaValidator->check($payload, $schema);
-    var_dump($schemaValidator->getErrors());
-    var_dump($this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
+  function save(Request $request, ProductSerializer $serializer): Response
+  {
+    $product = $serializer->deserialize($this->getInput());
+    var_dump('Config : '. $this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
 
     return new Response('Product save action', 200);
   }
@@ -53,10 +48,5 @@ class Controller
  }
 }
 PAYLOAD;
-  }
-
-  private function getSchema()
-  {
-    return json_decode(file_get_contents(__DIR__.'/schema-save.json'));
   }
 }

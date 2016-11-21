@@ -7,13 +7,13 @@
     "silex/silex": "v2.0.3",
     "justinrainbow/json-schema": "4.0.0",
     "symfony/config": "v3.1.6",
-    "symfony/yaml": "v3.1.6"
+    "symfony/yaml": "v3.1.6",
+    "symfony/serializer": "v3.1.6",
+    "symfony/validator": "v3.1.6"
   },
   "autoload": {
     "psr-4": {
       "Nu3\\Service\\": "src/service/",
-      "Nu3\\Entity\\": "src/entity/",
-      "Nu3\\Component\\": "src/component",
       "Nu3\\Property\\": "src/property"
     }
   }
