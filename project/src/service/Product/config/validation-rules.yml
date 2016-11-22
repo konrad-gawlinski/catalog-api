@@ -1,0 +1,13 @@
+Nu3\Service\Product\Entity:
+  properties:
+    sku:
+      - Type: string
+      - NotBlank: ~
+    properties:
+      - Type: array
+      - Collection:
+          fields:
+            name:
+              - NotBlank: ~
+          allowExtraFields: true
+          allowMissingFields: true

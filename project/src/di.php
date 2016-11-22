@@ -1,7 +1,5 @@
 <?php
 
-use Symfony\Component\Serializer;
-
 $app['config'] = function() {
   return require(APPLICATION_ROOT.'config/config.php');
 };
@@ -19,9 +17,21 @@ $app['product.serializer'] = function() use ($app) {
   );
 };
 
+$app['product.validator'] = function() use ($app) {
+    return new \Nu3\Service\Product\Validator($app['validator.builder']);
+};
+
 $app['json.serializer'] = function() {
-  return new Serializer\Serializer(
-    [new Serializer\Normalizer\PropertyNormalizer()],
-    [new Serializer\Encoder\JsonEncoder()]
+  return new Symfony\Component\Serializer\Serializer(
+    [new Symfony\Component\Serializer\Normalizer\PropertyNormalizer()],
+    [new Symfony\Component\Serializer\Encoder\JsonEncoder()]
   );
+};
+
+$app['validator.builder'] = function() {
+  return \Symfony\Component\Validator\Validation::createValidatorBuilder()
+    ->setMetadataCache(
+      new \Symfony\Component\Validator\Mapping\Cache\DoctrineCache(
+        new \Doctrine\Common\Cache\ArrayCache()
+      ));
 };

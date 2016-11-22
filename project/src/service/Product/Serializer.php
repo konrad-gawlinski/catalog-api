@@ -29,6 +29,6 @@ class Serializer
 
   private function getSchema() : string
   {
-    return file_get_contents(__DIR__.'/valid-schema.json');
+    return file_get_contents(__DIR__ . '/config/validation-schema.json');
   }
 }
