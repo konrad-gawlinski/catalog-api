@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-RUN apt-get update && apt-get install -y gcc make wget
+RUN apt-get update && apt-get install -y gcc make wget autoconf
 RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev git
 
 #install postgresql client
@@ -56,7 +56,18 @@ COPY conf/php.ini /usr/local/php-fpm/lib/
 COPY src/ /var/webapp/
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
+#install xdebug
+ENV XDEBUG_VERSION xdebug-2.4.1
+ENV XDEBUG_FILENAME "${XDEBUG_VERSION}.tgz"
+
+RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAME}" \
+    && tar -xf "/tmp/${PHP_FILENAME}" -C "/tmp/" \
+    && cd "/tmp/${XDEBUG_VERSION}" && "/usr/local/php-fpm/bin/phpize" \
+    && "./configure --enable-xdebug --with-php-config=/usr/local/php-fpm/bin/php-config" \
+    && make && make install \
+    && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\n;insert_extension/g' /usr/local/php-fpm/lib/php.ini
+
 RUN rm -rf /tmp/* \
-    && apt-get purge -y --auto-remove gcc make wget
+    && apt-get purge -y --auto-remove gcc make wget autoconf
 
 CMD ["supervisord", "-n"]
