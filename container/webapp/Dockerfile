@@ -61,11 +61,13 @@ ENV XDEBUG_VERSION xdebug-2.4.1
 ENV XDEBUG_FILENAME "${XDEBUG_VERSION}.tgz"
 
 RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAME}" \
-    && tar -xf "/tmp/${PHP_FILENAME}" -C "/tmp/" \
-    && cd "/tmp/${XDEBUG_VERSION}" && "/usr/local/php-fpm/bin/phpize" \
-    && "./configure --enable-xdebug --with-php-config=/usr/local/php-fpm/bin/php-config" \
+    && tar -xf "/tmp/${XDEBUG_FILENAME}" -C "/tmp/" \
+    && cd "/tmp/${XDEBUG_VERSION}" && /usr/local/php-fpm/bin/phpize \
+    && "./configure" \
+        --enable-xdebug \
+        --with-php-config=/usr/local/php-fpm/bin/php-config \
     && make && make install \
-    && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\n;insert_extension/g' /usr/local/php-fpm/lib/php.ini
+    && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\nxdebug.remote_enable=1;insert_extension/g' /usr/local/php-fpm/lib/php.ini
 
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget autoconf
