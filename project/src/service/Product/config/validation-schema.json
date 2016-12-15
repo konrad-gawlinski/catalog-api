@@ -2,17 +2,17 @@
   "title": "Product save",
   "type": "object",
   "properties": {
-    "sku": {
-      "type": "string",
-      "pattern": "^nu3_[1-9][0-9]{0,4}$"
-    },
-    "target": {
+    "storage": {
       "type": "string",
       "enum": ["COMMON", "DE", "AT"]
     },
-    "properties": {
+    "product": {
       "type": "object",
       "properties": {
+        "sku": {
+          "type": "string",
+          "pattern": "^nu3_[1-9][0-9]{0,4}$"
+        },
         "name": {
           "type": "string",
           "maxLength": 60
@@ -26,8 +26,13 @@
           ]
         },
         "price": {
-          "type": "integer",
-          "minimum": 1
+          "type": "object",
+          "properties": {
+            "final": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
         },
         "tax_rate": {
           "type": "integer",
@@ -51,14 +56,12 @@
             "type": "string",
             "pattern": "^[a-z]{2}$"
           }
-        },
-        "ingredient_list": {
-          "type": "integer"
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": ["sku"]
     }
   },
   "additionalProperties": false,
-  "required": ["sku", "target", "properties"]
+  "required": ["storage", "product"]
 }

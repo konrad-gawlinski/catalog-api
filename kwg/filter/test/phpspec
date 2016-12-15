@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+define('PHPSPEC_VERSION', '3.0.0');
+
+/** @var \Composer\Autoload\ClassLoader */
+$loader = require __DIR__ . '/../vendor/autoload.php';
+$loader->addPsr4('spec\\Kwg\\Filter\\', 'spec');
+
+$app = new PhpSpec\Console\Application(PHPSPEC_VERSION);
+$app->run();

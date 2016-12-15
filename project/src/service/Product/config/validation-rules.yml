@@ -9,5 +9,12 @@ Nu3\Service\Product\Entity:
           fields:
             name:
               - NotBlank: ~
+            type:
+              - Choice:
+                  choices: [config, bundle, book, voucher]
+            price:
+              - Type: integer
+              - GreaterThan:
+                  value: 0
           allowExtraFields: true
           allowMissingFields: true

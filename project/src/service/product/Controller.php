@@ -14,15 +14,42 @@ class Controller
 {
   use Property\Config;
 
-  function save(Request $request, ProductSerializer $serializer, ProductValidator $validator): Response
-  {
-    $product = $serializer->deserialize($this->getInput());
-    $violations = $validator->validate($product);
+  /** @var  JsonValidator */
+  private $jsonValidator;
 
-    /** @var ConstraintViolation $violation */
-    foreach ($violations as $violation) {
-      var_dump($violation->getMessage());
-    }
+  /** @var  ProductSerializer */
+  private $serializer;
+
+  /** @var  ProductValidator */
+  private $validator;
+
+  function setJsonValidator(JsonValidator $jsonValidator)
+  {
+    $this->jsonValidator = $jsonValidator;
+  }
+
+  function setSerializer(ProductSerializer $serializer)
+  {
+    $this->serializer = $serializer;
+  }
+
+  function setValidator(ProductValidator $validator)
+  {
+    $this->validator = $validator;
+  }
+
+
+  function save(Request $request): Response
+  {
+    $this->jsonValidator->validate($this->getInput());
+    $product = $this->serializer->deserialize($this->getInput());
+    var_dump($product);
+//    $violations = $this->validator->validate($product);
+//
+//    /** @var ConstraintViolation $violation */
+//    foreach ($violations as $violation) {
+//      var_dump($violation->getMessage());
+//    }
     var_dump('Config : '. $this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
 
     return new Response('Product save action', 200);
@@ -32,28 +59,29 @@ class Controller
   {
     return <<<'PAYLOAD'
 {
- "sku": "nu3_1",
- "target": "COMMON",
- "properties": {
-   "name": "silly_hodgkin",
-   "type": "book",
-   "price": 5172,
-   "tax_rate": 19,
-   "attributes": [
-     "is_gluten_free",
-     "is_lactose_free"
-   ],
-   "seo_robots": [
-     "noindex",
-     "follow"
-   ],
-   "manufacturer": "philips",
-   "label_language": [
-     "en",
-     "it"
-   ],
-   "ingredient_list": 1
- }
+  "storage": "COMMON",
+  "product": {
+    "sku": "nu3_1",
+    "name": "silly_hodgkin",
+    "type": "book",
+    "price": {
+      "final": 5172
+    },
+    "tax_rate": 19,
+    "attributes": [
+      "is_gluten_free",
+      "is_lactose_free"
+    ],
+    "seo": {
+      "robots": ["noindex", "follow"],
+      "title": "Silly Hodgkin"
+    },
+    "manufacturer": "philips",
+    "label_language": [
+      "en",
+      "it"
+    ]
+  }
 }
 PAYLOAD;
   }

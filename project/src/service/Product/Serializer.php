@@ -2,33 +2,23 @@
 
 namespace Nu3\Service\Product;
 
-use Symfony\Component\Serializer\Serializer as SymfonySerializer;
-use Nu3\Service\Product\Entity as ProductEntity;
+use JMS\Serializer\Serializer as ExternalSerializer;
+use Nu3\Service\Product\Entity\Payload as Payload;
 
 class Serializer
 {
-  /** @var  SymfonySerializer */
+  /** @var  ExternalSerializer */
   private $serializer;
-  /** @var \JsonSchema\Validator */
-  private $schemaValidator;
 
-  function __construct(SymfonySerializer $serializer, \JsonSchema\Validator $schemaValidator)
+  function __construct(ExternalSerializer $serializer)
   {
     $this->serializer = $serializer;
-    $this->schemaValidator = $schemaValidator;
   }
 
-  function deserialize(string $json) : ProductEntity
+  function deserialize(string $json) : Payload
   {
-    $this->schemaValidator->check(json_decode($json), $this->getSchema());
-    $product = $this->serializer->deserialize($json, ProductEntity::class, 'json');
-    var_dump('Json Errors: ', $this->schemaValidator->getErrors());
-    
-    return $product;
-  }
+    $payload = $this->serializer->deserialize($json, Payload::class, 'json');
 
-  private function getSchema() : string
-  {
-    return file_get_contents(__DIR__ . '/config/validation-schema.json');
+    return $payload;
   }
 }
