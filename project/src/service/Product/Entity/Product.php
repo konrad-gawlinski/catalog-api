@@ -2,52 +2,87 @@
 
 namespace Nu3\Service\Product\Entity;
 
-use JMS\Serializer\Annotation\Type;
+use JMS\Serializer\Annotation as Serializer;
+use DMS\Filter\Rules as Filter;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Product
 {
   /**
-   * @Type("string")
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   * @Assert\NotBlank()
    */
   public $sku = '';
 
   /**
-   * @Type("string")
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   * @Assert\Choice(choices = {"new", "approved", "not listed", "unavailable"})
+   */
+  public $status = '';
+
+  /**
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   * @Assert\NotBlank()
    */
   public $name = '';
 
   /**
-   * @Type("string")
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   * @Assert\NotBlank()
    */
   public $type = '';
 
   /**
-   * @Type("Nu3\Service\Product\Entity\Price")
+   * @Serializer\Type("Nu3\Service\Product\Entity\Price")
+   * @Assert\Valid()
    */
   public $price;
 
   /**
-   * @Type("integer")
+   * @Serializer\Type("integer")
+   * @Assert\Range(
+   *      min = 0,
+   *      max = 100
+   * )
    */
   public $taxRate = 0;
 
   /**
-   * @Type("array<string>")
+   * @Serializer\Type("array<string>")
    */
   public $attributes = [];
 
   /**
-   * @Type("Nu3\Service\Product\Entity\Seo")
+   * @Serializer\Type("Nu3\Service\Product\Entity\Seo")
+   * @Assert\Valid()
    */
   public $seo;
 
   /**
-   * @Type("string")
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   * @Assert\NotBlank()
    */
   public $manufacturer = '';
 
   /**
-   * @Type("array<string>")
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   */
+  public $description = '';
+
+  /**
+   * @Serializer\Type("string")
+   * @Filter\Trim()
+   */
+  public $shortDescription = '';
+
+  /**
+   * @Serializer\Type("array<string>")
    */
   public $labelLanguage = [];
 }

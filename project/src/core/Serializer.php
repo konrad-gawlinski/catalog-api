@@ -1,9 +1,8 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Core;
 
 use JMS\Serializer\Serializer as ExternalSerializer;
-use Nu3\Service\Product\Entity\Payload as Payload;
 
 class Serializer
 {
@@ -15,9 +14,9 @@ class Serializer
     $this->serializer = $serializer;
   }
 
-  function deserialize(string $json) : Payload
+  function deserialize(string $json, string $className) : Payload
   {
-    $payload = $this->serializer->deserialize($json, Payload::class, 'json');
+    $payload = $this->serializer->deserialize($json, $className, 'json');
 
     return $payload;
   }

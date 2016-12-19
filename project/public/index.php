@@ -1,17 +1,17 @@
 <?php
-define('APPLICATION_ROOT', __DIR__.'/../');
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
-$loader = require_once APPLICATION_ROOT.'vendor/autoload.php';
-\Doctrine\Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
-  'JMS\Serializer\Annotation',
-  APPLICATION_ROOT . 'vendor/jms/serializer/src'
-);
+define('APPLICATION_ROOT', __DIR__.'/../');
+define('APPLICATION_SRC', __DIR__.'/../src/');
+
+$loader = require_once APPLICATION_ROOT . 'vendor/autoload.php';
+AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
 $app = new Silex\Application();
 $app['debug'] = true;
 
-require APPLICATION_ROOT.'src/Config.php';
-require APPLICATION_ROOT.'src/di.php';
-require APPLICATION_ROOT.'src/routing.php';
+require APPLICATION_SRC . 'Config.php';
+require APPLICATION_SRC . 'di.php';
+require APPLICATION_SRC . 'routing.php';
 
 $app->run();

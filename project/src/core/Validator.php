@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Core;
 
 use Symfony\Component\Validator\ValidatorBuilderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -16,15 +16,13 @@ class Validator
     $this->validator = $this->buildValidator($validatorBuilder);
   }
 
-  function validate(Entity $entity) : ConstraintViolationListInterface
+  function validate(Payload $entity) : ConstraintViolationListInterface
   {
     return $this->validator->validate($entity);
   }
 
   private function buildValidator(ValidatorBuilderInterface $validatorBuilder) : ValidatorInterface
   {
-    return $validatorBuilder
-      ->addYamlMapping(__DIR__ . '/config/validation-rules.yml')
-      ->getValidator();
+    return $validatorBuilder->getValidator();
   }
 }

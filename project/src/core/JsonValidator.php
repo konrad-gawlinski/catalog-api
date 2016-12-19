@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Core;
 
 class JsonValidator
 {
@@ -12,16 +12,16 @@ class JsonValidator
     $this->schemaValidator = $schemaValidator;
   }
 
-  function validate(string $json)
+  function validate(string $json, string $schemaPath)
   {
     $data = json_decode($json);
-    $this->schemaValidator->check($data, $this->getSchema());
+    $this->schemaValidator->check($data, $this->getSchema($schemaPath));
 
     var_dump('Json Errors: ', $this->schemaValidator->getErrors());
   }
 
-  private function getSchema() : string
+  private function getSchema($schemaPath) : string
   {
-    return file_get_contents(__DIR__ . '/config/validation-schema.json');
+    return file_get_contents($schemaPath);
   }
 }
