@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Service\Product\Entity;
+namespace Nu3\Service\Product\Entity\Property;
 
 use JMS\Serializer\Annotation as Serializer;
 use Dms\Filter\Rules as Filter;

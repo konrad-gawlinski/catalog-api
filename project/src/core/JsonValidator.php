@@ -12,9 +12,8 @@ class JsonValidator
     $this->schemaValidator = $schemaValidator;
   }
 
-  function validate(string $json, string $schemaPath)
+  function validate(array $data, string $schemaPath)
   {
-    $data = json_decode($json);
     $this->schemaValidator->check($data, $this->getSchema($schemaPath));
 
     var_dump('Json Errors: ', $this->schemaValidator->getErrors());

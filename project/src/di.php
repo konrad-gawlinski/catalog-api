@@ -7,15 +7,21 @@ $app['config'] = function() {
 $app['service.product'] = function() use ($app) {
   $controller = new Nu3\Service\Product\Controller();
   $controller->setConfig($app['config']);
-  $controller->setJsonValidator($app['product.json-validator']);
-  $controller->setSerializer($app['serializer']);
-  $controller->setValidator($app['validator']);
-  $controller->setSanitizer($app['sanitizer']);
   
   return $controller;
 };
 
-$app['product.json-validator'] = function() use ($app) {
+$app['product.model'] = function() use ($app) {
+  $model = new \Nu3\Service\Product\Model();
+  $model->setJsonValidator($app['json.validator']);
+  $model->setSerializer($app['serializer']);
+  $model->setValidator($app['validator']);
+  $model->setSanitizer($app['sanitizer']);
+
+  return $model;
+};
+
+$app['json.validator'] = function() use ($app) {
   return new \Nu3\Core\JsonValidator(
     new \JsonSchema\Validator()
   );

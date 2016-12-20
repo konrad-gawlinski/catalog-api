@@ -16,7 +16,7 @@ class Validator
     $this->validator = $this->buildValidator($validatorBuilder);
   }
 
-  function validate(Payload $entity) : ConstraintViolationListInterface
+  function validate(Entity $entity) : ConstraintViolationListInterface
   {
     return $this->validator->validate($entity);
   }

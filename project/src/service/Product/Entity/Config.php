@@ -6,7 +6,7 @@ use JMS\Serializer\Annotation as Serializer;
 use DMS\Filter\Rules as Filter;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Product
+class Config implements \Nu3\Core\Entity
 {
   /**
    * @Serializer\Type("string")
@@ -37,7 +37,7 @@ class Product
   public $type = '';
 
   /**
-   * @Serializer\Type("Nu3\Service\Product\Entity\Price")
+   * @Serializer\Type("Nu3\Service\Product\Entity\Property\Price")
    * @Assert\Valid()
    */
   public $price;
@@ -57,7 +57,7 @@ class Product
   public $attributes = [];
 
   /**
-   * @Serializer\Type("Nu3\Service\Product\Entity\Seo")
+   * @Serializer\Type("Nu3\Service\Product\Entity\Property\Seo")
    * @Assert\Valid()
    */
   public $seo;

@@ -6,68 +6,35 @@ namespace Nu3\Service\Product;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nu3\Config as Nu3Config;
-use Nu3\Service\Product\Entity\Payload;
 use Nu3\Core;
-use DMS\Filter\Filter;
 use Nu3\Property;
-use Symfony\Component\Validator\ConstraintViolation;
+use Nu3\Service\Product\Entity\Properties as ProductProperty;
 
 class Controller
 {
   use Property\Config;
 
-  /** @var Core\JsonValidator */
-  private $jsonValidator;
-
-  /** @var Core\Serializer */
-  private $serializer;
-
-  /** @var Core\Validator */
-  private $validator;
-
-  /** @var Filter */
-  private $sanitizer;
-
-  function setJsonValidator(Core\JsonValidator $jsonValidator)
+  function save(Request $request, Model $productModel): Response
   {
-    $this->jsonValidator = $jsonValidator;
-  }
+    $json = $this->getInput();
+    $payload = json_decode($json, true);
 
-  function setSerializer(Core\Serializer $serializer)
-  {
-    $this->serializer = $serializer;
-  }
+    if (!empty($payload[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU])) {
+      $product = $payload[ProductProperty::PRODUCT];
+      $sku = $product[ProductProperty::PRODUCT_SKU];
+      $type = empty($product[ProductProperty::PRODUCT_TYPE]) ? '' : $product[ProductProperty::PRODUCT_TYPE];
 
-  function setValidator(Core\Validator $validator)
-  {
-    $this->validator = $validator;
-  }
+      $productModel->set($sku, $type);
+      $productModel->validateSchema($payload);
+      $payload = $productModel->deserialize($json, $payload[ProductProperty::PRODUCT]);
 
-  function setSanitizer(Filter $sanitizer)
-  {
-    $this->sanitizer = $sanitizer;
-  }
+      var_dump($payload);
+      $productModel->validate($payload);
 
-  function save(Request $request): Response
-  {
-    $jsonSchema = APPLICATION_SRC . 'service/Product/config/validation-schema.json';
-    $this->jsonValidator->validate($this->getInput(), $jsonSchema);
-
-    /** @var Payload $payload */
-    $payload = $this->serializer->deserialize($this->getInput(), Payload::class);
-    $this->sanitizer->filterEntity($payload->product);
-    $this->sanitizer->filterEntity($payload->product->seo);
-    $this->sanitizer->filterEntity($payload->product->price);
-
-    var_dump($payload);
-    $violations = $this->validator->validate($payload);
-
-    /** @var ConstraintViolation $violation */
-    foreach ($violations as $violation) {
-      var_dump($violation->getMessage());
+      var_dump('Config : ' . $this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
+    } else {
+      //Todo error message
     }
-
-    var_dump('Config : '. $this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
 
     return new Response('Product save action', 200);
   }
@@ -81,7 +48,7 @@ class Controller
     "sku": "nu3_1",
     "status": "new",
     "name": " Silly Hodgin",
-    "type": "book",
+    "type": "config",
     "price": {
       "final": 5172
     },

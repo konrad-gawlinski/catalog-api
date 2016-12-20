@@ -2,7 +2,7 @@
 
 namespace Nu3\Core;
 
-interface Payload
+interface Entity
 {
 
 }

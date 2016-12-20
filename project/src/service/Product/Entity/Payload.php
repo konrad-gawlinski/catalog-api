@@ -5,10 +5,10 @@ namespace Nu3\Service\Product\Entity;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Payload implements \Nu3\Core\Payload
+class Payload implements \Nu3\Core\Entity
 {
   /**
-   * @Serializer\Type("Nu3\Service\Product\Entity\Product")
+   * @Serializer\Exclude
    * @Assert\Valid()
    */
   public $product;

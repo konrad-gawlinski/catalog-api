@@ -14,10 +14,8 @@ class Serializer
     $this->serializer = $serializer;
   }
 
-  function deserialize(string $json, string $className) : Payload
+  function deserialize(string $json, string $className) : Entity
   {
-    $payload = $this->serializer->deserialize($json, $className, 'json');
-
-    return $payload;
+    return $this->serializer->deserialize($json, $className, 'json');
   }
 }
