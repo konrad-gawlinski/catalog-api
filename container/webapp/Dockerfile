@@ -44,6 +44,7 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --prefix=/usr/local/php-fpm \
         --disable-cgi \
         --with-pgsql=/usr/local/pgsql \
+        --with-pdo-pgsql=/usr/local/pgsql \
         --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
     && make && make install \
     && mkdir -p /usr/html \

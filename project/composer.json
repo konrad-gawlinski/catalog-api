@@ -12,13 +12,15 @@
     "symfony/validator": "v3.2.1",
     "dms/dms-filter": "3.0.0",
     "doctrine/annotations": "v1.3.0",
-    "doctrine/cache": "v1.6.1"
+    "doctrine/cache": "v1.6.1",
+    "propel/propel": "2.0.0-alpha6"
   },
   "autoload": {
     "psr-4": {
       "Nu3\\Core\\": "src/core/",
       "Nu3\\Service\\": "src/service/",
-      "Nu3\\Property\\": "src/property"
+      "Nu3\\Property\\": "src/property",
+      "Nu3\\Database\\Model\\": "database/generated-classes"
     }
   }
 }
