@@ -1,9 +1,13 @@
 propel:
+  paths:
+    phpDir: /var/webapp/src/database
+  generator:
+    namespaceAutoPackage: false
   database:
     connections:
       nu3_catalog:
         adapter: pgsql
-        dsn: "pgsql:host=172.17.0.1;port=5432;dbname=nu3_catalog;"
+        dsn: "pgsql:host=172.18.0.3;port=5432;dbname=nu3_catalog;"
         user: postgres
         password: postgres
         classname: Propel\Runtime\Connection\ConnectionWrapper

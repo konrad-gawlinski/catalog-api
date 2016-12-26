@@ -5,7 +5,7 @@ namespace Nu3\Database\Model;
 use Nu3\Database\Model\Base\ProductQuery as BaseProductQuery;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'nu3.product' table.
+ * Skeleton subclass for performing query and update operations on the 'catalog.product' table.
  *
  *
  *

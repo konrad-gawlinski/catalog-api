@@ -5,7 +5,7 @@ namespace Nu3\Database\Model;
 use Nu3\Database\Model\Base\Product as BaseProduct;
 
 /**
- * Skeleton subclass for representing a row from the 'nu3.product' table.
+ * Skeleton subclass for representing a row from the 'catalog.product' table.
  *
  *
  *
@@ -16,5 +16,9 @@ use Nu3\Database\Model\Base\Product as BaseProduct;
  */
 class Product extends BaseProduct
 {
+  const STATUS_NEW = 'new';
+  const STATUS_APPROVED = 'approved';
+  const STATUS_NOT_LISTED = 'not listed';
+  const STATUS_UNAVAILABLE = 'unavailable';
 
 }

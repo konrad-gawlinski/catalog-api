@@ -16,11 +16,12 @@
     "propel/propel": "2.0.0-alpha6"
   },
   "autoload": {
+    "files": ["database/generated-conf/config.php"],
     "psr-4": {
       "Nu3\\Core\\": "src/core/",
       "Nu3\\Service\\": "src/service/",
-      "Nu3\\Property\\": "src/property",
-      "Nu3\\Database\\Model\\": "database/generated-classes"
+      "Nu3\\Property\\": "src/property/",
+      "Nu3\\Database\\Model\\": "src/database/"
     }
   }
 }

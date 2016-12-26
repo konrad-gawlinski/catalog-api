@@ -19,11 +19,11 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'nu3.product' table.
+ * Base class that represents a row from the 'catalog.product' table.
  *
  *
  *
- * @package    propel.generator.Nu3.Database.Model.Base
+ * @package    propel.generator..Base
  */
 abstract class Product implements ActiveRecordInterface
 {
@@ -702,7 +702,7 @@ abstract class Product implements ActiveRecordInterface
         }
 
         $sql = sprintf(
-            'INSERT INTO nu3.product (%s) VALUES (%s)',
+            'INSERT INTO catalog.product (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );

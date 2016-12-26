@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'nu3.product' table.
+ * This class defines the structure of the 'catalog.product' table.
  *
  *
  *
@@ -34,7 +34,7 @@ class ProductTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Nu3.Database.Model.Map.ProductTableMap';
+    const CLASS_NAME = '.Map.ProductTableMap';
 
     /**
      * The default database name for this class
@@ -44,7 +44,7 @@ class ProductTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'nu3.product';
+    const TABLE_NAME = 'catalog.product';
 
     /**
      * The related Propel class for this table
@@ -54,7 +54,7 @@ class ProductTableMap extends TableMap
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Nu3.Database.Model.Product';
+    const CLASS_DEFAULT = 'Product';
 
     /**
      * The total number of columns
@@ -74,22 +74,22 @@ class ProductTableMap extends TableMap
     /**
      * the column name for the sku field
      */
-    const COL_SKU = 'nu3.product.sku';
+    const COL_SKU = 'catalog.product.sku';
 
     /**
      * the column name for the status field
      */
-    const COL_STATUS = 'nu3.product.status';
+    const COL_STATUS = 'catalog.product.status';
 
     /**
      * the column name for the raw field
      */
-    const COL_RAW = 'nu3.product.raw';
+    const COL_RAW = 'catalog.product.raw';
 
     /**
      * the column name for the computed field
      */
-    const COL_COMPUTED = 'nu3.product.computed';
+    const COL_COMPUTED = 'catalog.product.computed';
 
     /**
      * The default string format for model objects of the related table
@@ -134,11 +134,11 @@ class ProductTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('nu3.product');
+        $this->setName('catalog.product');
         $this->setPhpName('Product');
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Nu3\\Database\\Model\\Product');
-        $this->setPackage('Nu3.Database.Model');
+        $this->setPackage('');
         $this->setUseIdGenerator(false);
         // columns
         $this->addPrimaryKey('sku', 'Sku', 'VARCHAR', true, null, null);
@@ -372,7 +372,7 @@ class ProductTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the nu3.product table.
+     * Deletes all rows from the catalog.product table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).

@@ -4,7 +4,7 @@ $serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('nu3_catalog', 'pgsql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
 $manager->setConfiguration(array (
-  'dsn' => 'pgsql:host=172.17.0.1;port=5432;dbname=nu3_catalog;',
+  'dsn' => 'pgsql:host=172.18.0.3;port=5432;dbname=nu3_catalog;',
   'user' => 'postgres',
   'password' => 'postgres',
   'classname' => 'Propel\\Runtime\\Connection\\ConnectionWrapper',

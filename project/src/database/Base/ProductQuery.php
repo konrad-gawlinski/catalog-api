@@ -15,7 +15,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'nu3.product' table.
+ * Base class that represents a query for the 'catalog.product' table.
  *
  *
  *
@@ -156,7 +156,7 @@ abstract class ProductQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT sku, status, raw, computed FROM nu3.product WHERE sku = :p0';
+        $sql = 'SELECT sku, status, raw, computed FROM catalog.product WHERE sku = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_STR);
@@ -363,7 +363,7 @@ abstract class ProductQuery extends ModelCriteria
     }
 
     /**
-     * Deletes all rows from the nu3.product table.
+     * Deletes all rows from the catalog.product table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
