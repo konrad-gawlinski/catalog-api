@@ -2,8 +2,6 @@
 
 namespace Nu3\Service\Product;
 
-
-use Nu3\Database\Model\Product;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nu3\Config as Nu3Config;
@@ -31,13 +29,6 @@ class Controller
 
       var_dump($payload);
       $productModel->validate($payload);
-
-      $productEntity = new Product();
-      $productEntity->setSku('nu3_1');
-      $productEntity->setStatus(Product::STATUS_NEW);
-      $productEntity->setRaw('{"type":"book"}');
-      $productEntity->setComputed('{}');
-      $productEntity->save();
 
       var_dump('Config : ' . $this->config()[Nu3Config::DB][Nu3Config::DB_HOST]);
     } else {

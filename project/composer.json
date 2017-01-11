@@ -12,11 +12,9 @@
     "symfony/validator": "v3.2.1",
     "dms/dms-filter": "3.0.0",
     "doctrine/annotations": "v1.3.0",
-    "doctrine/cache": "v1.6.1",
-    "propel/propel": "2.0.0-alpha6"
+    "doctrine/cache": "v1.6.1"
   },
   "autoload": {
-    "files": ["database/generated-conf/config.php"],
     "psr-4": {
       "Nu3\\Core\\": "src/core/",
       "Nu3\\Service\\": "src/service/",
