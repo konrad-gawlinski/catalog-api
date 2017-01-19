@@ -1,0 +1,49 @@
+Nu3\Service\Product\Entity\Payload:
+  properties:
+    product:
+      - Collection:
+          fields:
+            sku:
+              - NotBlank: ~
+            status:
+              - Choice:
+                  choices: ["new", "approved", "not listed", "unavailable"]
+                  groups: [approved]
+            name:
+              - NotBlank: ~
+            type:
+              - NotBlank: ~
+            price:
+              - Collection:
+                  fields:
+                    final:
+                      - Type: integer
+                      - Range:
+                          min: 1
+                          groups: [approved]
+            tax_rate:
+              - Range:
+                  min: 0
+                  max: 100
+            attributes: ~
+            seo:
+              - Collection:
+                  fields:
+                    robots:
+                      - Choice:
+                          choices: ["noindex", "index", "nofollow", "follow"]
+                          multiple: true
+                    title:
+                      - NotBlank: ~
+                    description: ~
+
+                  allowMissingFields: true
+            manufacturer:
+              - NotBlank: ~
+            description:
+              - NotBlank: { groups: [approved] }
+            short_description: ~
+            label_language:
+              - Type: array
+
+          allowMissingFields: true

@@ -2,27 +2,18 @@
 
 namespace Nu3\Core;
 
-use Symfony\Component\Validator\ValidatorBuilderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class Validator
 {
-  /** @var ValidatorInterface */
-  private $validator;
-
-  function __construct(ValidatorBuilderInterface $validatorBuilder)
+  function buildValidator(string $ymlConfigPath) : ValidatorInterface
   {
-    $this->validator = $this->buildValidator($validatorBuilder);
-  }
-
-  function validate(Entity $entity) : ConstraintViolationListInterface
-  {
-    return $this->validator->validate($entity);
-  }
-
-  private function buildValidator(ValidatorBuilderInterface $validatorBuilder) : ValidatorInterface
-  {
-    return $validatorBuilder->getValidator();
+    return \Symfony\Component\Validator\Validation::createValidatorBuilder()
+      ->addYamlMapping($ymlConfigPath)
+      ->setMetadataCache(
+        new \Symfony\Component\Validator\Mapping\Cache\DoctrineCache(
+          new \Doctrine\Common\Cache\ArrayCache()
+        ))
+      ->getValidator();
   }
 }

@@ -19,7 +19,7 @@
       "Nu3\\Core\\": "src/core/",
       "Nu3\\Service\\": "src/service/",
       "Nu3\\Property\\": "src/property/",
-      "Nu3\\Database\\Model\\": "src/database/"
+      "Nu3\\Core\\Database\\": "src/core/database/"
     }
   }
 }

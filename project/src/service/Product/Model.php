@@ -3,9 +3,11 @@
 namespace Nu3\Service\Product;
 
 use Nu3\Core;
-use DMS\Filter\Filter;
 use Nu3\Service\Product\Entity as ProductEntity;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Validator\ConstraintViolation;
+use Nu3\Core\Database\Broker\Factory as DbFactory;
+use Nu3\Service\Product\Entity\Properties as ProductProperty;
 
 class Model
 {
@@ -18,14 +20,11 @@ class Model
   /** @var Core\JsonValidator */
   private $jsonValidator;
 
-  /** @var Core\Serializer */
-  private $serializer;
-
   /** @var Core\Validator */
   private $validator;
 
-  /** @var Filter */
-  private $sanitizer;
+  /** @var  DbFactory */
+  private $dbFactory;
 
   function set(string $sku, string $type)
   {
@@ -38,19 +37,14 @@ class Model
     $this->jsonValidator = $jsonValidator;
   }
 
-  function setSerializer(Core\Serializer $serializer)
-  {
-    $this->serializer = $serializer;
-  }
-
   function setValidator(Core\Validator $validator)
   {
     $this->validator = $validator;
   }
 
-  function setSanitizer(Filter $sanitizer)
+  function setDbFactory(DbFactory $factory)
   {
-    $this->sanitizer = $sanitizer;
+    $this->dbFactory = $factory;
   }
 
   function validateSchema(array $data)
@@ -66,49 +60,43 @@ class Model
   private function chooseSchema() : string
   {
     switch ($this->type) {
-      case 'config': return APPLICATION_SRC . 'service/Product/config/validation-schema.json';
+      case 'config': return APPLICATION_SRC . 'service/Product/config/validation/rest-request/payload.json';
     }
 
-    return '';
-  }
-
-  function deserialize(string $json, array $productData) : ProductEntity\Payload
-  {
-    $productClass = $this->chooseProductClass();
-    if ($productClass === '') {
-      //Todo create violations
-    }
-    /** @var ProductEntity\Payload $payload */
-    $payload = $this->serializer->deserialize($json, ProductEntity\Payload::class);
-    $payload->product = $this->serializer->deserialize(json_encode($productData), $productClass);
-    $this->sanitize($payload);
-
-    return $payload;
-  }
-
-  private function chooseProductClass() : string
-  {
-    switch ($this->type) {
-      case 'config': return ProductEntity\Config::class;
-    }
-
-    return '';
-  }
-
-  private function sanitize(ProductEntity\Payload $payload)
-  {
-    $this->sanitizer->filterEntity($payload->product);
-    $this->sanitizer->filterEntity($payload->product->seo);
-    $this->sanitizer->filterEntity($payload->product->price);
+    throw new Exception('Unknown REST request validation rules file');
   }
 
   function validate(ProductEntity\Payload $payload)
   {
-    $violations = $this->validator->validate($payload);
+    $violations = $this->validator
+      ->buildValidator($this->chooseValidationRules())
+      ->validate($payload);
 
     /** @var ConstraintViolation $violation */
     foreach ($violations as $violation) {
-      var_dump($violation->getMessage());
+      var_dump($violation);
     }
+  }
+
+  private function chooseValidationRules() : string
+  {
+    switch ($this->type) {
+      case 'config': return APPLICATION_SRC . 'service/Product/config/validation/entity/payload.yml';
+    }
+
+    throw new Exception('Unknown product validation rules file');
+  }
+
+  function prepareProductForDb(array $product) : string
+  {
+    unset($product[ProductProperty::PRODUCT_SKU]);
+    unset($product[ProductProperty::PRODUCT_STATUS]);
+
+    return json_encode($product);
+  }
+
+  function getDatabaseProductBroker() : Core\Database\Broker\Product
+  {
+    return $this->dbFactory->getProductBroker();
   }
 }

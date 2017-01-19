@@ -6,7 +6,7 @@ use JMS\Serializer\Annotation as Serializer;
 use DMS\Filter\Rules as Filter;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Config implements \Nu3\Core\Entity
+class Product implements \Nu3\Core\Entity
 {
   /**
    * @Serializer\Type("string")

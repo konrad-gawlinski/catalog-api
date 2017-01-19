@@ -4,7 +4,7 @@
   "properties": {
     "storage": {
       "type": "string",
-      "enum": ["COMMON", "DE", "AT"]
+      "enum": ["catalog", "catalog_de", "catalog_at"]
     },
     "product": {
       "type": "object",

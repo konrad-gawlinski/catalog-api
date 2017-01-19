@@ -2,19 +2,10 @@
 
 namespace Nu3\Service\Product\Entity;
 
-use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Payload implements \Nu3\Core\Entity
+class Payload
 {
-  /**
-   * @Serializer\Exclude
-   * @Assert\Valid()
-   */
-  public $product;
-
-  /**
-   * @Serializer\Type("string")
-   */
-  public $storage;
+  public $product = [];
+  public $storage = '';
 }

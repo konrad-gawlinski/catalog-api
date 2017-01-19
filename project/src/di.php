@@ -1,12 +1,31 @@
 <?php
 
+use Nu3\Config;
+
 $app['config'] = function() {
   return require(APPLICATION_ROOT.'config/config.php');
 };
 
+$app['database.connection'] = function() use ($app) {
+  $config = $app['config'][Config::DB];
+  $db = new Nu3\Core\Database\Connection();
+
+  $db->connect(
+    $config[Config::DB_HOST],
+    $config[Config::DB_NAME],
+    $config[Config::DB_USER],
+    $config[Config::DB_PASS]
+  );
+
+  return $db;
+};
+
+$app['database.product'] = function() use ($app) {
+  return new Nu3\Core\Database\Broker\Product($app['database.connection']);
+};
+
 $app['service.product'] = function() use ($app) {
   $controller = new Nu3\Service\Product\Controller();
-  $controller->setConfig($app['config']);
   
   return $controller;
 };
@@ -14,11 +33,17 @@ $app['service.product'] = function() use ($app) {
 $app['product.model'] = function() use ($app) {
   $model = new \Nu3\Service\Product\Model();
   $model->setJsonValidator($app['json.validator']);
-  $model->setSerializer($app['serializer']);
   $model->setValidator($app['validator']);
-  $model->setSanitizer($app['sanitizer']);
+  $model->setDbFactory($app['database.factory']);
 
   return $model;
+};
+
+$app['database.factory'] = function() use ($app) {
+  $factory = new \Nu3\Core\Database\Broker\Factory();
+  $factory->setApp($app);
+
+  return $factory;
 };
 
 $app['json.validator'] = function() use ($app) {
@@ -27,36 +52,6 @@ $app['json.validator'] = function() use ($app) {
   );
 };
 
-$app['json.serializer'] = function() {
-  return \JMS\Serializer\SerializerBuilder::create()
-    ->setCacheDir(APPLICATION_ROOT . 'cache/jms/product')
-    ->build();
-};
-
-$app['serializer'] = function() use ($app) {
-  return new \Nu3\Core\Serializer($app['json.serializer']);
-};
-
-$app['sanitizer'] = function() {
-  $reader = new \Doctrine\Common\Annotations\AnnotationReader();
-  $loader = new \DMS\Filter\Mapping\Loader\AnnotationLoader($reader);
-  $metadataFactory = new \DMS\Filter\Mapping\ClassMetadataFactory($loader);
-  $filterLoader = new \DMS\Filter\Filters\Loader\FilterLoader();
-
-  return new DMS\Filter\Filter($metadataFactory, $filterLoader);
-};
-
 $app['validator'] = function() use ($app) {
-  return new \Nu3\Core\Validator($app['validator.builder']);
+  return new \Nu3\Core\Validator();
 };
-
-$app['validator.builder'] = function() {
-  return \Symfony\Component\Validator\Validation::createValidatorBuilder()
-    ->enableAnnotationMapping()
-    ->setMetadataCache(
-      new \Symfony\Component\Validator\Mapping\Cache\DoctrineCache(
-        new \Doctrine\Common\Cache\ArrayCache()
-      ));
-};
-
-
