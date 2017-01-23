@@ -21,7 +21,7 @@ $app['database.connection'] = function() use ($app) {
 };
 
 $app['database.product'] = function() use ($app) {
-  return new Nu3\Core\Database\Broker\Product($app['database.connection']);
+  return new Nu3\Core\Database\Controller\Product($app['database.connection']);
 };
 
 $app['service.product'] = function() use ($app) {
@@ -40,7 +40,7 @@ $app['product.model'] = function() use ($app) {
 };
 
 $app['database.factory'] = function() use ($app) {
-  $factory = new \Nu3\Core\Database\Broker\Factory();
+  $factory = new \Nu3\Core\Database\Controller\Factory();
   $factory->setApp($app);
 
   return $factory;

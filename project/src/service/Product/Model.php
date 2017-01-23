@@ -6,7 +6,7 @@ use Nu3\Core;
 use Nu3\Service\Product\Entity as ProductEntity;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Validator\ConstraintViolation;
-use Nu3\Core\Database\Broker\Factory as DbFactory;
+use Nu3\Core\Database\Controller\Factory as DbFactory;
 use Nu3\Service\Product\Entity\Properties as ProductProperty;
 
 class Model
@@ -95,8 +95,8 @@ class Model
     return json_encode($product);
   }
 
-  function getDatabaseProductBroker() : Core\Database\Broker\Product
+  function getDatabaseProductController() : Core\Database\Controller\Product
   {
-    return $this->dbFactory->getProductBroker();
+    return $this->dbFactory->getProductController();
   }
 }

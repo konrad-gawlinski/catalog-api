@@ -20,6 +20,7 @@ class Controller
     if (!empty($input[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU])) {
       $product = $input[ProductProperty::PRODUCT];
       $sku = $product[ProductProperty::PRODUCT_SKU];
+      
       $type = empty($product[ProductProperty::PRODUCT_TYPE]) ? '' : $product[ProductProperty::PRODUCT_TYPE];
       $status = empty($product[ProductProperty::PRODUCT_STATUS]) ? $product[ProductProperty::PRODUCT_STATUS] : ProductStatus::NEW;
 
@@ -28,9 +29,10 @@ class Controller
       $payload = $this->buildPayload($input);
       $productModel->validate($payload);
 
-      $db = $productModel->getDatabaseProductBroker();
+      $db = $productModel->getDatabaseProductController();
       $db->set_schema(Core\Database\Connection::SCHEMA_CATALOG);
-      $db->save_product($sku, $status, $productModel->prepareProductForDb($product));
+      //$db->save_product($sku, $status, $productModel->prepareProductForDb($product));
+      $db->fetch_product('nu3_1');
       $db->disconnect();
 
     } else {

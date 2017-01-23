@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Core\Database\Broker;
+namespace Nu3\Core\Database\Controller;
 
 use Nu3\Core\Database\Connection;
 
