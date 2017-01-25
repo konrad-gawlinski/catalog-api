@@ -4,19 +4,17 @@ namespace Nu3\Core;
 
 class JsonValidator
 {
-  /** @var \JsonSchema\Validator */
-  private $schemaValidator;
-
-  function __construct(\JsonSchema\Validator $schemaValidator)
+  protected function buildSchemaValidator()
   {
-    $this->schemaValidator = $schemaValidator;
+    return new \JsonSchema\Validator();
   }
 
   function validate(array $data, string $schemaPath)
   {
-    $this->schemaValidator->check($data, $this->getSchema($schemaPath));
+    $schemaValidator = $this->buildSchemaValidator();
+    $schemaValidator->check($data, $this->getSchema($schemaPath));
 
-    var_dump('Json Errors: ', $this->schemaValidator->getErrors());
+    var_dump('Json Errors: ', $schemaValidator->getErrors());
   }
 
   private function getSchema($schemaPath) : string

@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Validator
 {
-  function buildValidator(string $ymlConfigPath) : ValidatorInterface
+  protected function buildValidator(string $ymlConfigPath) : ValidatorInterface
   {
     return \Symfony\Component\Validator\Validation::createValidatorBuilder()
       ->addYamlMapping($ymlConfigPath)

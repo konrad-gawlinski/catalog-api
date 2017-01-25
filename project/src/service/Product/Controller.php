@@ -3,7 +3,6 @@
 namespace Nu3\Service\Product;
 
 use Nu3\Service\Product\Entity\Payload;
-use Nu3\Service\Product\Entity\ProductStatus;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nu3\Core;
@@ -18,23 +17,13 @@ class Controller
     $input = json_decode($json, true);
 
     if (!empty($input[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU])) {
-      $product = $input[ProductProperty::PRODUCT];
-      $sku = $product[ProductProperty::PRODUCT_SKU];
-      
-      $type = empty($product[ProductProperty::PRODUCT_TYPE]) ? '' : $product[ProductProperty::PRODUCT_TYPE];
-      $status = empty($product[ProductProperty::PRODUCT_STATUS]) ? $product[ProductProperty::PRODUCT_STATUS] : ProductStatus::NEW;
-
-      $productModel->set($sku, $type);
-      $productModel->validateSchema($input);
+      //TO DO: validatePayload requires product type, which is not mandatory
+      $productModel->validatePayload($input);
       $payload = $this->buildPayload($input);
-      $productModel->validate($payload);
+      $productEntity = $productModel->createProductEntity($payload);
+      $productModel->validateEntity($productEntity);
 
-      $db = $productModel->getDatabaseProductController();
-      $db->set_schema(Core\Database\Connection::SCHEMA_CATALOG);
-      //$db->save_product($sku, $status, $productModel->prepareProductForDb($product));
-      $db->fetch_product('nu3_1');
-      $db->disconnect();
-
+      $productModel->saveProduct($productEntity);
     } else {
       //Todo error message
     }

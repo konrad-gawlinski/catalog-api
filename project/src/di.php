@@ -32,8 +32,8 @@ $app['service.product'] = function() use ($app) {
 
 $app['product.model'] = function() use ($app) {
   $model = new \Nu3\Service\Product\Model();
-  $model->setJsonValidator($app['json.validator']);
-  $model->setValidator($app['validator']);
+  $model->setPayloadValidator($app['product.validator.payload']);
+  $model->setEntityValidator($app['product.validator.entity']);
   $model->setDbFactory($app['database.factory']);
 
   return $model;
@@ -46,12 +46,10 @@ $app['database.factory'] = function() use ($app) {
   return $factory;
 };
 
-$app['json.validator'] = function() use ($app) {
-  return new \Nu3\Core\JsonValidator(
-    new \JsonSchema\Validator()
-  );
+$app['product.validator.payload'] = function() use ($app) {
+  return new \Nu3\Service\Product\PayloadValidator();
 };
 
-$app['validator'] = function() use ($app) {
-  return new \Nu3\Core\Validator();
+$app['product.validator.entity'] = function() use ($app) {
+  return new \Nu3\Service\Product\EntityValidator();
 };

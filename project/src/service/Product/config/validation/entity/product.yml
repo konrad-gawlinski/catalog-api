@@ -1,6 +1,6 @@
-Nu3\Service\Product\Entity\Payload:
+Nu3\Service\Product\Entity\Product:
   properties:
-    product:
+    properties:
       - Collection:
           fields:
             sku:
