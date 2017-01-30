@@ -43,37 +43,51 @@ class Model
     $this->validator->validate($product);
   }
 
-  function createProductEntity(ProductEntity\Payload $payload) : ProductEntity\Product
+  function preValidateProduct(array $payload, array $storedProduct)
   {
-    $db = $this->dbFactory->getProductController();
-    $db->set_schema($this->chooseDbSchema($payload->storage));
-    $result = $db->fetch_product($payload->product[Properties::PRODUCT_SKU]);
-    $product = $this->initializeProductEntity($result, $payload);
+    if (!isset($storedProduct[Properties::PRODUCT_SKU])
+      && empty($payload[Properties::PRODUCT][Properties::PRODUCT_TYPE]))
+      throw new Exception(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE);
+  }
+
+  function preValidatePayload(array $payload)
+  {
+    if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
+      return new Exception('Sku is required', 500);
+    }
+
+    if (empty($payload[Properties::STORAGE])) {
+      return new Exception('Storage is required', 500);
+    }
+  }
+
+  function createProductEntity(ProductEntity\Payload $payload, array $storedProduct) : ProductEntity\Product
+  {
+    $product = new ProductEntity\Product();
+    $payloadProduct = $payload->product;
+
+    if (isset($storedProduct[Properties::PRODUCT_SKU])) {
+      $product->properties[Properties::PRODUCT_TYPE] = $storedProduct[Properties::PRODUCT_TYPE];
+    } else {
+      $product->isNew = true;
+      $product->properties[Properties::PRODUCT_TYPE] = $payloadProduct[Properties::PRODUCT_TYPE];
+    }
 
     $product->properties = array_replace_recursive(
       $this->fetchDefaultValues($product->properties[Properties::PRODUCT_TYPE]),
-      $payload->product,
-      $product->properties
+      $storedProduct,
+      $payloadProduct
     );
 
     return $product;
   }
 
-  private function initializeProductEntity(array $source, ProductEntity\Payload $payload) : ProductEntity\Product
+  function getProductFromStorage(string $sku, string $storage) : array
   {
-    $product = new ProductEntity\Product();
+    $db = $this->dbFactory->getProductController();
+    $db->set_schema($this->chooseDbSchema($storage));
 
-    if (isset($result[Properties::PRODUCT_SKU])) {
-      $product->properties[Properties::PRODUCT_TYPE] = $source[Properties::PRODUCT_TYPE];
-    } else {
-      if (empty($payload->product[Properties::PRODUCT_TYPE]))
-        throw new Exception(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE);
-
-      $product->isNew = true;
-      $product->properties[Properties::PRODUCT_TYPE] = $payload->product[Properties::PRODUCT_TYPE];
-    }
-
-    return $product;
+    return $db->fetch_product($sku);
   }
 
   private function fetchDefaultValues(string $productType) : array

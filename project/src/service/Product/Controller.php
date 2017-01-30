@@ -14,19 +14,22 @@ class Controller
   function save(Request $request, Model $productModel): Response
   {
     $json = $this->getInput();
-    $input = json_decode($json, true);
+    $payload = json_decode($json, true);
 
-    if (!empty($input[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU])) {
-      //TO DO: validatePayload requires product type, which is not mandatory
-      $productModel->validatePayload($input);
-      $payload = $this->buildPayload($input);
-      $productEntity = $productModel->createProductEntity($payload);
-      $productModel->validateEntity($productEntity);
+    $productModel->preValidatePayload($payload);
 
-      $productModel->saveProduct($productEntity);
-    } else {
-      //Todo error message
-    }
+    $storedProduct = $productModel->getProductFromStorage(
+      $payload[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU],
+      $payload[ProductProperty::STORAGE]
+    );
+    
+    $productModel->preValidateProduct($payload, $storedProduct);
+    $productModel->validatePayload($payload);
+    $payloadEntity = $this->buildPayload($payload);
+    $productEntity = $productModel->createProductEntity($payloadEntity, $storedProduct);
+    $productModel->validateEntity($productEntity);
+
+    $productModel->saveProduct($productEntity);
 
     return new Response('Product save action', 200);
   }
