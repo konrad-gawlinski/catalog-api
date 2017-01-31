@@ -6,6 +6,7 @@ use Nu3\Core;
 use Nu3\Service\Product\Entity as ProductEntity;
 use Nu3\Core\Database\Controller\Factory as DbFactory;
 use Nu3\Service\Product\Entity\Properties;
+use Nu3\Core\Violation;
 
 class Model
 {
@@ -43,51 +44,53 @@ class Model
     $this->validator->validate($product);
   }
 
-  function preValidateProduct(array $payload, array $storedProduct)
+  function preValidatePayload(array $payload) : array
   {
-    if (!isset($storedProduct[Properties::PRODUCT_SKU])
-      && empty($payload[Properties::PRODUCT][Properties::PRODUCT_TYPE]))
-      throw new Exception(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE);
+    return $this->payloadValidator->preValidatePayload($payload);
   }
 
-  function preValidatePayload(array $payload)
+  function preValidateProduct(array $payload, array $storedProduct) : array
   {
-    if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
-      return new Exception('Sku is required', 500);
-    }
+    $violations = [];
+    if (!isset($storedProduct[Properties::PRODUCT_SKU])
+      && empty($payload[Properties::PRODUCT][Properties::PRODUCT_TYPE]))
+        $violations[] = new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE, Violation::EK_REQUEST);
 
-    if (empty($payload[Properties::STORAGE])) {
-      return new Exception('Storage is required', 500);
-    }
+    return $violations;
   }
 
   function createProductEntity(ProductEntity\Payload $payload, array $storedProduct) : ProductEntity\Product
   {
     $product = new ProductEntity\Product();
     $payloadProduct = $payload->product;
+    $product->sku = $payloadProduct[Properties::PRODUCT_SKU];
 
     if (isset($storedProduct[Properties::PRODUCT_SKU])) {
-      $product->properties[Properties::PRODUCT_TYPE] = $storedProduct[Properties::PRODUCT_TYPE];
+      $product->type = $storedProduct[Properties::PRODUCT_TYPE];
     } else {
       $product->isNew = true;
-      $product->properties[Properties::PRODUCT_TYPE] = $payloadProduct[Properties::PRODUCT_TYPE];
+      $product->type = $payloadProduct[Properties::PRODUCT_TYPE];
+
+      $product->properties = array_replace_recursive(
+        $this->fetchDefaultValues($product->properties[Properties::PRODUCT_TYPE]),
+        $storedProduct
+      );
     }
 
     $product->properties = array_replace_recursive(
-      $this->fetchDefaultValues($product->properties[Properties::PRODUCT_TYPE]),
-      $storedProduct,
+      $product->properties,
       $payloadProduct
     );
 
     return $product;
   }
 
-  function getProductFromStorage(string $sku, string $storage) : array
+  function fetchProductType(string $sku, string $storage) : array
   {
     $db = $this->dbFactory->getProductController();
     $db->set_schema($this->chooseDbSchema($storage));
 
-    return $db->fetch_product($sku);
+    return $db->fetch_product_type($sku);
   }
 
   private function fetchDefaultValues(string $productType) : array
@@ -120,7 +123,7 @@ class Model
   function saveProduct(ProductEntity\Product $product)
   {
     $this->dbFactory->getProductController()->save_product(
-      $product->properties[Properties::PRODUCT_SKU],
+      $product->sku,
       $product->properties[Properties::PRODUCT_STATUS],
       $this->prepareProductPropertiesForDb($product)
     );
@@ -129,8 +132,9 @@ class Model
   private function prepareProductPropertiesForDb(ProductEntity\Product $product) : string
   {
     $properties = $product->properties;
-    unset($properties[Properties::PRODUCT_SKU]);
+    $properties[Properties::PRODUCT_TYPE] = $product->type;
     unset($properties[Properties::PRODUCT_STATUS]);
+    unset($properties[Properties::PRODUCT_SKU]);
 
     return json_encode($properties);
   }

@@ -34,9 +34,15 @@ $$
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION catalog.fetch_product(skuIN VARCHAR) RETURNS text AS
+CREATE OR REPLACE FUNCTION catalog.fetch_product(skuIN VARCHAR) RETURNS RECORD AS
 $$
-  SELECT jsonb_set(jsonb_set(properties, '{sku}', to_jsonb(sku), true),'{status}', to_jsonb(status), true)::text
-  FROM product WHERE sku=skuIN;
+  SELECT sku, status, properties FROM product WHERE sku=skuIN;
+$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION catalog.fetch_product_type(skuIN VARCHAR) RETURNS
+  table(sku VARCHAR, type VARCHAR) AS
+$$
+  SELECT sku, properties->>'type' AS type FROM product WHERE sku=skuIN;
 $$
 LANGUAGE SQL;

@@ -13,24 +13,31 @@ class Controller
 {
   function save(Request $request, Model $productModel): Response
   {
+    $violations = [];
     $json = $this->getInput();
     $payload = json_decode($json, true);
 
-    $productModel->preValidatePayload($payload);
+    do {
+      $violations = $productModel->preValidatePayload($payload);
+      if (isset($violations[0])) break;
 
-    $storedProduct = $productModel->getProductFromStorage(
-      $payload[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU],
-      $payload[ProductProperty::STORAGE]
-    );
-    
-    $productModel->preValidateProduct($payload, $storedProduct);
-    $productModel->validatePayload($payload);
-    $payloadEntity = $this->buildPayload($payload);
-    $productEntity = $productModel->createProductEntity($payloadEntity, $storedProduct);
-    $productModel->validateEntity($productEntity);
+      $storedProduct = $productModel->fetchProductType(
+        $payload[ProductProperty::PRODUCT][ProductProperty::PRODUCT_SKU],
+        $payload[ProductProperty::STORAGE]
+      );
 
-    $productModel->saveProduct($productEntity);
+      $violations = $productModel->preValidateProduct($payload, $storedProduct);
+      if (isset($violations[0])) break;
 
+      $productModel->validatePayload($payload);
+      $payloadEntity = $this->buildPayload($payload);
+      $productEntity = $productModel->createProductEntity($payloadEntity, $storedProduct);
+      $productModel->validateEntity($productEntity);
+
+      $productModel->saveProduct($productEntity);
+    } while(false);
+
+    var_dump($violations);
     return new Response('Product save action', 200);
   }
 
