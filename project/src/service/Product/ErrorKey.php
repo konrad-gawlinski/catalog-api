@@ -11,4 +11,5 @@ interface ErrorKey
 
   const SKU_IS_REQUIRED = 'sku_is_required';
   const STORAGE_IS_REQUIRED = 'storage_is_required';
+  const INVALID_STORAGE_VALUE = 'invalid_storage_value';
 }

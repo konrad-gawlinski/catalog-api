@@ -14,7 +14,25 @@ class Controller
   function save(Request $request, Model $productModel): Response
   {
     $violations = [];
-    $json = $this->getInput();
+    $result = $this->init($productModel, $this->getInput());
+
+    if ($result->isValid()) {
+      $payloadEntity = $this->buildPayload($result->getPayload());
+      $productEntity = $productModel->createProductEntity($payloadEntity, $result->getStoredProduct());
+      $productModel->validateEntity($productEntity);
+
+      $productModel->saveProduct($productEntity);
+    } else {
+      $violations = $result->getViolations();
+    }
+
+    var_dump('Violations: ', $violations);
+    return new Response('Product save action', 200);
+  }
+
+  private function init(Model $productModel, string $json) : InitRequest
+  {
+    $storedProduct = [];
     $payload = json_decode($json, true);
 
     do {
@@ -27,18 +45,9 @@ class Controller
       );
 
       $violations = $productModel->preValidateProduct($payload, $storedProduct);
-      if (isset($violations[0])) break;
-
-      $productModel->validatePayload($payload);
-      $payloadEntity = $this->buildPayload($payload);
-      $productEntity = $productModel->createProductEntity($payloadEntity, $storedProduct);
-      $productModel->validateEntity($productEntity);
-
-      $productModel->saveProduct($productEntity);
     } while(false);
 
-    var_dump($violations);
-    return new Response('Product save action', 200);
+    return new InitRequest($storedProduct, $violations, $payload);
   }
 
   private function buildPayload(array $input) : Payload
@@ -54,7 +63,7 @@ class Controller
   {
     return <<<'PAYLOAD'
 {
-  "storage": "common",
+  "storage": "catalog",
   "product": {
     "sku": "nu3_1",
     "status": "new",
@@ -77,11 +86,45 @@ class Controller
     "short_description": "curved 55\" tv",
     "manufacturer": "philips",
     "label_language": [
-      " en ",
-      " it"
+      "en",
+      "it"
     ]
   }
 }
 PAYLOAD;
+  }
+}
+
+class InitRequest
+{
+  private $storedProduct;
+  private $violations;
+  private $payload;
+
+  function __construct(array $storedProduct, array $violations, array $payload)
+  {
+    $this->storedProduct = $storedProduct;
+    $this->violations = $violations;
+    $this->payload = $payload;
+  }
+
+  function isValid() : bool
+  {
+    return empty($this->violations);
+  }
+
+  function getViolations() : array
+  {
+    return $this->violations;
+  }
+
+  function getStoredProduct() : array
+  {
+    return $this->storedProduct;
+  }
+
+  function getPayload() : array
+  {
+    return $this->payload;
   }
 }

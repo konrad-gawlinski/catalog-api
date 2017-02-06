@@ -32,7 +32,6 @@ $app['service.product'] = function() use ($app) {
 
 $app['product.model'] = function() use ($app) {
   $model = new \Nu3\Service\Product\Model();
-  $model->setPayloadValidator($app['product.validator.payload']);
   $model->setEntityValidator($app['product.validator.entity']);
   $model->setDbFactory($app['database.factory']);
 
@@ -44,10 +43,6 @@ $app['database.factory'] = function() use ($app) {
   $factory->setApp($app);
 
   return $factory;
-};
-
-$app['product.validator.payload'] = function() use ($app) {
-  return new \Nu3\Service\Product\PayloadValidator();
 };
 
 $app['product.validator.entity'] = function() use ($app) {

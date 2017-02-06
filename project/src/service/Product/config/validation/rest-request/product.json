@@ -3,7 +3,6 @@
   "type": "object",
   "properties": {
     "storage": {
-      "type": "string",
       "enum": ["catalog", "catalog_de", "catalog_at"]
     },
     "product": {
@@ -51,9 +50,17 @@
           "type": "array",
           "uniqueItems": true
         },
-        "seo_robots": {
-          "type": "array",
-          "uniqueItems": true
+        "seo": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "robots": {
+              "type": "array",
+              "uniqueItems": true
+            }
+          }
         },
         "manufacturer": {
           "type": "string",

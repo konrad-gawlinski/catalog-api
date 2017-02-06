@@ -10,19 +10,11 @@ use Nu3\Core\Violation;
 
 class Model
 {
-  /** @var PayloadValidator */
-  private $payloadValidator;
-
   /** @var EntityValidator */
   private $validator;
 
   /** @var  DbFactory */
   private $dbFactory;
-
-  function setPayloadValidator(PayloadValidator $payloadValidator)
-  {
-    $this->payloadValidator = $payloadValidator;
-  }
 
   function setEntityValidator(EntityValidator $validator)
   {
@@ -34,11 +26,6 @@ class Model
     $this->dbFactory = $factory;
   }
 
-  function validatePayload(array $data)
-  {
-    $this->payloadValidator->validatePayload($data);
-  }
-
   function validateEntity(ProductEntity\Product $product)
   {
     $this->validator->validate($product);
@@ -46,7 +33,19 @@ class Model
 
   function preValidatePayload(array $payload) : array
   {
-    return $this->payloadValidator->preValidatePayload($payload);
+    $violations = [];
+
+    if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
+      $violations[] = new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::EK_REQUEST);
+    }
+
+    if (empty($payload[Properties::STORAGE])) {
+      $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
+    } else if (!in_array($payload[Properties::STORAGE], ["catalog", "catalog_de", "catalog_at"])) {
+        $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
+    }
+
+    return $violations;
   }
 
   function preValidateProduct(array $payload, array $storedProduct) : array
