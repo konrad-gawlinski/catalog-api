@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 RUN apt-get update && apt-get install -y gcc make wget
-RUN apt-get install -y supervisor libreadline-dev zlib1g-dev less
+RUN apt-get install -y supervisor libreadline-dev zlib1g-dev less git curl lbzip2 g++
 
 #install postgresql server-client
 ENV PGSQL_VERSION 9.6.0
@@ -23,10 +23,19 @@ RUN echo '' >> /etc/profile \
     && su -m postgres -c "ALTER ROLE postgres WITH PASSWORD 'postgres'" \
     && printf "\nhost\tall\t\tpostgres\tsamenet\t\t\tmd5\n" >> /var/pgsql_data/pg_hba.conf
 
+#install pl/v8
+ENV PLV8_VERSION 2.0.0
+ENV PLV8_FILENAME "plv8-v${PLV8_VERSION}.tar.gz"
+RUN wget "https://github.com/plv8/plv8/archive/v${PLV8_VERSION}.tar.gz" -O "/tmp/${PLV8_FILENAME}" \
+    && tar -xf "/tmp/${PLV8_FILENAME}" -C "/tmp/" \
+    && cd "/tmp/plv8-${PLV8_VERSION}" \
+    && make static PG_CONFIG=/usr/local/pgsql/bin/pg_config \
+    && make install PG_CONFIG=/usr/local/pgsql/bin/pg_config
+
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
 #cleanup
 RUN rm -rf /tmp/* \
-    && apt-get purge -y --auto-remove gcc make wget
+    && apt-get purge -y --auto-remove gcc g++ make wget git curl lbzip2
 
 CMD ["supervisord", "-n"]

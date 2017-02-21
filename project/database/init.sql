@@ -13,3 +13,28 @@ CREATE OR REPLACE FUNCTION public.set_search_path(path TEXT) RETURNS TEXT AS
     SELECT set_config('search_path', path, false);
   $$
 LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION public.jsonb_merge_deep(target JSONB, source JSONB) RETURNS JSONB AS
+  $$
+    var isObject = (item) => {
+        return item && typeof item === 'object' && !Array.isArray(item) && item !== null;
+    };
+
+    var mergeObject = (_target, _source) => {
+      if (isObject(_target) && isObject(_source)) {
+        Object.keys(_source).forEach((key) => {
+          if (isObject(_source[key])) {
+            if (!_target[key]) Object.assign(_target, { [key]: {} });
+            mergeObject(_target[key], _source[key]);
+          } else {
+            Object.assign(_target, { [key]: _source[key] });
+          }
+        });
+      }
+
+      return _target;
+    };
+
+    return mergeObject(target, source);
+  $$
+LANGUAGE PLV8;

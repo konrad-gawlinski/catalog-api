@@ -9,7 +9,6 @@ CREATE TABLE catalog.product (
 CREATE TABLE catalog_de.product (
   sku VARCHAR(10) PRIMARY KEY REFERENCES product (sku),
   status product_status DEFAULT 'new',
-  type
   properties JSONB,
   created_at TIMESTAMP WITH TIME ZONE,
   update_at TIMESTAMP WITH TIME ZONE
@@ -44,5 +43,12 @@ CREATE OR REPLACE FUNCTION catalog.fetch_product_type(skuIN VARCHAR) RETURNS
   table(sku VARCHAR, type VARCHAR) AS
 $$
   SELECT sku, properties->>'type' AS type FROM product WHERE sku=skuIN;
+$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION catalog.update_product(skuIN VARCHAR, propertiesIN JSONB) RETURNS VARCHAR AS
+$$
+  UPDATE product SET properties=public.jsonb_merge_deep(properties, propertiesIN) WHERE sku=skuIN
+  RETURNING sku;
 $$
 LANGUAGE SQL;
