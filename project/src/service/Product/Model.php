@@ -2,14 +2,19 @@
 
 namespace Nu3\Service\Product;
 
+use Nu3\Config;
 use Nu3\Core;
 use Nu3\Service\Product\Entity as ProductEntity;
+use Nu3\Core\Database\Exception as DbException;
 use Nu3\Core\Database\Controller\Factory as DbFactory;
 use Nu3\Service\Product\Entity\Properties;
 use Nu3\Core\Violation;
+use Nu3\Property;
 
 class Model
 {
+  use Property\Config;
+
   /** @var EntityValidator */
   private $validator;
 
@@ -34,6 +39,7 @@ class Model
   function preValidatePayload(array $payload) : array
   {
     $violations = [];
+    $availableStorage = $this->config()[Config::STORAGE][Config::STORAGE_AVAILABLE];
 
     if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
       $violations[] = new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::EK_REQUEST);
@@ -41,7 +47,7 @@ class Model
 
     if (empty($payload[Properties::STORAGE])) {
       $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
-    } else if (!in_array($payload[Properties::STORAGE], ["catalog", "catalog_de", "catalog_at"])) {
+    } else if (!in_array($payload[Properties::STORAGE], $availableStorage)) {
         $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
     }
 
@@ -121,11 +127,16 @@ class Model
 
   function saveProduct(ProductEntity\Product $product)
   {
-    $this->dbFactory->getProductController()->save_product(
-      $product->sku,
-      $product->properties[Properties::PRODUCT_STATUS],
-      $this->prepareProductPropertiesForDb($product)
-    );
+    $violations = [];
+    try {
+      $this->dbFactory->getProductController()->save_product(
+        $product->sku,
+        $product->properties[Properties::PRODUCT_STATUS],
+        $this->prepareProductPropertiesForDb($product)
+      );
+    } catch(DbException $exception) {
+      $violations[] = new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR, Violation::EK_DATABASE);
+    }
   }
 
   private function prepareProductPropertiesForDb(ProductEntity\Product $product) : string

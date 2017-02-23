@@ -14,16 +14,16 @@ class Controller
   function save(Request $request, Model $productModel): Response
   {
     $violations = [];
-    $result = $this->init($productModel, $this->getInput());
+    $initRequest = $this->init($productModel, $this->getInput());
 
-    if ($result->isValid()) {
-      $payloadEntity = $this->buildPayload($result->getPayload());
-      $productEntity = $productModel->createProductEntity($payloadEntity, $result->getStoredProduct());
+    if ($initRequest->isValid()) {
+      $payloadEntity = $initRequest->createPayload();
+      $productEntity = $productModel->createProductEntity($payloadEntity, $initRequest->getStoredProduct());
       $productModel->validateEntity($productEntity);
 
       $productModel->saveProduct($productEntity);
     } else {
-      $violations = $result->getViolations();
+      $violations = $initRequest->getViolations();
     }
 
     var_dump('Violations: ', $violations);
@@ -48,15 +48,6 @@ class Controller
     } while(false);
 
     return new InitRequest($storedProduct, $violations, $payload);
-  }
-
-  private function buildPayload(array $input) : Payload
-  {
-    $payload = new Payload();
-    $payload->product = $input[ProductProperty::PRODUCT];
-    $payload->storage = $input[ProductProperty::STORAGE];
-
-    return $payload;
   }
 
   private function getInput(): string
@@ -123,8 +114,12 @@ class InitRequest
     return $this->storedProduct;
   }
 
-  function getPayload() : array
+  function createPayload() : Payload
   {
-    return $this->payload;
+    $payload = new Payload();
+    $payload->product = $this->payload[ProductProperty::PRODUCT];
+    $payload->storage = $this->payload[ProductProperty::STORAGE];
+
+    return $payload;
   }
 }

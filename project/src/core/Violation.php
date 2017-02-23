@@ -6,6 +6,7 @@ class Violation
 {
 
   const EK_REQUEST = 'request_error';
+  const EK_DATABASE = 'database_error';
 
   private $message = '';
   private $errorKey = '';

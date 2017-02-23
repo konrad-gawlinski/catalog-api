@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION catalog.save_product(skuIN VARCHAR, statusIN product_
 $$
   INSERT INTO product (sku, status, properties, created_at)
       VALUES (skuIN, statusIN,propertiesIN, now())
-  ON CONFLICT (sku) DO UPDATE SET status=statusIN, properties=propertiesIN
+  ON CONFLICT (sku) DO UPDATE SET status=statusIN, properties=public.jsonb_merge_deep(properties, propertiesIN)
   RETURNING 1;
 $$
 LANGUAGE SQL;

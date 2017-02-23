@@ -9,4 +9,7 @@ interface Config
   const DB_PASS = 'password';
   const DB_HOST = 'host';
   const DB_NAME = 'database';
+
+  const STORAGE = 'storage';
+  const STORAGE_AVAILABLE = 'available';
 }

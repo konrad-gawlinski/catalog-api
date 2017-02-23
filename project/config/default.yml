@@ -3,3 +3,5 @@ database:
   password: pass
   host: localhost
   database: default
+storage:
+  available: ['catalog', 'catalog_de', 'catalog_at']

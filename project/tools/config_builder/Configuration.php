@@ -20,6 +20,11 @@ class Configuration implements ConfigurationInterface
           ->scalarNode('host')->end()
           ->scalarNode('database')->end()
         ->end()
+        ->end()
+        ->arrayNode('storage')->children()
+          ->arrayNode('available')->prototype('scalar')->end()
+        ->end()
+        ->end()
       ->end();
 
     return $treeBuilder;
