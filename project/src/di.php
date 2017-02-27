@@ -34,7 +34,6 @@ $app['product.model'] = function() use ($app) {
   $model = new \Nu3\Service\Product\Model();
   $model->setEntityValidator($app['product.validator.entity']);
   $model->setDbFactory($app['database.factory']);
-  $model->setConfig($app['config']);
 
   return $model;
 };

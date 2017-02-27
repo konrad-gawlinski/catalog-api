@@ -5,6 +5,7 @@ Nu3\Service\Product\Entity\Product:
           fields:
             sku:
               - NotBlank: ~
+              - Regex: '/^nu3_[1-9][0-9]{0,4}$/'
             status:
               - Choice:
                   choices: ["new", "approved", "not listed", "unavailable"]
@@ -13,6 +14,8 @@ Nu3\Service\Product\Entity\Product:
               - NotBlank: ~
             type:
               - NotBlank: ~
+              - Choice:
+                  choices: ["config", "bundle", "book"]
             price:
               - Collection:
                   fields:

@@ -2,7 +2,6 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Config;
 use Nu3\Core;
 use Nu3\Service\Product\Entity as ProductEntity;
 use Nu3\Core\Database\Exception as DbException;
@@ -10,11 +9,10 @@ use Nu3\Core\Database\Controller\Factory as DbFactory;
 use Nu3\Service\Product\Entity\Properties;
 use Nu3\Core\Violation;
 use Nu3\Property;
+use Nu3\Service\Product\Request\ProductSave;
 
 class Model
 {
-  use Property\Config;
-
   /** @var EntityValidator */
   private $validator;
 
@@ -36,38 +34,10 @@ class Model
     $this->validator->validate($product);
   }
 
-  function preValidatePayload(array $payload) : array
-  {
-    $violations = [];
-    $availableStorage = $this->config()[Config::STORAGE][Config::STORAGE_AVAILABLE];
-
-    if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
-      $violations[] = new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::EK_REQUEST);
-    }
-
-    if (empty($payload[Properties::STORAGE])) {
-      $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
-    } else if (!in_array($payload[Properties::STORAGE], $availableStorage)) {
-        $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::EK_REQUEST);
-    }
-
-    return $violations;
-  }
-
-  function preValidateProduct(array $payload, array $storedProduct) : array
-  {
-    $violations = [];
-    if (!isset($storedProduct[Properties::PRODUCT_SKU])
-      && empty($payload[Properties::PRODUCT][Properties::PRODUCT_TYPE]))
-        $violations[] = new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE, Violation::EK_REQUEST);
-
-    return $violations;
-  }
-
-  function createProductEntity(ProductEntity\Payload $payload, array $storedProduct) : ProductEntity\Product
+  function createProductEntity(ProductSave $productRequest, array $storedProduct) : ProductEntity\Product
   {
     $product = new ProductEntity\Product();
-    $payloadProduct = $payload->product;
+    $payloadProduct = $productRequest->getPayloadProduct();
     $product->sku = $payloadProduct[Properties::PRODUCT_SKU];
 
     if (isset($storedProduct[Properties::PRODUCT_SKU])) {
@@ -77,7 +47,7 @@ class Model
       $product->type = $payloadProduct[Properties::PRODUCT_TYPE];
 
       $product->properties = array_replace_recursive(
-        $this->fetchDefaultValues($product->properties[Properties::PRODUCT_TYPE]),
+        $this->fetchDefaultValues($product->type),
         $storedProduct
       );
     }
