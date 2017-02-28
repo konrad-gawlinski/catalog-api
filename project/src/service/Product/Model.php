@@ -29,9 +29,13 @@ class Model
     $this->dbFactory = $factory;
   }
 
-  function validateEntity(ProductEntity\Product $product)
+  /**
+   * @throws Exception
+   * @return Violation[]
+   */
+  function validateEntity(ProductEntity\Product $product) : array
   {
-    $this->validator->validate($product);
+    return $this->validator->validate($product);
   }
 
   function createProductEntity(ProductSave $productRequest, array $storedProduct) : ProductEntity\Product
@@ -82,7 +86,7 @@ class Model
 
     if ($values) return $values;
 
-    throw new Exception(ErrorKey::INVALID_PRODUCT_DEFAULT_VALUES);
+    throw new Exception(ErrorKey::INVALID_PRODUCT_DEFAULT_VALUES, Violation::ET_REQUEST);
   }
 
   private function chooseDbSchema(string $storage)
@@ -105,7 +109,7 @@ class Model
         $this->prepareProductPropertiesForDb($product)
       );
     } catch(DbException $exception) {
-      $violations[] = new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR, Violation::EK_DATABASE);
+      $violations[] = new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR, Violation::ET_DATABASE);
     }
   }
 

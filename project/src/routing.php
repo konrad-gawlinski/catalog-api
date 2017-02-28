@@ -10,7 +10,7 @@ function getPayload()
     "sku": "nu3_1",
     "status": "new",
     "name": " Silly Hodgin",
-    "type": "configf",
+    "type": "config",
     "price": {
       "final": 5172
     },

@@ -4,17 +4,16 @@ namespace Nu3\Core;
 
 class Violation
 {
-
-  const EK_REQUEST = 'request_error';
-  const EK_DATABASE = 'database_error';
+  const ET_REQUEST = 'request_error';
+  const ET_DATABASE = 'database_error';
 
   private $message = '';
-  private $errorKey = '';
+  private $errorType = '';
 
-  function __construct($message, $errorKey=0)
+  function __construct($message, $errorType=0)
   {
     $this->message = $message;
-    $this->errorKey = $errorKey;
+    $this->errorType = $errorType;
   }
 
   function message() : string
@@ -22,9 +21,8 @@ class Violation
     return $this->message;
   }
 
-  function errorKey() : string
+  function errorType() : string
   {
-    return $this->errorKey;
+    return $this->errorType;
   }
-
 }

@@ -2,18 +2,20 @@
 
 namespace Nu3\Service\Product;
 
+use Nu3\Core\Violation;
+
 class Exception extends \Exception
 {
-  private $errorKey = '';
+  private $errorType = '';
 
-  function __construct($errorKey)
+  function __construct($message, $errorType)
   {
-    $this->errorKey = $errorKey;
-    parent::__construct('Product service error: '. $errorKey);
+    parent::__construct($message);
+    $this->errorType = $errorType;
   }
 
-  function errorKey()
+  function getViolation() : Violation
   {
-    return $this->errorKey;
+    return new Violation($this->getMessage(), $this->errorType);
   }
 }
