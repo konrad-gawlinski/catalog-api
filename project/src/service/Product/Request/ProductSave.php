@@ -2,43 +2,35 @@
 
 namespace Nu3\Service\Product\Request;
 
-use Nu3\Config;
-use Nu3\Property\Config as AppConfig;
-use Nu3\Service\Product\Entity\Properties;
 use Nu3\Core\Violation;
-use Nu3\Service\Product\ErrorKey;
+use Nu3\Service\Product\Entity\Properties as Property;
 
 class ProductSave
 {
-  use AppConfig;
-
   private $storedProduct = [];
   private $violations = [];
   private $payload;
+  private $validator;
 
-  function __construct(string $json)
+  function __construct(string $json, Validator $validator)
   {
     $this->payload = json_decode($json, true);
+    $this->validator = $validator;
   }
 
-  function isValid() : bool
+  function getPayload() : array
   {
-    return empty($this->violations);
+    return $this->payload;
   }
 
-  function getViolations() : array
-  {
-    return $this->violations;
-  }
-  
   function getPayloadProduct() : array
   {
-    return $this->payload[Properties::PRODUCT];
+    return $this->payload[Property::PRODUCT];
   }
 
   function getPayloadStorage() : string
   {
-    return $this->payload[Properties::STORAGE];
+    return $this->payload[Property::STORAGE];
   }
 
   function setStoredProduct(array $product)
@@ -51,34 +43,29 @@ class ProductSave
     return $this->storedProduct;
   }
 
-  function preValidatePayload() : array
+  function getViolations() : array
   {
-    $violations = [];
-    $availableStorage = $this->config()[Config::STORAGE][Config::STORAGE_AVAILABLE];
+    return $this->violations;
+  }
 
-    if (empty($this->payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
-      $violations[] = new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::ET_REQUEST);
-    }
-
-    if (empty($this->payload[Properties::STORAGE])) {
-      $violations[] = new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::ET_REQUEST);
-    } else if (!in_array($this->payload[Properties::STORAGE], $availableStorage)) {
-      $violations[] = new Violation(ErrorKey::INVALID_STORAGE_VALUE, Violation::ET_REQUEST);
-    }
-
-    array_merge($this->violations, $violations);
+  /**
+   * @return Violation[]
+   */
+  function validatePayload() : array
+  {
+    $violations = $this->validator->validatePayload($this);
+    $this->violations += $violations;
 
     return $violations;
   }
 
-  function preValidateProduct(array $storedProduct) : array
+  /**
+   * @return Violation[]
+   */
+  function validateProduct() : array
   {
-    $violations = [];
-    if (!isset($storedProduct[Properties::PRODUCT_SKU])
-      && empty($this->payload[Properties::PRODUCT][Properties::PRODUCT_TYPE]))
-      $violations[] = new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE, Violation::ET_REQUEST);
-
-    array_merge($this->violations, $violations);
+    $violations = $this->validator->validateProduct($this);
+    $this->violations += $violations;
 
     return $violations;
   }

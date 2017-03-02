@@ -22,9 +22,11 @@ class Configuration implements ConfigurationInterface
         ->end()
         ->end()
         ->arrayNode('storage')->children()
-          ->arrayNode('available')->prototype('scalar')->end()
+          ->arrayNode('available')->prototype('scalar')->end()->end()
         ->end()
         ->end()
+        ->variableNode('product')->end()
+      ->end()
       ->end();
 
     return $treeBuilder;

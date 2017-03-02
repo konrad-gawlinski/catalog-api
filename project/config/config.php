@@ -16,4 +16,17 @@ return array (
       2 => 'catalog_at',
     ),
   ),
+  'product' => 
+  array (
+    'config' => 
+    array (
+      'validation_rules' => 'product',
+      'default_values' => 'product',
+    ),
+    'bundle' => 
+    array (
+      'validation_rules' => 'bundle',
+      'default_values' => 'bundle',
+    ),
+  ),
 );

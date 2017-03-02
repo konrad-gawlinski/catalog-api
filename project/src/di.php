@@ -25,9 +25,9 @@ $app['database.product'] = function() use ($app) {
 };
 
 $app['service.product'] = function() use ($app) {
-  $controller = new Nu3\Service\Product\Controller();
+  $action = new Nu3\Service\Product\SaveAction();
   
-  return $controller;
+  return $action;
 };
 
 $app['product.model'] = function() use ($app) {
@@ -47,4 +47,11 @@ $app['database.factory'] = function() use ($app) {
 
 $app['product.validator.entity'] = function() use ($app) {
   return new \Nu3\Service\Product\EntityValidator();
+};
+
+$app['product.save_request.validator'] = function() use ($app) {
+  $validator = new \Nu3\Service\Product\Request\Validator();
+  $validator->setConfig($app['config']);
+
+  return $validator;
 };

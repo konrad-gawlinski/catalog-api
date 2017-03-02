@@ -12,4 +12,10 @@ interface Config
 
   const STORAGE = 'storage';
   const STORAGE_AVAILABLE = 'available';
+
+  const PRODUCT = 'product';
+  const CONFIG = 'config';
+  const BUNDLE = 'bundle';
+  const DEFAULT_VALUES = 'default_values';
+  const VALIDATION_RULES = 'validation_rules';
 }

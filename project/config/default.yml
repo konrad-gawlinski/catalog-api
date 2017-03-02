@@ -5,3 +5,10 @@ database:
   database: default
 storage:
   available: ['catalog', 'catalog_de', 'catalog_at']
+product:
+  config:
+    validation_rules: product
+    default_values: product
+  bundle:
+    validation_rules: bundle
+    default_values: bundle

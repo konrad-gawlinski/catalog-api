@@ -37,10 +37,11 @@ PAYLOAD;
 }
 
 $app->get('/product/save', function(Request $request) use($app) {
-  /** @var Nu3\Service\Product\Controller $service */
+  /** @var Nu3\Service\Product\SaveAction $service */
   $service = $app['service.product'];
-  $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(getPayload());
-  $productSaveRequest->setConfig($app['config']);
+  $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(
+    getPayload(),
+    $app['product.save_request.validator']);
 
-  return $service->save($productSaveRequest, $app['product.model']);
+  return $service->run($productSaveRequest, $app['product.model'], new Nu3\Service\Product\ContentBuilder\Database());
 });

@@ -7,16 +7,14 @@ use Nu3\Service\Product\Request\ProductSave as ProductSaveRequest;
 use Nu3\Service\Product\Entity\Properties as ProductProperty;
 use Symfony\Component\HttpFoundation\Response;
 
-class Controller
+class SaveAction
 {
-  function save(ProductSaveRequest $productRequest, Model $productModel): Response
+  function run(ProductSaveRequest $productRequest, Model $productModel, ContentBuilder\Database $builder): Response
   {
     $this->init($productModel, $productRequest);
-
-    if ($productRequest->isValid()) {
-      $violations = $this->saveProduct($productRequest, $productModel);
-    } else {
-      $violations = $productRequest->getViolations();
+    $violations = $productRequest->getViolations();
+    if (!$violations) {
+      $violations = $this->saveProduct($productRequest, $productModel, $builder);
     }
 
     var_dump('Violations: ', $violations);
@@ -25,29 +23,29 @@ class Controller
 
   private function init(Model $productModel, ProductSaveRequest $productRequest)
   {
-    $violations = $productRequest->preValidatePayload();
+    $violations = $productRequest->validatePayload();
     if ($violations) return;
 
+    $productModel->useSchemaByStorage($productRequest->getPayloadStorage());
     $storedProduct = $productModel->fetchProductType(
-      $productRequest->getPayloadProduct()[ProductProperty::PRODUCT_SKU],
-      $productRequest->getPayloadStorage()
+      $productRequest->getPayloadProduct()[ProductProperty::PRODUCT_SKU]
     );
     $productRequest->setStoredProduct($storedProduct);
 
-    $productRequest->preValidateProduct($storedProduct);
+    $productRequest->validateProduct();
   }
 
   /**
    * @return Violation[]
    */
-  private function saveProduct(ProductSaveRequest $productRequest, Model $productModel) : array
+  private function saveProduct(ProductSaveRequest $productRequest, Model $productModel, ContentBuilder\Database $builder) : array
   {
     try {
       $productEntity = $productModel->createProductEntity($productRequest, $productRequest->getStoredProduct());
       $violations = $productModel->validateEntity($productEntity);
       if ($violations) return $violations;
 
-      $productModel->saveProduct($productEntity);
+      $productModel->saveProduct($productEntity, $builder);
     } catch(Exception $serviceException) {
       return [$serviceException->getViolation()];
     }

@@ -36,8 +36,6 @@ class EntityValidator extends Validator
     switch ($productType) {
       case 'config': return APPLICATION_SRC . 'service/Product/config/validation/entity/product.yml';
     }
-
-    throw new Exception(ErrorKey::INVALID_PRODUCT_VALIDATION_RULES_FILE_PATH, Violation::ET_REQUEST);
   }
 
   private function buildMessage(ConstraintViolation $violation) : string

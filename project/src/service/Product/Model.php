@@ -64,10 +64,23 @@ class Model
     return $product;
   }
 
-  function fetchProductType(string $sku, string $storage) : array
+  function useSchemaByStorage(string $storage)
+  {
+    $schema = Core\Database\Connection::SCHEMA_CATALOG;
+    switch($storage) {
+      case 'catalog_de':
+        $schema = Core\Database\Connection::SCHEMA_CATALOG_DE; break;
+      case 'catalog_at':
+        $schema = Core\Database\Connection::SCHEMA_CATALOG_AT; break;
+    }
+
+    $db = $this->dbFactory->getProductController();
+    $db->set_schema($schema);
+  }
+
+  function fetchProductType(string $sku) : array
   {
     $db = $this->dbFactory->getProductController();
-    $db->set_schema($this->chooseDbSchema($storage));
 
     return $db->fetch_product_type($sku);
   }
@@ -76,7 +89,7 @@ class Model
   {
     $fileName = '';
     switch ($productType) {
-      case 'config':
+      case ProductEntity\ProductType::CONFIG:
         $fileName = 'product.json';
         break;
     }
@@ -85,41 +98,19 @@ class Model
     $values = json_decode(file_get_contents($filePath), true);
 
     if ($values) return $values;
-
-    throw new Exception(ErrorKey::INVALID_PRODUCT_DEFAULT_VALUES, Violation::ET_REQUEST);
   }
 
-  private function chooseDbSchema(string $storage)
-  {
-    switch($storage) {
-      case 'catalog_de': return Core\Database\Connection::SCHEMA_CATALOG_DE;
-      case 'catalog_at': return Core\Database\Connection::SCHEMA_CATALOG_AT;
-      default:
-        return Core\Database\Connection::SCHEMA_CATALOG;
-    }
-  }
-
-  function saveProduct(ProductEntity\Product $product)
+  function saveProduct(ProductEntity\Product $product, ContentBuilder\Database $builder)
   {
     $violations = [];
     try {
       $this->dbFactory->getProductController()->save_product(
         $product->sku,
         $product->properties[Properties::PRODUCT_STATUS],
-        $this->prepareProductPropertiesForDb($product)
+        $builder->build($product)
       );
     } catch(DbException $exception) {
       $violations[] = new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR, Violation::ET_DATABASE);
     }
-  }
-
-  private function prepareProductPropertiesForDb(ProductEntity\Product $product) : string
-  {
-    $properties = $product->properties;
-    $properties[Properties::PRODUCT_TYPE] = $product->type;
-    unset($properties[Properties::PRODUCT_STATUS]);
-    unset($properties[Properties::PRODUCT_SKU]);
-
-    return json_encode($properties);
   }
 }
