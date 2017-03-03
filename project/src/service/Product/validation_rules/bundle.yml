@@ -1,0 +1,85 @@
+Nu3\Service\Product\Entity\Product:
+  properties:
+    properties:
+      -
+        Collection:
+          fields:
+            children:
+              -
+                NotBlank: null
+              -
+                Type: array
+            sku:
+              -
+                NotBlank: null
+              -
+                Regex: '/^nu3_[1-9][0-9]{0,4}$/'
+            status:
+              -
+                Choice:
+                  choices:
+                    - new
+                    - approved
+                    - 'not listed'
+                    - unavailable
+            name:
+              -
+                NotBlank: null
+            type:
+              -
+                NotBlank: null
+              -
+                Choice:
+                  choices:
+                    - config
+                    - bundle
+                    - book
+            price:
+              -
+                Collection:
+                  fields:
+                    final:
+                      -
+                        Type: integer
+                      -
+                        Range:
+                          min: 1
+                          groups:
+                            - approved
+            tax_rate:
+              -
+                Range:
+                  min: 0
+                  max: 100
+            attributes: null
+            seo:
+              -
+                Collection:
+                  fields:
+                    robots:
+                      -
+                        Choice:
+                          choices:
+                            - noindex
+                            - index
+                            - nofollow
+                            - follow
+                          multiple: true
+                    title:
+                      -
+                        NotBlank: null
+                    description: null
+                  allowMissingFields: true
+            manufacturer:
+              -
+                NotBlank: null
+            description:
+              -
+                NotBlank:
+                  groups:
+                    - approved
+            short_description: null
+            label_language:
+              -
+                Type: array
+          allowMissingFields: true

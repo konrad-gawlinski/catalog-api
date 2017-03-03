@@ -1,13 +1,10 @@
 <?php
 
-namespace Nu3\Service\Product\ContentBuilder;
+namespace Nu3\Service\Product\Entity;
 
-use Nu3\Service\Product\Entity\Product;
-use Nu3\Service\Product\Entity\Properties;
-
-class Database
+class DatabaseConverter
 {
-  function build(Product $product) : string
+  function toDatabase(Product $product) : string
   {
     $properties = $product->properties;
     $properties[Properties::PRODUCT_TYPE] = $product->type;

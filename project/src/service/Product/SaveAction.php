@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SaveAction
 {
-  function run(ProductSaveRequest $productRequest, Model $productModel, ContentBuilder\Database $builder): Response
+  function run(ProductSaveRequest $productRequest, Model $productModel): Response
   {
     $this->init($productModel, $productRequest);
     $violations = $productRequest->getViolations();
     if (!$violations) {
-      $violations = $this->saveProduct($productRequest, $productModel, $builder);
+      $violations = $this->saveProduct($productRequest, $productModel);
     }
 
     var_dump('Violations: ', $violations);
@@ -38,14 +38,14 @@ class SaveAction
   /**
    * @return Violation[]
    */
-  private function saveProduct(ProductSaveRequest $productRequest, Model $productModel, ContentBuilder\Database $builder) : array
+  private function saveProduct(ProductSaveRequest $productRequest, Model $productModel) : array
   {
     try {
       $productEntity = $productModel->createProductEntity($productRequest, $productRequest->getStoredProduct());
       $violations = $productModel->validateEntity($productEntity);
       if ($violations) return $violations;
 
-      $productModel->saveProduct($productEntity, $builder);
+      $productModel->saveProduct($productEntity);
     } catch(Exception $serviceException) {
       return [$serviceException->getViolation()];
     }

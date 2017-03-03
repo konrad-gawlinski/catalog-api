@@ -43,5 +43,5 @@ $app->get('/product/save', function(Request $request) use($app) {
     getPayload(),
     $app['product.save_request.validator']);
 
-  return $service->run($productSaveRequest, $app['product.model'], new Nu3\Service\Product\ContentBuilder\Database());
+  return $service->run($productSaveRequest, $app['product.model']);
 });

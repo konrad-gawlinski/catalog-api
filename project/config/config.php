@@ -20,13 +20,13 @@ return array (
   array (
     'config' => 
     array (
-      'validation_rules' => 'product',
-      'default_values' => 'product',
+      'validation_rules' => 'config.yml',
+      'default_values' => 'config.php',
     ),
     'bundle' => 
     array (
-      'validation_rules' => 'bundle',
-      'default_values' => 'bundle',
+      'validation_rules' => 'config.yml',
+      'default_values' => 'bundle.php',
     ),
   ),
 );

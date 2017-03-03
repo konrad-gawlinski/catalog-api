@@ -9,7 +9,6 @@ Nu3\Service\Product\Entity\Product:
             status:
               - Choice:
                   choices: ["new", "approved", "not listed", "unavailable"]
-                  groups: [approved]
             name:
               - NotBlank: ~
             type:

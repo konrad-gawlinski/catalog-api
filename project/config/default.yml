@@ -7,8 +7,8 @@ storage:
   available: ['catalog', 'catalog_de', 'catalog_at']
 product:
   config:
-    validation_rules: product
-    default_values: product
+    validation_rules: config.yml
+    default_values: config.php
   bundle:
-    validation_rules: bundle
-    default_values: bundle
+    validation_rules: config.yml
+    default_values: bundle.php

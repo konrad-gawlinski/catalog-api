@@ -2,16 +2,18 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Core\Validator;
-use Nu3\Core\Violation;
+use Nu3\Core;
+use Nu3\Property\Config;
 use Nu3\Service\Product\Entity\Properties;
 use Symfony\Component\Validator\ConstraintViolation;
 
-class EntityValidator extends Validator
+class EntityValidator extends Core\Validator
 {
+  use Config;
+
   /**
    * @throws Exception
-   * @return Violation[]
+   * @return Core\Violation[]
    */
   function validate(Entity\Product $product) : array
   {
@@ -22,7 +24,7 @@ class EntityValidator extends Validator
 
     /** @var ConstraintViolation $violation */
     foreach ($violations as $violation) {
-      $requestViolations[] = new Violation($this->buildMessage($violation), Violation::ET_REQUEST);
+      $requestViolations[] = new Core\Violation($this->buildMessage($violation), Core\Violation::ET_REQUEST);
     }
 
     return $requestViolations;
@@ -33,9 +35,9 @@ class EntityValidator extends Validator
    */
   private function chooseValidationRules(string $productType) : string
   {
-    switch ($productType) {
-      case 'config': return APPLICATION_SRC . 'service/Product/config/validation/entity/product.yml';
-    }
+    $fileName = $this->config()[\Nu3\Config::PRODUCT][$productType][\Nu3\Config::VALIDATION_RULES];
+
+    return APPLICATION_SRC . 'service/Product/validation_rules/' . $fileName;
   }
 
   private function buildMessage(ConstraintViolation $violation) : string

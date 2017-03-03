@@ -34,6 +34,8 @@ $app['product.model'] = function() use ($app) {
   $model = new \Nu3\Service\Product\Model();
   $model->setEntityValidator($app['product.validator.entity']);
   $model->setDbFactory($app['database.factory']);
+  $model->setDatabaseConverter(new \Nu3\Service\Product\Entity\DatabaseConverter());
+  $model->setConfig($app['config']);
 
   return $model;
 };
@@ -46,7 +48,10 @@ $app['database.factory'] = function() use ($app) {
 };
 
 $app['product.validator.entity'] = function() use ($app) {
-  return new \Nu3\Service\Product\EntityValidator();
+  $validator = new \Nu3\Service\Product\EntityValidator();
+  $validator->setConfig($app['config']);
+
+  return $validator;
 };
 
 $app['product.save_request.validator'] = function() use ($app) {
