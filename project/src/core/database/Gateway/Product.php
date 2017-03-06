@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Core\Database\Controller;
+namespace Nu3\Core\Database\Gateway;
 
 use Nu3\Core\Database\Exception;
 
@@ -15,7 +15,7 @@ class Product extends Base
     if (!$result) throw new Exception('Product could not be saved: '. pg_last_error($this->dbconn));
   }
 
-  function fetch_product_type(string $sku) : array
+  function fetchProductType(string $sku) : array
   {
     $result = pg_query_params($this->dbconn->db(), 'SELECT * FROM catalog.fetch_product_type($1);', [$sku]);
     $result = pg_fetch_assoc($result);

@@ -20,31 +20,14 @@ $app['database.connection'] = function() use ($app) {
   return $db;
 };
 
-$app['database.product'] = function() use ($app) {
-  return new Nu3\Core\Database\Controller\Product($app['database.connection']);
+$app['product.gateway'] = function() use ($app) {
+  return new Nu3\Core\Database\Gateway\Product($app['database.connection']);
 };
 
-$app['service.product'] = function() use ($app) {
+$app['product.save_action'] = function() use ($app) {
   $action = new Nu3\Service\Product\SaveAction();
   
   return $action;
-};
-
-$app['product.model'] = function() use ($app) {
-  $model = new \Nu3\Service\Product\Model();
-  $model->setEntityValidator($app['product.validator.entity']);
-  $model->setDbFactory($app['database.factory']);
-  $model->setDatabaseConverter(new \Nu3\Service\Product\Entity\DatabaseConverter());
-  $model->setConfig($app['config']);
-
-  return $model;
-};
-
-$app['database.factory'] = function() use ($app) {
-  $factory = new \Nu3\Core\Database\Controller\Factory();
-  $factory->setApp($app);
-
-  return $factory;
 };
 
 $app['product.validator.entity'] = function() use ($app) {

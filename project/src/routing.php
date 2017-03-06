@@ -38,10 +38,14 @@ PAYLOAD;
 
 $app->get('/product/save', function(Request $request) use($app) {
   /** @var Nu3\Service\Product\SaveAction $service */
-  $service = $app['service.product'];
+  $service = $app['product.save_action'];
   $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(
     getPayload(),
     $app['product.save_request.validator']);
 
-  return $service->run($productSaveRequest, $app['product.model']);
+  return $service->run(
+    $productSaveRequest,
+    $app['product.gateway'],
+    $app['product.validator.entity']
+  );
 });

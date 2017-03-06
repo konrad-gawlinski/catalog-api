@@ -11,8 +11,9 @@ class EntityValidator extends Core\Validator
 {
   use Config;
 
+  const VALIDATION_RULES_DIR = APPLICATION_SRC . 'service/Product/validation_rules/';
+  
   /**
-   * @throws Exception
    * @return Core\Violation[]
    */
   function validate(Entity\Product $product) : array
@@ -37,7 +38,7 @@ class EntityValidator extends Core\Validator
   {
     $fileName = $this->config()[\Nu3\Config::PRODUCT][$productType][\Nu3\Config::VALIDATION_RULES];
 
-    return APPLICATION_SRC . 'service/Product/validation_rules/' . $fileName;
+    return self::VALIDATION_RULES_DIR . $fileName;
   }
 
   private function buildMessage(ConstraintViolation $violation) : string
