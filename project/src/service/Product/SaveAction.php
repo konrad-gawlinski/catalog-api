@@ -21,7 +21,7 @@ class SaveAction
       $violations = $validator->validate($productEntity);
 
       if (!$violations) {
-        $violations = $this->pushProduct($productEntity, $productGateway);
+        $violations = $this->saveProduct($productEntity, $productGateway);
       }
     }
 
@@ -49,7 +49,7 @@ class SaveAction
   /**
    * @return Violation[]
    */
-  private function pushProduct(Product $product, ProductGateway $productGateway) : array
+  private function saveProduct(Product $product, ProductGateway $productGateway) : array
   {
     try {
       $productGateway->save_product(
@@ -76,7 +76,7 @@ class SaveAction
 
   /**
    * @param Violation[] $violations
-   * @return array
+   * @return string
    */
   private function violationsToJson(array $violations) : string
   {

@@ -2,6 +2,7 @@
 
 namespace Nu3\Service\Product\Request;
 
+use Nu3\Core\Database\Connection;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\Entity\Properties as Property;
 use Nu3\Service\Product\Entity;
@@ -78,8 +79,18 @@ class ProductSave
 
   function createProductEntity() : Entity\Product
   {
-    $payloadProduct = $this->getPayloadProduct();
-    $storedProduct = $this->getStoredProduct();
+    $product = $this->instantiateProduct($this->getPayloadProduct(), $this->getStoredProduct());
+
+    $product->properties = array_replace_recursive(
+      $product->properties,
+      $payloadProduct
+    );
+
+    return $product;
+  }
+
+  private function instantiateProduct(array $payloadProduct, array $storedProduct) : Entity\Product
+  {
     $product = new Entity\Product();
     $product->sku = $payloadProduct[Property::PRODUCT_SKU];
 
@@ -88,19 +99,20 @@ class ProductSave
     } else {
       $product->isNew = true;
       $product->type = $payloadProduct[Property::PRODUCT_TYPE];
+    }
 
+    $this->applyDefaultValues($product, $payloadProduct[Property::STORAGE]);
+
+    return $product;
+  }
+
+  private function applyDefaultValues(Entity\Product $product, string $storage)
+  {
+    if ($product->isNew && $storage === Connection::SCHEMA_CATALOG)
       $product->properties = array_replace_recursive(
         $this->fetchDefaultValues($product->type),
         $storedProduct
-      );
-    }
-
-    $product->properties = array_replace_recursive(
-      $product->properties,
-      $payloadProduct
     );
-
-    return $product;
   }
 
   private function fetchDefaultValues(string $productType) : array
