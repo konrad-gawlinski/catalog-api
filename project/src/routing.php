@@ -7,10 +7,10 @@ function getPayload()
 {
   "storage": "catalog",
   "product": {
-    "sku": "nu3_1",
+    "sku": "nu3_2",
     "status": "new",
     "name": " Silly Hodgin",
-    "type": "config",
+    "type": "bundle",
     "price": {
       "final": 5172
     },
@@ -39,13 +39,10 @@ PAYLOAD;
 $app->get('/product/save', function(Request $request) use($app) {
   /** @var Nu3\Service\Product\SaveAction $service */
   $service = $app['product.save_action'];
-  $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(
-    getPayload(),
-    $app['product.save_request.validator']);
+  $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(getPayload());
 
   return $service->run(
     $productSaveRequest,
-    $app['product.gateway'],
-    $app['product.validator.entity']
+    $app['product.gateway']
   );
 });

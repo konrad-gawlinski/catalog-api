@@ -5,10 +5,8 @@
   },
   "require": {
     "silex/silex": "v2.0.3",
-    "justinrainbow/json-schema": "4.0.0",
     "symfony/config": "v3.2.1",
     "symfony/yaml": "v3.2.1",
-    "jms/serializer": "1.4.2",
     "symfony/validator": "v3.2.1",
     "dms/dms-filter": "3.0.0",
     "doctrine/cache": "v1.6.1"
@@ -17,7 +15,7 @@
     "psr-4": {
       "Nu3\\Core\\": "src/core/",
       "Nu3\\Service\\": "src/service/",
-      "Nu3\\Property\\": "src/property/",
+      "Nu3\\Feature\\": "src/feature/",
       "Nu3\\Core\\Database\\": "src/core/database/"
     }
   }

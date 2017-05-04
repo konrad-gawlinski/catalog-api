@@ -1,5 +1,5 @@
 <?php
-namespace Nu3\Property;
+namespace Nu3\Feature;
 
 use Silex\Application;
 

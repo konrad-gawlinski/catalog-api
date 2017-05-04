@@ -4,7 +4,7 @@ return array (
   array (
     'username' => 'postgres',
     'password' => 'postgres',
-    'host' => '172.17.0.2',
+    'host' => '172.17.0.3',
     'database' => 'nu3_catalog',
   ),
   'storage' => 

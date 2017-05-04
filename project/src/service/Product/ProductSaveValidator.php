@@ -1,18 +1,16 @@
 <?php
 
-namespace Nu3\Service\Product\Request;
+namespace Nu3\Service\Product;
 
 use Nu3\Config;
-use Nu3\Property\Config as AppConfig;
+use Nu3\Feature\Config as AppConfig;
 use Nu3\Core\Violation;
-use Nu3\Service\Product\Entity\Properties as Property;
-use Nu3\Service\Product\ErrorKey;
 
-class Validator
+class ProductSaveValidator
 {
   use AppConfig;
 
-  function validatePayload(ProductSave $request) : array
+  function validateRequest(Request\ProductSave $request) : array
   {
     $violations = [];
     $payload = $request->getPayload();
@@ -28,7 +26,7 @@ class Validator
    */
   private function validateRequiredSku(array $payload) : array
   {
-    if (empty($payload[Property::PRODUCT][Property::PRODUCT_SKU])) {
+    if (empty($payload[Properties::PRODUCT][Properties::PRODUCT_SKU])) {
       return [new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::ET_REQUEST)];
     }
 
@@ -42,9 +40,9 @@ class Validator
   {
     $availableStorage = $this->config()[Config::STORAGE][Config::STORAGE_AVAILABLE];
 
-    if (empty($payload[Property::STORAGE])) {
+    if (empty($payload[Properties::STORAGE])) {
       return [new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::ET_REQUEST)];
-    } else if (!in_array($payload[Property::STORAGE], $availableStorage)) {
+    } else if (!in_array($payload[Properties::STORAGE], $availableStorage)) {
       return [new Violation(ErrorKey::INVALID_STORAGE_VALUE, Violation::ET_REQUEST)];
     }
 
@@ -54,13 +52,13 @@ class Validator
   /**
    * @return Violation[]
    */
-  function validateProduct(ProductSave $request) : array
+  function validateProduct(DTO\ProductSave $dto, array $storedProductProperties) : array
   {
     $violations = [];
-    $payload = $request->getPayloadProduct();
+    $productProperties = $dto->getProductProperties();
 
-    $violations += $this->validateRequiredProductType($payload, $request->getStoredProduct());
-    $violations += $this->validateProductType($payload);
+    $violations += $this->validateRequiredProductType($productProperties, $storedProductProperties);
+    $violations += $this->validateProductType($productProperties);
 
     return $violations;
   }
@@ -68,10 +66,10 @@ class Validator
   /**
    * @return Violation[]
    */
-  private function validateRequiredProductType(array $payload, array $storedProduct) : array
+  private function validateRequiredProductType(array $productProperties, array $storedProductProperties) : array
   {
-    if (!isset($storedProduct[Property::PRODUCT_SKU])
-      && empty($payload[Property::PRODUCT_TYPE]))
+    if (!isset($storedProductProperties[Properties::PRODUCT_SKU])
+      && empty($productProperties[Properties::PRODUCT_TYPE]))
       return [new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE, Violation::ET_REQUEST)];
 
     return [];
@@ -80,12 +78,12 @@ class Validator
   /**
    * @return Violation[]
    */
-  private function validateProductType(array $payload) : array
+  private function validateProductType(array $productProperties) : array
   {
     $availableProductTypes = array_keys($this->config()[Config::PRODUCT]);
 
-    if (isset($payload[Property::PRODUCT_TYPE])
-      && !in_array($payload[Property::PRODUCT_TYPE], $availableProductTypes))
+    if (isset($productProperties[Properties::PRODUCT_TYPE])
+      && !in_array($productProperties[Properties::PRODUCT_TYPE], $availableProductTypes))
       return [new Violation(ErrorKey::INVALID_PRODUCT_TYPE, Violation::ET_REQUEST)];
 
     return [];

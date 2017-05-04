@@ -6,6 +6,13 @@ $app['config'] = function() {
   return require(APPLICATION_ROOT.'config/config.php');
 };
 
+$app['product.service.factory'] = function() use ($app) {
+  $factory = new \Nu3\Service\Product\ProductSaveFactory();
+  $factory->setConfig($app['config']);
+
+  return $factory;
+};
+
 $app['database.connection'] = function() use ($app) {
   $config = $app['config'][Config::DB];
   $db = new Nu3\Core\Database\Connection();
@@ -25,21 +32,5 @@ $app['product.gateway'] = function() use ($app) {
 };
 
 $app['product.save_action'] = function() use ($app) {
-  $action = new Nu3\Service\Product\SaveAction();
-  
-  return $action;
-};
-
-$app['product.validator.entity'] = function() use ($app) {
-  $validator = new \Nu3\Service\Product\EntityValidator();
-  $validator->setConfig($app['config']);
-
-  return $validator;
-};
-
-$app['product.save_request.validator'] = function() use ($app) {
-  $validator = new \Nu3\Service\Product\Request\Validator();
-  $validator->setConfig($app['config']);
-
-  return $validator;
+  return new Nu3\Service\Product\SaveAction($app['product.service.factory']);
 };

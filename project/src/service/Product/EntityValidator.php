@@ -3,13 +3,11 @@
 namespace Nu3\Service\Product;
 
 use Nu3\Core;
-use Nu3\Property\Config;
-use Nu3\Service\Product\Entity\Properties;
 use Symfony\Component\Validator\ConstraintViolation;
 
 class EntityValidator extends Core\Validator
 {
-  use Config;
+  use \Nu3\Feature\Config;
 
   const VALIDATION_RULES_DIR = APPLICATION_SRC . 'service/Product/validation_rules/';
   
@@ -18,6 +16,7 @@ class EntityValidator extends Core\Validator
    */
   function validate(Entity\Product $product) : array
   {
+    var_dump($product);
     $requestViolations = [];
     $violations = $this
       ->buildValidator($this->chooseValidationRules($product->properties[Properties::PRODUCT_TYPE]))

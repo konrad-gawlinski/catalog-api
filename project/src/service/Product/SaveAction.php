@@ -6,24 +6,22 @@ use Nu3\Core\Violation;
 use Nu3\Core\Database;
 use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\Request\ProductSave as ProductSaveRequest;
-use Nu3\Service\Product\Entity\Properties as ProductProperty;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Symfony\Component\HttpFoundation\Response;
 
 class SaveAction
 {
-  function run(ProductSaveRequest $productRequest, ProductGateway $productGateway, EntityValidator $validator): Response
-  {
-    $this->init($productRequest, $productGateway);
-    $violations = $productRequest->getViolations();
-    if (!$violations) {
-      $productEntity = $productRequest->createProductEntity();
-      $violations = $validator->validate($productEntity);
+  /** @var  ProductSaveFactory */
+  private $factory;
 
-      if (!$violations) {
-        $violations = $this->saveProduct($productEntity, $productGateway);
-      }
-    }
+  function __construct(ProductSaveFactory $factory)
+  {
+    $this->factory = $factory;
+  }
+
+  function run(ProductSaveRequest $productRequest, ProductGateway $productGateway): Response
+  {
+    $violations = $this->handleRequest($productRequest, $productGateway);
 
     if ($violations) {
       return new Response($this->violationsToJson($violations), 513);
@@ -32,18 +30,40 @@ class SaveAction
     return new Response('', 200);
   }
 
-  private function init(ProductSaveRequest $productRequest, ProductGateway $productGateway)
+  /**
+   * @return Violation[]
+   */
+  private function handleRequest(ProductSaveRequest $productRequest, ProductGateway $productGateway) : array
   {
-    $violations = $productRequest->validatePayload();
-    if ($violations) return;
+    $validator = $this->factory->createValidator();
+    $violations = $validator->validateRequest($productRequest);
+    if ($violations) return $violations;
 
-    $productGateway->setSchemaByStorage($productRequest->getPayloadStorage());
+    $dto = $this->factory->createDataTransferObject($productRequest);
+    $productGateway->setSchemaByStorage($dto->getStorage());
     $storedProduct = $productGateway->fetchProductType(
-      $productRequest->getPayloadProduct()[ProductProperty::PRODUCT_SKU]
+      $dto->getProductProperties()[Properties::PRODUCT_SKU]
     );
-    $productRequest->setStoredProduct($storedProduct);
 
-    $productRequest->validateProduct();
+    $violations = $validator->validateProduct($dto, $storedProduct);
+    if ($violations) return $violations;
+
+    $this->hydrateDto($dto, $storedProduct);
+    $productEntity = $this->factory->createProductEntityFromDto($dto);
+    $violations = $this->factory->createEntityValidator()->validate($productEntity);
+
+    if (!$violations) {
+      return $this->saveProduct($productEntity, $productGateway);
+    }
+
+    return [];
+  }
+
+  private function hydrateDto(DTO\ProductSave $dto, array $storedProductProperties)
+  {
+    $productBuilder = $this->factory->createProductBuilder();
+    $productBuilder->applyPropertiesFromDB($dto, $storedProductProperties);
+    $productBuilder->applyDefaultValues($dto);
   }
 
   /**
@@ -54,8 +74,8 @@ class SaveAction
     try {
       $productGateway->save_product(
         $product->sku,
-        $product->properties[ProductProperty::PRODUCT_STATUS],
-        $this->prepareProduct($product)
+        $product->status,
+        json_encode($product->properties)
       );
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR, Violation::ET_DATABASE)];
@@ -64,18 +84,9 @@ class SaveAction
     return [];
   }
 
-  private function prepareProduct(Entity\Product $product) : string
-  {
-    $properties = $product->properties;
-    $properties[ProductProperty::PRODUCT_TYPE] = $product->type;
-    unset($properties[ProductProperty::PRODUCT_STATUS]);
-    unset($properties[ProductProperty::PRODUCT_SKU]);
-
-    return json_encode($properties);
-  }
-
   /**
    * @param Violation[] $violations
+   *
    * @return string
    */
   private function violationsToJson(array $violations) : string

@@ -2,27 +2,15 @@
 
 namespace Nu3\Service\Product\Request;
 
-use Nu3\Core\Database\Connection;
-use Nu3\Core\Violation;
-use Nu3\Service\Product\Entity\Properties as Property;
-use Nu3\Service\Product\Entity;
-use Nu3\Config;
+use Nu3\Service\Product\Properties;
 
 class ProductSave
 {
-  use \Nu3\Property\Config;
-
-  const DEFAULT_VALUES_DIR = APPLICATION_SRC . 'service/Product/default_values/';
-
-  private $storedProduct = [];
-  private $violations = [];
   private $payload;
-  private $validator;
 
-  function __construct(string $json, Validator $validator)
+  function __construct(string $json)
   {
     $this->payload = json_decode($json, true);
-    $this->validator = $validator;
   }
 
   function getPayload() : array
@@ -32,94 +20,11 @@ class ProductSave
 
   function getPayloadProduct() : array
   {
-    return $this->payload[Property::PRODUCT];
+    return $this->payload[Properties::PRODUCT];
   }
 
   function getPayloadStorage() : string
   {
-    return $this->payload[Property::STORAGE];
-  }
-
-  function setStoredProduct(array $product)
-  {
-    $this->storedProduct = $product;
-  }
-
-  function getStoredProduct() : array
-  {
-    return $this->storedProduct;
-  }
-
-  function getViolations() : array
-  {
-    return $this->violations;
-  }
-
-  /**
-   * @return Violation[]
-   */
-  function validatePayload() : array
-  {
-    $violations = $this->validator->validatePayload($this);
-    $this->violations += $violations;
-
-    return $violations;
-  }
-
-  /**
-   * @return Violation[]
-   */
-  function validateProduct() : array
-  {
-    $violations = $this->validator->validateProduct($this);
-    $this->violations += $violations;
-
-    return $violations;
-  }
-
-  function createProductEntity() : Entity\Product
-  {
-    $product = $this->instantiateProduct($this->getPayloadProduct(), $this->getStoredProduct());
-
-    $product->properties = array_replace_recursive(
-      $product->properties,
-      $payloadProduct
-    );
-
-    return $product;
-  }
-
-  private function instantiateProduct(array $payloadProduct, array $storedProduct) : Entity\Product
-  {
-    $product = new Entity\Product();
-    $product->sku = $payloadProduct[Property::PRODUCT_SKU];
-
-    if (isset($storedProduct[Property::PRODUCT_SKU])) {
-      $product->type = $storedProduct[Property::PRODUCT_TYPE];
-    } else {
-      $product->isNew = true;
-      $product->type = $payloadProduct[Property::PRODUCT_TYPE];
-    }
-
-    $this->applyDefaultValues($product, $payloadProduct[Property::STORAGE]);
-
-    return $product;
-  }
-
-  private function applyDefaultValues(Entity\Product $product, string $storage)
-  {
-    if ($product->isNew && $storage === Connection::SCHEMA_CATALOG)
-      $product->properties = array_replace_recursive(
-        $this->fetchDefaultValues($product->type),
-        $storedProduct
-    );
-  }
-
-  private function fetchDefaultValues(string $productType) : array
-  {
-    $fileName = $this->config()[Config::PRODUCT][$productType][Config::DEFAULT_VALUES];
-    $filePath = self::DEFAULT_VALUES_DIR . $fileName;
-
-    return include($filePath);
+    return $this->payload[Properties::STORAGE];
   }
 }
