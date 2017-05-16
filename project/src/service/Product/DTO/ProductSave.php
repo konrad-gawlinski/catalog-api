@@ -3,7 +3,6 @@
 namespace Nu3\Service\Product\DTO;
 
 use Nu3\Service\Product\Request\ProductSave as Request;
-use Nu3\Service\Product\Entity\Properties as Property;
 
 class ProductSave
 {

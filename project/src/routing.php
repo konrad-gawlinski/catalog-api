@@ -10,7 +10,7 @@ function getPayload()
     "sku": "nu3_2",
     "status": "new",
     "name": " Silly Hodgin",
-    "type": "bundle",
+    "type": "config",
     "price": {
       "final": 5172
     },
@@ -21,7 +21,7 @@ function getPayload()
     ],
     "seo": {
       "robots": ["noindex", "follow"],
-      "title": "Silly Hodgkin "
+      "title": " Silly Hodgkin "
     },
     "manufacturer": "philips2",
     "description": "Your neighbours will visit you more often",

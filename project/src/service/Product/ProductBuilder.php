@@ -19,9 +19,9 @@ class ProductBuilder
   function applyPropertiesFromDB(DTO\ProductSave $dto, array $storedProductProperties)
   {
     $productProperties = $dto->getProductProperties();
-
     if (isset($storedProductProperties[Properties::PRODUCT_SKU])) {
       $productProperties[Properties::PRODUCT_TYPE] = $storedProductProperties[Properties::PRODUCT_TYPE];
+      $productProperties[Properties::PRODUCT_STATUS] = $storedProductProperties[Properties::PRODUCT_STATUS];
       $dto->setProductProperties($productProperties);
     } else {
       $dto->setIsNew(true);

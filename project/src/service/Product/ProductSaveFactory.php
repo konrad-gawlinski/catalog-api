@@ -41,4 +41,9 @@ class ProductSaveFactory
 
     return $validator;
   }
+
+  function createPropertyValueFilter() : PropertyValueFilter
+  {
+    return new PropertyValueFilter();
+  }
 }

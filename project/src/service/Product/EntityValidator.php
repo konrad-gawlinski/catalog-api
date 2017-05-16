@@ -16,7 +16,6 @@ class EntityValidator extends Core\Validator
    */
   function validate(Entity\Product $product) : array
   {
-    var_dump($product);
     $requestViolations = [];
     $violations = $this
       ->buildValidator($this->chooseValidationRules($product->properties[Properties::PRODUCT_TYPE]))

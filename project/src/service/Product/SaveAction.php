@@ -41,7 +41,7 @@ class SaveAction
 
     $dto = $this->factory->createDataTransferObject($productRequest);
     $productGateway->setSchemaByStorage($dto->getStorage());
-    $storedProduct = $productGateway->fetchProductType(
+    $storedProduct = $productGateway->fetchProductBasicSet(
       $dto->getProductProperties()[Properties::PRODUCT_SKU]
     );
 
@@ -53,6 +53,7 @@ class SaveAction
     $violations = $this->factory->createEntityValidator()->validate($productEntity);
 
     if (!$violations) {
+      $this->factory->createPropertyValueFilter()->filterEntity($productEntity);
       return $this->saveProduct($productEntity, $productGateway);
     }
 

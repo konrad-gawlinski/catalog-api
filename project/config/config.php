@@ -25,7 +25,7 @@ return array (
     ),
     'bundle' => 
     array (
-      'validation_rules' => 'config.yml',
+      'validation_rules' => 'bundle.yml',
       'default_values' => 'bundle.php',
     ),
   ),

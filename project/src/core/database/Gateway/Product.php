@@ -15,9 +15,9 @@ class Product extends Base
     if (!$result) throw new Exception('Product could not be saved: '. pg_last_error($this->dbconn));
   }
 
-  function fetchProductType(string $sku) : array
+  function fetchProductBasicSet(string $sku) : array
   {
-    $result = pg_query_params($this->dbconn->db(), 'SELECT * FROM catalog.fetch_product_type($1);', [$sku]);
+    $result = pg_query_params($this->dbconn->db(), 'SELECT * FROM catalog.fetch_product_basic_set($1);', [$sku]);
     $result = pg_fetch_assoc($result);
 
     if ($result === false) return [];

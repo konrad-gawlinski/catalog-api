@@ -8,7 +8,6 @@
     "symfony/config": "v3.2.1",
     "symfony/yaml": "v3.2.1",
     "symfony/validator": "v3.2.1",
-    "dms/dms-filter": "3.0.0",
     "doctrine/cache": "v1.6.1"
   },
   "autoload": {
