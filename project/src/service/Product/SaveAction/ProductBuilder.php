@@ -1,12 +1,13 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Service\Product\SaveAction;
 
 use Nu3\Config;
+use Nu3\Service\Product\Property;
 
 class ProductBuilder
 {
-  const DEFAULT_VALUES_DIR = APPLICATION_SRC . 'service/Product/default_values/';
+  const DEFAULT_VALUES_DIR = APPLICATION_SRC . 'service/Product/SaveAction/default_values/';
 
   /** @var  array */
   private $config;
@@ -16,25 +17,25 @@ class ProductBuilder
     $this->config = $config;
   }
 
-  function applyPropertiesFromDB(DTO\ProductSave $dto, array $storedProductProperties)
+  function applyPropertiesFromDB(TransferObject $dto, array $storedProductProperties)
   {
     $productProperties = $dto->getProductProperties();
-    if (isset($storedProductProperties[Properties::PRODUCT_SKU])) {
-      $productProperties[Properties::PRODUCT_TYPE] = $storedProductProperties[Properties::PRODUCT_TYPE];
-      $productProperties[Properties::PRODUCT_STATUS] = $storedProductProperties[Properties::PRODUCT_STATUS];
+    if (isset($storedProductProperties[Property::PRODUCT_SKU])) {
+      $productProperties[Property::PRODUCT_TYPE] = $storedProductProperties[Property::PRODUCT_TYPE];
+      $productProperties[Property::PRODUCT_STATUS] = $storedProductProperties[Property::PRODUCT_STATUS];
       $dto->setProductProperties($productProperties);
     } else {
       $dto->setIsNew(true);
     }
   }
 
-  function applyDefaultValues(DTO\ProductSave $dto)
+  function applyDefaultValues(TransferObject $dto)
   {
     $productProperties = $dto->getProductProperties();
 
     if ($dto->getIsNew()) {
       $productProperties = array_replace_recursive(
-        $this->fetchDefaultValues($productProperties[Properties::PRODUCT_TYPE]),
+        $this->fetchDefaultValues($productProperties[Property::PRODUCT_TYPE]),
         $productProperties
       );
 

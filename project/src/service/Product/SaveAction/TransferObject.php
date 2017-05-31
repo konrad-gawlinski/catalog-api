@@ -1,10 +1,8 @@
 <?php
 
-namespace Nu3\Service\Product\DTO;
+namespace Nu3\Service\Product\SaveAction;
 
-use Nu3\Service\Product\Request\ProductSave as Request;
-
-class ProductSave
+class TransferObject
 {
   /** @var array */
   private $productProperties;

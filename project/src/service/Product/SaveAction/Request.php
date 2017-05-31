@@ -1,10 +1,10 @@
 <?php
 
-namespace Nu3\Service\Product\Request;
+namespace Nu3\Service\Product\SaveAction;
 
-use Nu3\Service\Product\Properties;
+use Nu3\Service\Product\Property;
 
-class ProductSave
+class Request
 {
   private $payload;
 
@@ -20,11 +20,11 @@ class ProductSave
 
   function getPayloadProduct() : array
   {
-    return $this->payload[Properties::PRODUCT];
+    return $this->payload[Property::PRODUCT];
   }
 
   function getPayloadStorage() : string
   {
-    return $this->payload[Properties::STORAGE];
+    return $this->payload[Property::STORAGE];
   }
 }

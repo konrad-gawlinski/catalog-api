@@ -6,8 +6,15 @@ $app['config'] = function() {
   return require(APPLICATION_ROOT.'config/config.php');
 };
 
-$app['product.service.factory'] = function() use ($app) {
-  $factory = new \Nu3\Service\Product\ProductSaveFactory();
+$app['product.service.save.factory'] = function() use ($app) {
+  $factory = new \Nu3\Service\Product\SaveAction\Factory();
+  $factory->setConfig($app['config']);
+
+  return $factory;
+};
+
+$app['product.service.get.factory'] = function() use ($app) {
+  $factory = new \Nu3\Service\Product\GetAction\Factory();
   $factory->setConfig($app['config']);
 
   return $factory;
@@ -32,5 +39,9 @@ $app['product.gateway'] = function() use ($app) {
 };
 
 $app['product.save_action'] = function() use ($app) {
-  return new Nu3\Service\Product\SaveAction($app['product.service.factory']);
+  return new Nu3\Service\Product\SaveAction\Action($app['product.service.save.factory']);
+};
+
+$app['product.get_action'] = function() use ($app) {
+  return new Nu3\Service\Product\GetAction\Action($app['product.service.get.factory']);
 };

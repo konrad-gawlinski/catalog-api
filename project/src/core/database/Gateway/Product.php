@@ -24,4 +24,14 @@ class Product extends Base
 
     return $result;
   }
+
+  function fetchProduct(string $sku) : array
+  {
+    $result = pg_query_params($this->dbconn->db(), 'SELECT * FROM catalog.fetch_product($1);', [$sku]);
+    $result = pg_fetch_assoc($result);
+
+    if ($result === false) return [];
+
+    return $result;
+  }
 }

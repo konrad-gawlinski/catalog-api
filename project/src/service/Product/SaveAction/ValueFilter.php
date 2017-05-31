@@ -1,18 +1,19 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Service\Product\SaveAction;
 
-use Nu3\Service\Product\Properties as Property;
+use Nu3\Service\Product\Property;
+use Nu3\Service\Product\Entity\Product;
 
-class PropertyValueFilter
+class ValueFilter
 {
-  function filterEntity(Entity\Product $product)
+  function filterEntity(Product $product)
   {
     $this->applyFilter($product, Property::PRODUCT_NAME, 'trim');
     $this->applyFilter($product, Property::SEO .'.'. Property::META_TITLE, 'trim');
   }
 
-  private function applyFilter(Entity\Product $product, string $propertyPath, callable $filter)
+  private function applyFilter(Product $product, string $propertyPath, callable $filter)
   {
     $propertyTokens = explode('.', $propertyPath);
     $tokensCount = count($propertyTokens)-1;

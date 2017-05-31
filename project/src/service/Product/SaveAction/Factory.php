@@ -1,21 +1,21 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Service\Product\SaveAction;
 
 use Nu3\Service\Product\Entity\Product as ProductEntity;
 
-class ProductSaveFactory
+class Factory
 {
   use \Nu3\Feature\Config;
 
-  function createDataTransferObject(Request\ProductSave $request) : DTO\ProductSave
+  function createDataTransferObject(Request $request) : TransferObject
   {
-    return new DTO\ProductSave($request);
+    return new TransferObject($request);
   }
 
-  function createValidator() : ProductSaveValidator
+  function createValidator() : Validator
   {
-    $object = new ProductSaveValidator();
+    $object = new Validator();
     $object->setConfig($this->config());
 
     return $object;
@@ -26,7 +26,7 @@ class ProductSaveFactory
     return new ProductBuilder($this->config());
   }
 
-  function createProductEntityFromDto(DTO\ProductSave $dto) : ProductEntity
+  function createProductEntityFromDto(TransferObject $dto) : ProductEntity
   {
     $entity = new ProductEntity();
     $entity->fillFromDto($dto);
@@ -42,8 +42,8 @@ class ProductSaveFactory
     return $validator;
   }
 
-  function createPropertyValueFilter() : PropertyValueFilter
+  function createValueFilter() : ValueFilter
   {
-    return new PropertyValueFilter();
+    return new ValueFilter();
   }
 }

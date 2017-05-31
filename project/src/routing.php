@@ -37,12 +37,23 @@ PAYLOAD;
 }
 
 $app->get('/product/save', function(Request $request) use($app) {
-  /** @var Nu3\Service\Product\SaveAction $service */
+  /** @var Nu3\Service\Product\SaveAction\Action $service */
   $service = $app['product.save_action'];
-  $productSaveRequest = new \Nu3\Service\Product\Request\ProductSave(getPayload());
+  $productSaveRequest = new \Nu3\Service\Product\SaveAction\Request(getPayload());
 
   return $service->run(
     $productSaveRequest,
+    $app['product.gateway']
+  );
+});
+
+$app->get('/product/{sku}/{storage}', function($sku, $storage) use($app) {
+  /** @var Nu3\Service\Product\GetAction\Action $service */
+  $service = $app['product.get_action'];
+  $productGetRequest = new \Nu3\Service\Product\GetAction\Request(['sku' => $sku, 'storage' => $storage]);
+
+  return $service->run(
+    $productGetRequest,
     $app['product.gateway']
   );
 });

@@ -6,7 +6,7 @@ define('APPLICATION_ROOT', __DIR__ . '/../../');
 $loader = require_once APPLICATION_ROOT . 'vendor/autoload.php';
 
 $sourceDir = APPLICATION_ROOT . 'src/service/Product/config/default_values/';
-$targetDir = APPLICATION_ROOT . 'src/service/Product/default_values/';
+$targetDir = APPLICATION_ROOT . 'src/service/Product/SaveAction/default_values/';
 $config = require(__DIR__ . '/configuration.php');
 
 foreach ($config as $target => $sources) {

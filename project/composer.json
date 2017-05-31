@@ -1,7 +1,8 @@
 {
   "config": {
     "disable-tls": true,
-    "secure-http": false
+    "secure-http": false,
+    "optimize-autoloader": true
   },
   "require": {
     "silex/silex": "v2.0.3",

@@ -1,24 +1,27 @@
 <?php
 
-namespace Nu3\Service\Product;
+namespace Nu3\Service\Product\SaveAction;
 
 use Nu3\Core;
 use Symfony\Component\Validator\ConstraintViolation;
+use Nu3\Service\Product\Entity\Product;
+use Nu3\Service\Product\Property;
+use Nu3\Service\Product\Exception;
 
 class EntityValidator extends Core\Validator
 {
   use \Nu3\Feature\Config;
 
-  const VALIDATION_RULES_DIR = APPLICATION_SRC . 'service/Product/validation_rules/';
+  const VALIDATION_RULES_DIR = APPLICATION_SRC . 'service/Product/SaveAction/validation_rules/';
   
   /**
    * @return Core\Violation[]
    */
-  function validate(Entity\Product $product) : array
+  function validate(Product $product) : array
   {
     $requestViolations = [];
     $violations = $this
-      ->buildValidator($this->chooseValidationRules($product->properties[Properties::PRODUCT_TYPE]))
+      ->buildValidator($this->chooseValidationRules($product->properties[Property::PRODUCT_TYPE]))
       ->validate($product);
 
     /** @var ConstraintViolation $violation */

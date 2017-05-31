@@ -33,7 +33,8 @@ $$
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION catalog.fetch_product(skuIN VARCHAR) RETURNS RECORD AS
+CREATE OR REPLACE FUNCTION catalog.fetch_product(skuIN VARCHAR) RETURNS
+  table(sku VARCHAR, status product_status, properties JSONB) AS
 $$
   SELECT sku, status, properties FROM product WHERE sku=skuIN;
 $$

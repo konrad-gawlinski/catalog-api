@@ -19,8 +19,8 @@ RUN echo '' >> /etc/profile \
     && adduser --disabled-password --gecos "" postgres \
     && mkdir -p /var/pgsql_data && chown postgres:postgres /var/pgsql_data && chmod 770 /var/pgsql_data \
     && mkdir -p /var/log/postgres && chown postgres:postgres /var/log/postgres && chmod 774 /var/log/postgres \
-    && su -m psql -c "/usr/local/pgsql/bin/initdb -D /var/pgsql_data" \
-#    && su -m psql -c "ALTER ROLE postgres WITH PASSWORD 'postgres'" \ this should be run after pgsql server is runing
+    && su -m postgres -c "/usr/local/pgsql/bin/initdb -D /var/pgsql_data" \
+#    && su -m postgres -c "ALTER ROLE postgres WITH PASSWORD 'postgres'" \ this should be run after pgsql server is runing
     && printf "\nhost\tall\t\tpostgres\tsamenet\t\t\tmd5\n" >> /var/pgsql_data/pg_hba.conf
 
 #install pl/v8

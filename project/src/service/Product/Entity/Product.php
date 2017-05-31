@@ -2,8 +2,8 @@
 
 namespace Nu3\Service\Product\Entity;
 
-use Nu3\Service\Product\DTO;
-use Nu3\Service\Product\Properties;
+use Nu3\Service\Product\SaveAction\TransferObject;
+use Nu3\Service\Product\Property;
 
 class Product
 {
@@ -11,16 +11,23 @@ class Product
   public $status = '';
   public $properties = [];
 
-  function fillFromDto(DTO\ProductSave $dto)
+  function fillFromDto(TransferObject $dto)
   {
     $productProperties = $dto->getProductProperties();
-    $this->sku = $productProperties[Properties::PRODUCT_SKU];
-    $this->status = $productProperties[Properties::PRODUCT_STATUS];
+    $this->sku = $productProperties[Property::PRODUCT_SKU];
+    $this->status = $productProperties[Property::PRODUCT_STATUS];
 
     $properties = $productProperties;
-    unset($properties[Properties::PRODUCT_SKU]);
-    unset($properties[Properties::PRODUCT_STATUS]);
+    unset($properties[Property::PRODUCT_SKU]);
+    unset($properties[Property::PRODUCT_STATUS]);
 
     $this->properties = $properties;
+  }
+
+  function fillFromArray(array $product)
+  {
+    $this->sku = $product[Property::PRODUCT_SKU];
+    $this->status = $product[Property::PRODUCT_STATUS];
+    $this->properties = $product[Property::PROPERTIES];
   }
 }

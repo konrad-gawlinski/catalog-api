@@ -2,10 +2,11 @@
 
 namespace Nu3\Service\Product;
 
-interface Properties
+interface Property
 {
   const PRODUCT = 'product';
   const STORAGE = 'storage';
+  const PROPERTIES = 'properties';
   
   const PRODUCT_SKU = 'sku';
   const PRODUCT_TYPE = 'type';
