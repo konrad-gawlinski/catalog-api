@@ -1,6 +1,6 @@
 Nu3\Service\Product\Entity\Product:
   properties:
-    properties:
+    attributes:
       - Collection:
           fields:
             sku:
@@ -15,31 +15,21 @@ Nu3\Service\Product\Entity\Product:
               - NotBlank: ~
               - Choice:
                   choices: ["config", "bundle", "book"]
-            price:
-              - Collection:
-                  fields:
-                    final:
-                      - Type: integer
-                      - Range:
-                          min: 1
-                          groups: [approved]
+            final_price:
+              - Type: integer
+              - Range:
+                  min: 1
+                  groups: [approved]
             tax_rate:
               - Range:
                   min: 0
                   max: 100
-            attributes: ~
-            seo:
-              - Collection:
-                  fields:
-                    robots:
-                      - Choice:
-                          choices: ["noindex", "index", "nofollow", "follow"]
-                          multiple: true
-                    title:
-                      - NotBlank: ~
-                    description: ~
-
-                  allowMissingFields: true
+            seo_robots:
+              - Choice:
+                  choices: ["noindex", "index", "nofollow", "follow"]
+                  multiple: true
+            seo_title:
+              - NotBlank: ~
             manufacturer:
               - NotBlank: ~
             description:
@@ -47,5 +37,5 @@ Nu3\Service\Product\Entity\Product:
             short_description: ~
             label_language:
               - Type: array
-
           allowMissingFields: true
+          allowExtraFields: true

@@ -35,7 +35,6 @@ class Action
 
   private function buildResponse(Request $request, ProductGateway $productGateway) : Response
   {
-    $productGateway->setSchemaByStorage($request->storage());
     $productArray = $productGateway->fetchProduct($request->sku());
     $productEntity = $this->factory->createProductEntityFromDB($productArray);
 

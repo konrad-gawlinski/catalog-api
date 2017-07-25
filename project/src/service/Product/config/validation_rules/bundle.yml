@@ -1,6 +1,6 @@
 Nu3\Service\Product\Entity\Product:
   properties:
-    properties:
+    attributes:
       - Collection:
           fields:
             children:

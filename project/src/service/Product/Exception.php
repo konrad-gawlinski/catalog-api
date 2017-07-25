@@ -6,16 +6,13 @@ use Nu3\Core\Violation;
 
 class Exception extends \Exception
 {
-  private $errorType = '';
-
-  function __construct($message, $errorType)
+  function __construct($errorKey)
   {
-    parent::__construct($message);
-    $this->errorType = $errorType;
+    parent::__construct($errorKey);
   }
 
   function getViolation() : Violation
   {
-    return new Violation($this->getMessage(), $this->errorType);
+    return new Violation($this->getMessage());
   }
 }

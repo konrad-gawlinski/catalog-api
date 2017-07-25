@@ -1,48 +1,56 @@
-CREATE TABLE catalog.product (
-  sku VARCHAR(10) PRIMARY KEY,
-  status product_status DEFAULT 'new',
-  properties JSONB,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  update_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+CREATE TYPE catalog.country AS ENUM ('DE', 'AT', 'FR');
+
+CREATE TABLE catalog.product_family (
+  id SERIAL PRIMARY KEY,
+  attributes JSONB,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP
 );
 
-CREATE TABLE catalog_de.product (
-  sku VARCHAR(10) PRIMARY KEY REFERENCES product (sku),
-  status product_status DEFAULT 'new',
-  properties JSONB,
-  created_at TIMESTAMP WITH TIME ZONE,
-  update_at TIMESTAMP WITH TIME ZONE
+CREATE TABLE catalog.products (
+  sku VARCHAR PRIMARY KEY,
+  attributes JSONB,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP
 );
 
-CREATE TABLE catalog_at.product (
-  sku VARCHAR(10) PRIMARY KEY REFERENCES product (sku),
-  status product_status DEFAULT 'new',
-  properties JSONB,
-  created_at TIMESTAMP WITH TIME ZONE,
-  update_at TIMESTAMP WITH TIME ZONE
+CREATE TABLE catalog.tax_rates (
+  id SMALLSERIAL PRIMARY KEY,
+  country country NOT NULL,
+  tax_rate SMALLINT NOT NULL,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP,
+  UNIQUE (country, tax_rate)
 );
 
-SELECT public.set_search_path('catalog');
+CREATE TABLE catalog.per_country_attributes (
+  sku VARCHAR REFERENCES products(sku),
+  DE JSONB,
+  AT JSONB,
+  FR JSONB,
+  created_at TIMESTAMP DEFAULT now()
+);
 
-CREATE OR REPLACE FUNCTION catalog.save_product(skuIN VARCHAR, statusIN product_status, propertiesIN JSONB) RETURNS integer AS
+CREATE TABLE catalog.per_locale_attributes (
+  sku VARCHAR REFERENCES products(sku),
+  de_DE JSONB,
+  fr_FR JSONB,
+  at_DE JSONB,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE OR REPLACE FUNCTION catalog_sp.save_product(skuIN VARCHAR, attributesIn JSONB) RETURNS integer AS
 $$
-  INSERT INTO product (sku, status, properties, created_at)
-      VALUES (skuIN, statusIN, propertiesIN, now())
-  ON CONFLICT (sku) DO UPDATE SET status=statusIN, properties=public.jsonb_merge_deep(product.properties, propertiesIN)
+  INSERT INTO catalog.products (sku, attributes)
+      VALUES (skuIN, attributesIn)
+  ON CONFLICT (sku) DO UPDATE SET attributes = products.attributes || attributesIn
   RETURNING 1;
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION catalog.fetch_product(skuIN VARCHAR) RETURNS
-  table(sku VARCHAR, status product_status, properties JSONB) AS
+CREATE OR REPLACE FUNCTION catalog_sp.fetch_product(skuIN VARCHAR) RETURNS
+  table(sku VARCHAR, attributes JSONB) AS
 $$
-  SELECT sku, status, properties FROM product WHERE sku=skuIN;
-$$
-LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION catalog.fetch_product_basic_set(skuIN VARCHAR) RETURNS
-  table(sku VARCHAR, status product_status, type VARCHAR) AS
-$$
-  SELECT sku, status, properties->>'type' AS type FROM product WHERE sku=skuIN;
+  SELECT sku, attributes FROM catalog.products WHERE sku=skuIN;
 $$
 LANGUAGE SQL;

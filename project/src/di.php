@@ -6,9 +6,18 @@ $app['config'] = function() {
   return require(APPLICATION_ROOT.'config/config.php');
 };
 
-$app['product.service.save.factory'] = function() use ($app) {
-  $factory = new \Nu3\Service\Product\SaveAction\Factory();
+$app['product.service.create.factory'] = function() use ($app) {
+  $factory = new \Nu3\Service\Product\Action\CreateProduct\Factory();
   $factory->setConfig($app['config']);
+  $factory->setDatabaseConnection($app['database.connection']);
+
+  return $factory;
+};
+
+$app['product.service.update.factory'] = function() use ($app) {
+  $factory = new \Nu3\Service\Product\Action\UpdateProduct\Factory();
+  $factory->setConfig($app['config']);
+  $factory->setDatabaseConnection($app['database.connection']);
 
   return $factory;
 };
@@ -38,8 +47,12 @@ $app['product.gateway'] = function() use ($app) {
   return new Nu3\Core\Database\Gateway\Product($app['database.connection']);
 };
 
-$app['product.save_action'] = function() use ($app) {
-  return new Nu3\Service\Product\SaveAction\Action($app['product.service.save.factory']);
+$app['product.create_action'] = function() use ($app) {
+  return new Nu3\Service\Product\Action\CreateProduct\Action($app['product.service.create.factory']);
+};
+
+$app['product.update_action'] = function() use ($app) {
+  return new Nu3\Service\Product\Action\UpdateProduct\Action($app['product.service.update.factory']);
 };
 
 $app['product.get_action'] = function() use ($app) {

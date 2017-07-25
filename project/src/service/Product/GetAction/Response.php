@@ -21,7 +21,7 @@ class Response
 
   private function fillProperties(ProductEntity $product)
   {
-    $this->properties = json_decode($product->properties, true);
+    $this->properties = json_decode($product->attributes, true);
     $this->properties = [
       Property::PRODUCT_SKU => $product->sku,
       Property::PRODUCT_STATUS => $product->status

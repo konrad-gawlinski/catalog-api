@@ -5,8 +5,6 @@ namespace Nu3\Core\Database;
 class Connection
 {
   const SCHEMA_CATALOG = 'catalog';
-  const SCHEMA_CATALOG_DE = 'catalog_de';
-  const SCHEMA_CATALOG_AT = 'catalog_at';
 
   private $dbconn = null;
 

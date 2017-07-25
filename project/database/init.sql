@@ -1,20 +1,15 @@
-CREATE DATABASE nu3_catalog
+CREATE DATABASE catalog_api ENCODING 'UTF-8'
   LC_COLLATE 'C.UTF-8'
-  LC_CTYPE 'C.UTF-8';
+  LC_CTYPE 'C.UTF-8'
+TEMPLATE template0;
+
+CREATE EXTENSION plv8;
 
 CREATE SCHEMA catalog;
-CREATE SCHEMA catalog_de;
-CREATE SCHEMA catalog_at;
+CREATE SCHEMA catalog_sp;
+ALTER DATABASE catalog_api SET SEARCH_PATH TO catalog_sp,catalog;
 
-CREATE TYPE product_status AS ENUM ('new', 'approved', 'not listed', 'unavailable');
-
-CREATE OR REPLACE FUNCTION public.set_search_path(path TEXT) RETURNS TEXT AS
-  $$
-    SELECT set_config('search_path', path, false);
-  $$
-LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION public.jsonb_merge_deep(target JSONB, source JSONB) RETURNS JSONB AS
+CREATE OR REPLACE FUNCTION catalog_sp.jsonb_merge_deep(target JSONB, source JSONB) RETURNS JSONB AS
   $$
     var isObject = (item) => {
         return item && typeof item === 'object' && !Array.isArray(item) && item !== null;

@@ -4,11 +4,9 @@ database:
   host: localhost
   database: default
 storage:
-  available: ['catalog', 'catalog_de', 'catalog_at']
+  available: ['catalog']
 product:
   config:
     validation_rules: config.yml
-    default_values: config.php
   bundle:
     validation_rules: config.yml
-    default_values: bundle.php

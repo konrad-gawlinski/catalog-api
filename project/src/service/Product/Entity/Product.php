@@ -2,32 +2,17 @@
 
 namespace Nu3\Service\Product\Entity;
 
-use Nu3\Service\Product\SaveAction\TransferObject;
-use Nu3\Service\Product\Property;
-
 class Product
 {
+  const SKU = 'sku';
+  const ATTRIBUTES = 'attributes';
+
   public $sku = '';
-  public $status = '';
-  public $properties = [];
+  public $attributes = [];
 
-  function fillFromDto(TransferObject $dto)
+  function fillFromDb(array $input)
   {
-    $productProperties = $dto->getProductProperties();
-    $this->sku = $productProperties[Property::PRODUCT_SKU];
-    $this->status = $productProperties[Property::PRODUCT_STATUS];
-
-    $properties = $productProperties;
-    unset($properties[Property::PRODUCT_SKU]);
-    unset($properties[Property::PRODUCT_STATUS]);
-
-    $this->properties = $properties;
-  }
-
-  function fillFromArray(array $product)
-  {
-    $this->sku = $product[Property::PRODUCT_SKU];
-    $this->status = $product[Property::PRODUCT_STATUS];
-    $this->properties = $product[Property::PROPERTIES];
+    $this->sku = $input[self::SKU];
+    $this->attributes = json_decode($input[self::ATTRIBUTES], true);
   }
 }

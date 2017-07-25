@@ -1,9 +1,14 @@
 Nu3\Service\Product\Entity\Product:
   properties:
-    properties:
+    attributes:
       -
         Collection:
           fields:
+            children:
+              -
+                NotBlank: null
+              -
+                Type: array
             sku:
               -
                 NotBlank: null
@@ -29,42 +34,31 @@ Nu3\Service\Product\Entity\Product:
                     - config
                     - bundle
                     - book
-            price:
+            final_price:
               -
-                Collection:
-                  fields:
-                    final:
-                      -
-                        Type: integer
-                      -
-                        Range:
-                          min: 1
-                          groups:
-                            - approved
+                Type: integer
+              -
+                Range:
+                  min: 1
+                  groups:
+                    - approved
             tax_rate:
               -
                 Range:
                   min: 0
                   max: 100
-            attributes: null
-            seo:
+            seo_robots:
               -
-                Collection:
-                  fields:
-                    robots:
-                      -
-                        Choice:
-                          choices:
-                            - noindex
-                            - index
-                            - nofollow
-                            - follow
-                          multiple: true
-                    title:
-                      -
-                        NotBlank: null
-                    description: null
-                  allowMissingFields: true
+                Choice:
+                  choices:
+                    - noindex
+                    - index
+                    - nofollow
+                    - follow
+                  multiple: true
+            seo_title:
+              -
+                NotBlank: null
             manufacturer:
               -
                 NotBlank: null
@@ -78,3 +72,4 @@ Nu3\Service\Product\Entity\Product:
               -
                 Type: array
           allowMissingFields: true
+          allowExtraFields: true

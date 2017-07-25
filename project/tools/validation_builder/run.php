@@ -7,7 +7,7 @@ define('APPLICATION_ROOT', __DIR__ . '/../../');
 $loader = require_once APPLICATION_ROOT . 'vendor/autoload.php';
 
 $sourceDir = APPLICATION_ROOT . 'src/service/Product/config/validation_rules/';
-$targetDir = APPLICATION_ROOT . 'src/service/Product/SaveAction/validation_rules/';
+$targetDir = APPLICATION_ROOT . 'src/service/Product/validation_rules/';
 $config = require(__DIR__ . '/configuration.php');
 
 foreach ($config as $target => $sources) {
