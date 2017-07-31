@@ -4,23 +4,23 @@ namespace Nu3\Core\Database;
 
 class Connection
 {
-  const SCHEMA_CATALOG = 'catalog';
-
-  private $dbconn = null;
+  private $connection = null;
 
   function connect(string $localhost, string $dbname, string $user, string $password)
   {
-    $this->dbconn = pg_connect("host={$localhost} dbname={$dbname} user={$user} password={$password}")
+    $this->connection = pg_connect("host={$localhost} dbname={$dbname} user={$user} password={$password}")
     or die('Could not connect: ' . pg_last_error());
+
+    return $this->connection;
   }
 
   function disconnect()
   {
-    if ($this->dbconn) pg_close($this->dbconn);
+    if ($this->connection) pg_close($this->connection);
   }
 
-  function db()
+  function con()
   {
-    return $this->dbconn;
+    return $this->connection;
   }
 }

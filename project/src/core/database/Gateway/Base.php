@@ -18,7 +18,7 @@ class Base
 
   function set_schema(string $schema)
   {
-    pg_query_params($this->dbconn->db(), 'SELECT public.set_search_path($1);', [$schema]);
+    pg_query_params($this->dbconn->con(), 'SELECT public.set_search_path($1);', [$schema]);
   }
 
   function disconnect()
