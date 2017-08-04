@@ -27,4 +27,12 @@
  * the services are started through superviser automatically on the container startup
 4) login to the machine `docker exec -it postgres-01 /bin/bash`
 5) run `su -m postgres -c "/usr/local/pgsql/bin/psql -c \"ALTER ROLE postgres WITH PASSWORD 'postgres'\""`
- * it will set the 'postgres' password for the 'postgres' user
+ * it will set the 'postgres' password for the 'postgres' user 
+
+# Access the machine
+
+## Http server
+`localhost:8085`
+
+## Database server
+`localhost:8086, user=postgres, pass=postgres`
