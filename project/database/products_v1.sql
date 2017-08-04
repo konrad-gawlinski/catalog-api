@@ -65,8 +65,18 @@ $$
   $$
 LANGUAGE PLV8;
 
-CREATE OR REPLACE FUNCTION print_constant() RETURNS VARCHAR AS
+CREATE OR REPLACE FUNCTION catalog_sp.save_product(skuIN VARCHAR, attributesIn JSONB) RETURNS integer AS
 $$
-    return 'abc';
+  INSERT INTO catalog.products (sku, attributes)
+      VALUES (skuIN, attributesIn)
+  ON CONFLICT (sku) DO UPDATE SET attributes = products.attributes || attributesIn
+  RETURNING 1;
 $$
-LANGUAGE PLV8;
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION catalog_sp.fetch_product(skuIN VARCHAR) RETURNS
+  table(sku VARCHAR, attributes JSONB) AS
+$$
+  SELECT sku, attributes FROM catalog.products WHERE sku=skuIN;
+$$
+LANGUAGE SQL;

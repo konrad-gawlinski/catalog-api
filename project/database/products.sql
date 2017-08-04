@@ -1,15 +1,16 @@
 CREATE TYPE catalog.country AS ENUM ('DE', 'AT', 'FR');
+CREATE TYPE catalog.product_type AS ENUM('config', 'bundle', 'true_config');
 
-CREATE TABLE catalog.product_family (
+CREATE TABLE catalog.product_entity (
   id SERIAL PRIMARY KEY,
-  attributes JSONB,
-  created_at TIMESTAMP DEFAULT now(),
-  updated_at TIMESTAMP
-);
-
-CREATE TABLE catalog.products (
-  sku VARCHAR PRIMARY KEY,
-  attributes JSONB,
+  sku VARCHAR UNIQUE,
+  type product_type NOT NULL,
+  DE JSONB,
+  AT JSONB,
+  FR JSONB,
+  de_DE JSONB,
+  fr_FR JSONB,
+  at_DE JSONB,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP
 );
@@ -23,34 +24,8 @@ CREATE TABLE catalog.tax_rates (
   UNIQUE (country, tax_rate)
 );
 
-CREATE TABLE catalog.per_country_attributes (
-  sku VARCHAR REFERENCES products(sku),
-  DE JSONB,
-  AT JSONB,
-  FR JSONB,
-  created_at TIMESTAMP DEFAULT now()
+CREATE TABLE catalog.product_relations_DE (
+  parent_id INTEGER REFERENCES catalog.product_entity(id),
+  child_id INTEGER REFERENCES catalog.product_entity(id),
+  depth INTEGER NOT NULL
 );
-
-CREATE TABLE catalog.per_locale_attributes (
-  sku VARCHAR REFERENCES products(sku),
-  de_DE JSONB,
-  fr_FR JSONB,
-  at_DE JSONB,
-  created_at TIMESTAMP DEFAULT now()
-);
-
-CREATE OR REPLACE FUNCTION catalog_sp.save_product(skuIN VARCHAR, attributesIn JSONB) RETURNS integer AS
-$$
-  INSERT INTO catalog.products (sku, attributes)
-      VALUES (skuIN, attributesIn)
-  ON CONFLICT (sku) DO UPDATE SET attributes = products.attributes || attributesIn
-  RETURNING 1;
-$$
-LANGUAGE SQL;
-
-CREATE OR REPLACE FUNCTION catalog_sp.fetch_product(skuIN VARCHAR) RETURNS
-  table(sku VARCHAR, attributes JSONB) AS
-$$
-  SELECT sku, attributes FROM catalog.products WHERE sku=skuIN;
-$$
-LANGUAGE SQL;
