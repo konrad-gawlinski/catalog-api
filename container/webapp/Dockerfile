@@ -48,7 +48,7 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --with-pdo-pgsql=/usr/local/pgsql \
         --enable-opcache --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
     && make && make install \
-    && mkdir -p /usr/html \
+    && mkdir -p /var/webapp \
     && mkdir /var/log/php \
     && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php \
     && wget "https://getcomposer.org/download/1.4.2/composer.phar" -O "/usr/local/composer.phar"

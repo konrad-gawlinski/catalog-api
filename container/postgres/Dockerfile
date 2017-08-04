@@ -20,8 +20,7 @@ RUN echo '' >> /etc/profile \
     && mkdir -p /var/pgsql_data && chown postgres:postgres /var/pgsql_data && chmod 770 /var/pgsql_data \
     && mkdir -p /var/log/postgres && chown postgres:postgres /var/log/postgres && chmod 774 /var/log/postgres \
     && su -m postgres -c "/usr/local/pgsql/bin/initdb -D /var/pgsql_data" \
-#    && su -m postgres -c "ALTER ROLE postgres WITH PASSWORD 'postgres'" \ this should be run after pgsql server is runing
-    && printf "\nhost\tall\t\tpostgres\tsamenet\t\t\tmd5\n" >> /var/pgsql_data/pg_hba.conf
+    && printf "\nhost\tall\t\tpostgres\tall\t\t\tpassword\n" >> /var/pgsql_data/pg_hba.conf
 
 #install pl/v8
 ENV PLV8_VERSION 2.0.0
