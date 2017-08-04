@@ -29,7 +29,7 @@
 5) run `su -m postgres -c "/usr/local/pgsql/bin/psql -c \"ALTER ROLE postgres WITH PASSWORD 'postgres'\""`
  * it will set the 'postgres' password for the 'postgres' user 
 
-#Access the machine
+# Access the machine
 
 ## Http server
 `localhost:8085`
