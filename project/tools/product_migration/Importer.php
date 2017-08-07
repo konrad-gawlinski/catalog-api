@@ -2,7 +2,7 @@
 
 namespace Nu3\ProductMigration;
 
-use Nu3\ProductMigration\Importer\DatabaseWriter;
+use Nu3\ProductMigration\Importer\Database as DatabaseImporter;
 use Nu3\ProductMigration\Importer\JsonReader;
 
 class Importer
@@ -24,13 +24,13 @@ class Importer
     pg_query($con, "SET search_path TO migration;");
   }
 
-  function run()
+  function importProducts()
   {
     $file = fopen(APPLICATION_ROOT. 'tools/product_migration/products_DE.json', 'r');
     $totalSkus = 0;
 
     $jsonReader = new JsonReader($file, './reader.log');
-    $databaseWriter = new DatabaseWriter($this->dbCon);
+    $databaseWriter = new DatabaseImporter\ProductWriter($this->dbCon);
 
     while($product = $jsonReader->readProduct()) {
       $databaseWriter->writeProduct($product);
@@ -39,6 +39,53 @@ class Importer
     }
 
     echo "\nTotal skus: {$totalSkus}\n";
+
+    fclose($file);
+  }
+
+  function importAttributes()
+  {
+    $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/pac_catalog_attribute.csv', 'r');
+    $totalItems = 0;
+
+    //ingore first row
+    fgetcsv($file, null, ',');
+
+    while (($data = fgetcsv($file, null, ',')) !== false) {
+      $databaseWriter->write('pac_catalog_attribute', [
+        'id' => ['value' => $data[0], 'type' => 'numeric'],
+        'name' => ['value' => $data[1], 'type' => 'text']
+      ]);
+
+      ++$totalItems;
+    }
+
+    echo "\nTotal attributes: {$totalItems}\n";
+
+    fclose($file);
+  }
+
+  function importAttributesTypes()
+  {
+    $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/pac_catalog_value_type.csv', 'r');
+    $totalItems = 0;
+
+    //ingore first row
+    fgetcsv($file, null, ',');
+
+    while (($data = fgetcsv($file, null, ',')) !== false) {
+      $databaseWriter->write('pac_catalog_attribute_type', [
+        'id' => ['value' => $data[0], 'type' => 'numeric'],
+        'type' => ['value' => $data[1], 'type' => 'text'],
+        'fk_attribute' => ['value' => $data[2], 'type' => 'numeric']
+      ]);
+
+      ++$totalItems;
+    }
+
+    echo "\nTotal attribute types: {$totalItems}\n";
 
     fclose($file);
   }

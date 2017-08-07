@@ -12,6 +12,17 @@ CREATE TABLE products (
 sku VARCHAR PRIMARY KEY,
 attributes JSONB
 );
+
+CREATE TABLE migration.pac_catalog_attribute (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR NOT NULL UNIQUE
+);
+
+CREATE TABLE migration.pac_catalog_attribute_type (
+  id INTEGER PRIMARY KEY,
+  type VARCHAR NOT NULL,
+  fk_attribute INTEGER REFERENCES migration.pac_catalog_attribute(id)
+);
 QUERY;
 
 $db = new Nu3\ProductMigration\Database();

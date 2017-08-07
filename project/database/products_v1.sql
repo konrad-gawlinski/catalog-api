@@ -3,6 +3,7 @@ CREATE EXTENSION plv8;
 --CREATE DATABASE json_structure WITH ENCODING 'UTF8' LC_COLLATE='C.UTF-8' LC_CTYPE='C.UTF-8' TEMPLATE template0;
 SELECT set_config('search_path', 'version_1, public', false);
 SELECT set_config('search_path', 'public', false);
+SELECT set_config('search_path', 'catalog', false);
 
 
 CREATE TYPE product_status AS ENUM ('new', 'approved', 'not listed', 'unavailable');
