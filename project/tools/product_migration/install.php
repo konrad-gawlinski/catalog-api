@@ -10,6 +10,7 @@ $loader->addPsr4('Nu3\\ProductMigration\\', APPLICATION_ROOT.'tools/product_migr
 $createTableQuery = <<<QUERY
 CREATE TABLE products (
 sku VARCHAR PRIMARY KEY,
+product_id INTEGER NOT NULL,
 attributes JSONB
 );
 QUERY;

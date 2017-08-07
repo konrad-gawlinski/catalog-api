@@ -14,18 +14,21 @@ class DatabaseWriter
   public function writeProduct(array $product)
   {
     $sku = $product['sku'];
+    $productId = $product['product_id'];
     $json = json_encode($this->prepareAttributes($product));
     $json = str_replace("'", "''", $json);
 
     pg_query($this->con,
-      "INSERT INTO products (sku, attributes) VALUES('{$sku}', '{$json}');"
+      "INSERT INTO products (sku, product_id, attributes) VALUES('{$sku}', {$productId}, '{$json}');"
     );
   }
 
   private function prepareAttributes(array $product) : array
   {
+    unset($product['sku']);
+    unset($product['product_id']);
+    
     $attributes = [
-      'product_id' => $product['product_id'],
       'status' => $product['status'],
       'variety' => $product['variety'],
     ];
