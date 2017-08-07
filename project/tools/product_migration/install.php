@@ -8,7 +8,7 @@ $loader->addPsr4('Nu3\\ProductMigration\\', APPLICATION_ROOT.'tools/product_migr
 
 
 $createTableQuery = <<<QUERY
-CREATE TABLE products (
+CREATE TABLE migration.products (
 sku VARCHAR PRIMARY KEY,
 product_id INTEGER NOT NULL,
 attributes JSONB
@@ -23,6 +23,11 @@ CREATE TABLE migration.pac_catalog_attribute_type (
   id INTEGER PRIMARY KEY,
   type VARCHAR NOT NULL,
   fk_attribute INTEGER REFERENCES migration.pac_catalog_attribute(id)
+);
+
+CREATE TABLE migration.nu3_catalog_bundle (
+  product_idA INTEGER NOT NULL,
+  product_idB INTEGER NOT NULL
 );
 QUERY;
 

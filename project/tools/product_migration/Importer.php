@@ -89,4 +89,27 @@ class Importer
 
     fclose($file);
   }
+
+  function importConfigBundleRelation()
+  {
+    $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/nu3_catalog_bundle.csv', 'r');
+    $totalItems = 0;
+
+    //ingore first row
+    fgetcsv($file, null, ',');
+
+    while (($data = fgetcsv($file, null, ',')) !== false) {
+      $databaseWriter->write('nu3_catalog_bundle', [
+        'product_idA' => ['value' => $data[0], 'type' => 'numeric'],
+        'product_idB' => ['value' => $data[1], 'type' => 'numeric'],
+      ]);
+
+      ++$totalItems;
+    }
+
+    echo "\nTotal relations: {$totalItems}\n";
+
+    fclose($file);
+  }
 }
