@@ -10,7 +10,7 @@ $loader->addPsr4('Nu3\\ProductMigration\\', APPLICATION_ROOT. 'tools/product_mig
 
 $importer = new Importer();
 $importer->init();
-//$importer->importProducts(); //slow for DE it takes 2,5min
-//$importer->importAttributes(); //fast
-//$importer->importAttributesTypes(); //fast
+$importer->importProducts(); //slow for DE it takes 2,5min
+$importer->importAttributes(); //fast
+$importer->importAttributesTypes(); //fast
 $importer->importConfigBundleRelation(); //fast

@@ -1,10 +1,11 @@
 CREATE TYPE catalog.country AS ENUM ('DE', 'AT', 'FR');
-CREATE TYPE catalog.product_type AS ENUM('config', 'bundle', 'true_config');
+CREATE TYPE catalog.product_type AS ENUM('Config', 'Bundle', 'True_Config');
 
 CREATE TABLE catalog.product_entity (
   id SERIAL PRIMARY KEY,
   sku VARCHAR UNIQUE,
   type product_type NOT NULL,
+  global JSONB,
   DE JSONB,
   AT JSONB,
   FR JSONB,
