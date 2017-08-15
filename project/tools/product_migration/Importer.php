@@ -26,7 +26,7 @@ class Importer
 
   function importProducts()
   {
-    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/products_DE.json', 'r');
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/data/products_DE.json', 'r');
     $totalSkus = 0;
 
     $jsonReader = new JsonReader($file, './reader.log');
@@ -46,7 +46,7 @@ class Importer
   function importAttributes()
   {
     $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
-    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/pac_catalog_attribute.csv', 'r');
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/data/pac_catalog_attribute.csv', 'r');
     $totalItems = 0;
 
     //ingore first row
@@ -69,7 +69,7 @@ class Importer
   function importAttributesTypes()
   {
     $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
-    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/pac_catalog_value_type.csv', 'r');
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/data/pac_catalog_value_type.csv', 'r');
     $totalItems = 0;
 
     //ingore first row
@@ -93,7 +93,7 @@ class Importer
   function importConfigBundleRelation()
   {
     $databaseWriter = new DatabaseImporter\ColumnWriter($this->dbCon);
-    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/nu3_catalog_bundle.csv', 'r');
+    $file = fopen(APPLICATION_ROOT. 'tools/product_migration/data/nu3_catalog_bundle.csv', 'r');
     $totalItems = 0;
 
     //ingore first row

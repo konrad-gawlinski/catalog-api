@@ -8,7 +8,7 @@ class Database
 {
   const DB_USER = 'postgres';
   const DB_PASS = 'postgres';
-  const DB_HOST = '172.17.0.3';
+  const DB_HOST = '172.18.0.3';
   const DB_NAME = 'catalog_api';
 
   /** @var Storage\Connection */
