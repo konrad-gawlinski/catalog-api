@@ -20,15 +20,60 @@ class Migrator
   {
     $this->dbCon = $con = $this->db->connect();
     pg_query($con, "SET CLIENT_ENCODING TO 'UTF8';");
-    pg_query($con, "SET search_path TO migration,catalog;");
+    pg_query($con, "SET search_path TO migration, catalog;");
   }
 
-  function migrate()
+  function migrateProducts(string $country, string $language)
   {
+    $products = pg_query($this->dbCon, "SELECT * FROM migration.products");
 
+    while ($row = pg_fetch_assoc($products)) {
+      $attributes = $this->splitAttributesByType($row);
+      $variety = $attributes['global']['variety'];
+      $attributes = $this->encodeAttributes($attributes);
+
+      pg_query('INSERT INTO catalog.product_entity' .
+        "(sku, type, global, {$country}, {$language}) " .
+        "VALUES('{$row['sku']}', '{$variety}', '{$attributes['global']}', '{$attributes['country']}', '{$attributes['language']}')");
+    }
   }
 
-  function isGlobalAttribute(string $attributeName) : array
+  private function splitAttributesByType(array $productRow) : array
+  {
+    $result = [
+      'global' => [],
+      'country' => [],
+      'language' => []
+    ];
+
+    $attributes = json_decode($productRow['attributes'], true);
+    foreach ($attributes as $name => $value) {
+      $type = 'global';
+
+      if ($this->isLanguageAttribute($name)) {
+        $type = 'language';
+      } else if ($this->isCountryAttribute($name)) {
+        $type = 'country';
+      }
+
+      $result[$type][$name] = $value;
+    }
+
+    return $result;
+  }
+
+  private function encodeAttributes(array $attributes)
+  {
+    unset($attributes['type']);
+
+    return [
+      'global' => str_replace("'", "''", json_encode($attributes['global'])),
+      'country' => str_replace("'", "''", json_encode($attributes['country'])),
+      'language' => str_replace("'", "''", json_encode($attributes['language']))
+    ];
+  }
+
+  private function isGlobalAttribute(string $attributeName) : array
   {
     static $list = [
       'manufacturer' => true,
@@ -187,7 +232,7 @@ class Migrator
     return isset($list[$attributeName]);
   }
 
-  function isShopAttribute($attributeName)
+  private function isCountryAttribute($attributeName)
   {
     static $list = [
       'bundle_only' => true,
@@ -220,7 +265,7 @@ class Migrator
     return isset($list[$attributeName]);
   }
 
-  function isLanguageAttribute($attributeName)
+  private function isLanguageAttribute($attributeName)
   {
     static $list = [
       'name' => true,
