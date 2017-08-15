@@ -5,3 +5,16 @@ INSERT INTO catalog.product_relations_de (parent_id, child_id, depth)
 RETURNING 1;
 $$
 LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION
+  catalog_sp.ct_make_node_a_child(parent_idIn INTEGER, child_idIn INTEGER, depthIn INTEGER)
+  RETURNS integer AS
+$$
+INSERT INTO catalog.product_relations_de(parent_id, child_id, depth)
+  SELECT p.parent_id, c.child_id, p.depth+c.depth+1
+  FROM catalog.product_relations_de p, catalog.product_relations_de c
+  WHERE p.child_id = parent_idIn AND c.parent_id = child_idIn
+RETURNING 1;
+$$
+LANGUAGE SQL;
+
