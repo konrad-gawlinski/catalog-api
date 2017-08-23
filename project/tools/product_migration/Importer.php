@@ -101,8 +101,8 @@ class Importer
 
     while (($data = fgetcsv($file, null, ',')) !== false) {
       $databaseWriter->write('nu3_catalog_bundle', [
-        'product_idA' => ['value' => $data[0], 'type' => 'numeric'],
-        'product_idB' => ['value' => $data[1], 'type' => 'numeric'],
+        'product_idA' => ['value' => $data[1], 'type' => 'numeric'],
+        'product_idB' => ['value' => $data[2], 'type' => 'numeric'],
       ]);
 
       ++$totalItems;

@@ -25,7 +25,7 @@ CREATE TABLE catalog.tax_rates (
   UNIQUE (country, tax_rate)
 );
 
-CREATE TABLE catalog.product_relations_DE (
+CREATE TABLE catalog.product_relations (
   parent_id INTEGER REFERENCES catalog.product_entity(id),
   child_id INTEGER REFERENCES catalog.product_entity(id),
   depth INTEGER NOT NULL
