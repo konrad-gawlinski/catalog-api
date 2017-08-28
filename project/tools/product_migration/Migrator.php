@@ -329,4 +329,62 @@ class Migrator
       pg_query("SELECT catalog_sp.ct_make_node_a_child({$row['bundle_entity']}, {$row['config_entity']}, 1);");
     }
   }
+
+  function createTrueConfigs()
+  {
+    $productFamilies = pg_query($this->dbCon,
+      "SELECT array_agg(id), global->>'product_family' FROM product_entity
+        WHERE global->>'product_family' IS NOT NULL
+          AND global->>'product_family' = '108'
+        GROUP BY global->>'product_family';"
+    );
+
+    while ($productFamilyRow = pg_fetch_assoc($productFamilies)) {
+      $productIds = substr($productFamilyRow['product_family'], 1, -1);
+      $products = $this->fetchProductFamilyProducts($productIds);
+
+      list($trueConfig, $reducedProducts) = $this->extractTrueConfig($products);
+    }
+  }
+
+  private function fetchProductFamilyProducts(string $productIds) : array
+  {
+    $productFamilyProducts = [];
+    $products = pg_query("SELECT * FROM product_entity WHERE id IN ({$productIds})");
+    while ($product = pg_fetch_assoc($products)) {
+      $productFamilyProducts[] = $this->jsonDecode($product);
+    }
+
+    return $productFamilyProducts;
+  }
+
+  private function jsonDecode(array $product)
+  {
+    $_decodedProduct = $product;
+    foreach (['global', 'de', 'de_de'] as $key) {
+      $_decodedProduct[$key] = json_decode($_decodedProduct[$key], true);
+    }
+
+    return $_decodedProduct;
+  }
+
+  private function extractTrueConfig($products)
+  {
+    $trueConfig = [
+      'id' => null,
+      'sku' => null,
+      'type' => 'True_Config',
+    ];
+
+    foreach (['global', 'de', 'de_de'] as $key) {
+      $commonAttributes = call_user_func_array('array_intersect_assoc', array_column($products, $key));
+      $trueConfig[$key] = $commonAttributes;
+
+      foreach ($products as &$product) {
+        $product[$key] = array_diff_assoc($product[$key], $commonAttributes);
+      }
+    }
+
+    return [$trueConfig, $products];
+  }
 }

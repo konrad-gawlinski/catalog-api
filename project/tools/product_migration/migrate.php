@@ -10,6 +10,7 @@ $loader->addPsr4('Nu3\\ProductMigration\\', APPLICATION_ROOT. 'tools/product_mig
 
 $migrator = new Migrator();
 $migrator->init();
-$migrator->migrateProducts('DE', 'de_DE');
-$migrator->initializeProductRelations();
-$migrator->createConfigBundleRelations();
+//$migrator->migrateProducts('DE', 'de_DE');
+//$migrator->initializeProductRelations();
+//$migrator->createConfigBundleRelations();
+$migrator->createTrueConfigs();
