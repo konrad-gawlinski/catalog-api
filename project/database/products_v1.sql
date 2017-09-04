@@ -75,9 +75,44 @@ $$
 $$
 LANGUAGE SQL;
 
+-------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION catalog_sp.fetch_product(skuIN VARCHAR) RETURNS
   table(sku VARCHAR, attributes JSONB) AS
 $$
   SELECT sku, attributes FROM catalog.products WHERE sku=skuIN;
 $$
 LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION catalog_sp.nu3__jsonb2sql_string(__input JSONB)
+  RETURNS TEXT AS
+$$
+  if (!__input) return 'null';
+
+  var json = JSON.stringify(__input).trim();
+  if (json.length === 0 || json === '[]' || json === '{}') return 'null';
+
+  return `'${json}'`;
+$$
+LANGUAGE PLV8;
+
+CREATE OR REPLACE FUNCTION catalog_sp.nu3__jsonb_concat(__A JSONB, __B JSONB)
+  RETURNS JSONB AS
+$$
+BEGIN
+  IF __A IS NULL THEN
+    RETURN __B;
+  END IF;
+
+  IF __B IS NULL THEN
+    RETURN __A;
+  END IF;
+
+  RETURN __A || __B;
+END
+$$
+LANGUAGE PLPGSQL;
+
+CREATE AGGREGATE catalog_sp.nu3__jsonb_agg_concat (JSONB) (
+  sfunc = catalog_sp.nu3__jsonb_concat,
+  stype = JSONB
+);

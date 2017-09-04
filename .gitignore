@@ -3,4 +3,4 @@ vendor
 project/cache
 *.log
 project/tools/product_migration/*.json
-project/tools/product_migration/*.csv
+project/tools/product_migration/data
