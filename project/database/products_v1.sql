@@ -88,8 +88,10 @@ CREATE OR REPLACE FUNCTION catalog_sp.nu3__jsonb2sql_string(__input JSONB)
 $$
   if (!__input) return 'null';
 
-  var json = JSON.stringify(__input).trim();
-  if (json.length === 0 || json === '[]' || json === '{}') return 'null';
+  var json = JSON.stringify(__input);
+  if (json === '[]' || json === '{}') return 'null';
+
+  json = json.replace(/'/g, "''");
 
   return `'${json}'`;
 $$
