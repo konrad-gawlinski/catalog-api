@@ -3,7 +3,7 @@ CREATE EXTENSION plv8;
 --CREATE DATABASE json_structure WITH ENCODING 'UTF8' LC_COLLATE='C.UTF-8' LC_CTYPE='C.UTF-8' TEMPLATE template0;
 SELECT set_config('search_path', 'version_1, public', false);
 SELECT set_config('search_path', 'public', false);
-SELECT set_config('search_path', 'catalog', false);
+SELECT set_config('search_path', 'catalog_sp, catalog', false);
 
 
 CREATE TYPE product_status AS ENUM ('new', 'approved', 'not listed', 'unavailable');
@@ -83,38 +83,17 @@ $$
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION catalog_sp.nu3__jsonb2sql_string(__input JSONB)
-  RETURNS TEXT AS
-$$
-  if (!__input) return 'null';
-
-  var json = JSON.stringify(__input);
-  if (json === '[]' || json === '{}') return 'null';
-
-  json = json.replace(/'/g, "''");
-
-  return `'${json}'`;
-$$
-LANGUAGE PLV8;
-
-CREATE OR REPLACE FUNCTION catalog_sp.nu3__jsonb_concat(__A JSONB, __B JSONB)
-  RETURNS JSONB AS
-$$
-BEGIN
-  IF __A IS NULL THEN
-    RETURN __B;
-  END IF;
-
-  IF __B IS NULL THEN
-    RETURN __A;
-  END IF;
-
-  RETURN __A || __B;
-END
-$$
-LANGUAGE PLPGSQL;
-
-CREATE AGGREGATE catalog_sp.nu3__jsonb_agg_concat (JSONB) (
-  sfunc = catalog_sp.nu3__jsonb_concat,
-  stype = JSONB
-);
+SELECT
+  nu3__jsonb_agg_concat(related_products.global) as global,
+  nu3__jsonb_agg_concat(related_products.de) as de,
+  nu3__jsonb_agg_concat(related_products.de_de) as de_de FROM (
+    SELECT
+      relation.*,
+      parent.*
+    FROM product_entity product
+      JOIN product_relations relation ON product.id = relation.child_id
+      JOIN product_entity parent ON parent.id = relation.parent_id
+    WHERE product.id = 681 AND (parent.id = 681 OR parent.sku ISNULL)
+    ORDER BY relation.depth DESC
+  ) related_products
+GROUP BY related_products.child_id ;
