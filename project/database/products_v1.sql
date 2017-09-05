@@ -83,11 +83,18 @@ $$
 $$
 LANGUAGE SQL;
 
+
 SELECT
+  related_products.product_id,
+  related_products.product_sku,
+  related_products.product_type,
   nu3__jsonb_agg_concat(related_products.global) as global,
   nu3__jsonb_agg_concat(related_products.de) as de,
   nu3__jsonb_agg_concat(related_products.de_de) as de_de FROM (
     SELECT
+      product.id as product_id,
+      product.sku as product_sku,
+      product.type as product_type,
       relation.*,
       parent.*
     FROM product_entity product
@@ -96,4 +103,4 @@ SELECT
     WHERE product.id = 681 AND (parent.id = 681 OR parent.sku ISNULL)
     ORDER BY relation.depth DESC
   ) related_products
-GROUP BY related_products.child_id ;
+GROUP BY related_products.child_id, related_products.product_id, related_products.product_sku, related_products.product_type ;

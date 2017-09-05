@@ -16,15 +16,6 @@ CREATE TABLE catalog.product_entity (
   updated_at TIMESTAMP
 );
 
-CREATE TABLE catalog.tax_rates (
-  id SMALLSERIAL PRIMARY KEY,
-  country country NOT NULL,
-  tax_rate SMALLINT NOT NULL,
-  created_at TIMESTAMP DEFAULT now(),
-  updated_at TIMESTAMP,
-  UNIQUE (country, tax_rate)
-);
-
 CREATE TABLE catalog.product_relations (
   parent_id INTEGER REFERENCES catalog.product_entity(id),
   child_id INTEGER REFERENCES catalog.product_entity(id),
