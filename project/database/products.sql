@@ -21,3 +21,6 @@ CREATE TABLE catalog.product_relations (
   child_id INTEGER REFERENCES catalog.product_entity(id),
   depth INTEGER NOT NULL
 );
+
+CREATE INDEX product_relations__child_id
+  ON product_relations USING BTREE (child_id);

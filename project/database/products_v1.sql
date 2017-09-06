@@ -83,24 +83,35 @@ $$
 $$
 LANGUAGE SQL;
 
-
 SELECT
-  related_products.product_id,
-  related_products.product_sku,
-  related_products.product_type,
-  nu3__jsonb_agg_concat(related_products.global) as global,
-  nu3__jsonb_agg_concat(related_products.de) as de,
-  nu3__jsonb_agg_concat(related_products.de_de) as de_de FROM (
+  rp.product_id,
+  rp.product_sku,
+  rp.product_type,
+  nu3__jsonb_agg_concat(rp.global) as global,
+  nu3__jsonb_agg_concat(rp.de) as country,
+  nu3__jsonb_agg_concat(rp.de_de) as language FROM (
     SELECT
       product.id as product_id,
       product.sku as product_sku,
       product.type as product_type,
-      relation.*,
-      parent.*
+      parent.*,
+      relation.child_id
     FROM product_entity product
       JOIN product_relations relation ON product.id = relation.child_id
       JOIN product_entity parent ON parent.id = relation.parent_id
-    WHERE product.id = 681 AND (parent.id = 681 OR parent.sku ISNULL)
-    ORDER BY relation.depth DESC
-  ) related_products
-GROUP BY related_products.child_id, related_products.product_id, related_products.product_sku, related_products.product_type ;
+    WHERE product.id = 681 AND (child_id = parent_id OR parent.sku IS NULL)
+    ORDER BY child_id, relation.depth DESC
+  ) rp
+GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type;
+
+EXPLAIN ANALYZE SELECT
+  product.id as product_id,
+  product.sku as product_sku,
+  product.type as product_type,
+  parent.*,
+  relation.child_id
+FROM product_entity product
+  JOIN product_relations relation ON product.id = relation.child_id
+  JOIN product_entity parent ON parent.id = relation.parent_id
+WHERE product.id = 681 AND (child_id = parent_id OR parent.sku IS NULL)
+ORDER BY child_id, relation.depth DESC;
