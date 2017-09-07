@@ -161,7 +161,7 @@ $$ BEGIN
     ||  'FROM product_entity product '
     ||    'JOIN product_relations relation ON product.id = relation.child_id '
     ||    'JOIN product_entity parent ON parent.id = relation.parent_id '
-    ||  'WHERE product.id = 681 AND (parent.id = 681 OR parent.sku ISNULL) '
+    ||  'WHERE product.id = ' || __id || ' AND (parent.id = ' || __id || ' OR parent.sku ISNULL) '
     ||  'ORDER BY relation.depth DESC'
     ||') rp '
     ||  'GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type';
