@@ -18,9 +18,14 @@ class Request
     return $this->getValue(Property::PRODUCT_SKU);
   }
 
-  function storage(): string
+  function country(): string
   {
-    return $this->getValue(Property::STORAGE);
+    return $this->getValue(Property::COUNTRY);
+  }
+
+  function language(): string
+  {
+    return $this->getValue(Property::LANGUAGE);
   }
 
   private function getValue($name, $default=''): string

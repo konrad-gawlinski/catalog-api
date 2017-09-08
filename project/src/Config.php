@@ -10,8 +10,9 @@ interface Config
   const DB_HOST = 'host';
   const DB_NAME = 'database';
 
-  const STORAGE = 'storage';
-  const STORAGE_AVAILABLE = 'available';
+  const COUNTRY = 'country';
+  const LANGUAGE = 'language';
+  const AVAILABLE = 'available';
 
   const PRODUCT = 'product';
   const CONFIG = 'config';

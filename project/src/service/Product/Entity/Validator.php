@@ -20,7 +20,7 @@ class Validator extends Core\Validator
   {
     $requestViolations = [];
     $violations = $this
-      ->buildValidator($this->chooseValidationRules($product->attributes[Property::PRODUCT_TYPE]))
+      ->buildValidator($this->chooseValidationRules($product->properties[Property::PRODUCT_TYPE]))
       ->validate($product);
 
     /** @var ConstraintViolation $violation */

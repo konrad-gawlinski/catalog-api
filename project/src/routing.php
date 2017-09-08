@@ -44,10 +44,10 @@ $app->post('/product/save/{sku}', function(Request $request, string $sku) use($a
   return $service->run($productSaveRequest);
 });
 
-$app->get('/product/{sku}/{storage}', function($sku, $storage) use($app) {
+$app->get('/product/{sku}/{country}/{lang}', function($sku, $country, $lang) use($app) {
   /** @var Nu3\Service\Product\GetAction\Action $service */
   $service = $app['product.get_action'];
-  $productGetRequest = new \Nu3\Service\Product\GetAction\Request(['sku' => $sku, 'storage' => $storage]);
+  $productGetRequest = new \Nu3\Service\Product\GetAction\Request(['sku' => $sku, 'country' => $country, 'lang' => $lang]);
 
   return $service->run(
     $productGetRequest,

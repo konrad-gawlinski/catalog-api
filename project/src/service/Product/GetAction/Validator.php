@@ -14,11 +14,10 @@ class Validator
   function validateRequest(Request $request) : array
   {
     $violations = [];
-    $sku = $request->sku();
-    $storage = $request->storage();
 
-    $violations += $this->validateRequiredSku($sku);
-    $violations += $this->validateStorage($storage);
+    $violations += $this->validateRequiredSku($request->sku());
+    $violations += $this->validateCountry($request->country());
+    $violations += $this->validateLanguage($request->language());
 
     return $violations;
   }
@@ -29,7 +28,7 @@ class Validator
   private function validateRequiredSku(string $sku) : array
   {
     if (empty($sku)) {
-      return [new Violation(ErrorKey::SKU_IS_REQUIRED, Violation::ET_REQUEST)];
+      return [new Violation(ErrorKey::SKU_IS_REQUIRED)];
     }
 
     return [];
@@ -38,14 +37,26 @@ class Validator
   /**
    * @return Violation[]
    */
-  private function validateStorage(string $storage) : array
+  private function validateCountry(string $country) : array
   {
-    $availableStorage = $this->config()[Config::STORAGE][Config::STORAGE_AVAILABLE];
+    $availableCountries = $this->config()[Config::COUNTRY][Config::AVAILABLE];
 
-    if (empty($storage)) {
-      return [new Violation(ErrorKey::STORAGE_IS_REQUIRED, Violation::ET_REQUEST)];
-    } else if (!in_array($storage, $availableStorage)) {
-      return [new Violation(ErrorKey::INVALID_STORAGE_VALUE, Violation::ET_REQUEST)];
+    if (!in_array($country, $availableCountries)) {
+      return [new Violation(ErrorKey::INVALID_COUNTRY_VALUE)];
+    }
+
+    return [];
+  }
+
+  /**
+   * @return Violation[]
+   */
+  private function validateLanguage(string $language) : array
+  {
+    $availableCountries = $this->config()[Config::LANGUAGE][Config::AVAILABLE];
+
+    if (!in_array($language, $availableCountries)) {
+      return [new Violation(ErrorKey::INVALID_LANGUAGE_VALUE)];
     }
 
     return [];

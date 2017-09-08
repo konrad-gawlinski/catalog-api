@@ -18,9 +18,11 @@ class Product extends Base
     if (!$result) throw new Exception('Product could not be saved: '. pg_last_error($this->dbconn));
   }
 
-  function fetchProduct(string $sku) : array
+  function fetchProductBySku(string $sku, string $country, string $language) : array
   {
-    $result = pg_query_params($this->dbconn->con(), 'SELECT * FROM fetch_product($1);', [$sku]);
+    $result = pg_query_params(
+        $this->dbconn->con(),
+        'SELECT * FROM nu3__fetch_product_merged($1, $2, $3);', [$sku, $country, $language]);
     $result = pg_fetch_assoc($result);
 
     if ($result === false) return [];

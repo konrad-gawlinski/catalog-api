@@ -4,16 +4,21 @@ return array (
   array (
     'username' => 'postgres',
     'password' => 'postgres',
-    'host' => '172.17.0.3',
+    'host' => '172.18.0.3',
     'database' => 'catalog_api',
   ),
-  'storage' => 
+  'country' => 
   array (
     'available' => 
     array (
-      0 => 'catalog',
-      1 => 'catalog_de',
-      2 => 'catalog_at',
+      0 => 'de',
+    ),
+  ),
+  'language' => 
+  array (
+    'available' => 
+    array (
+      0 => 'de_de',
     ),
   ),
   'product' => 
@@ -21,12 +26,10 @@ return array (
     'config' => 
     array (
       'validation_rules' => 'config.yml',
-      'default_values' => 'config.php',
     ),
     'bundle' => 
     array (
-      'validation_rules' => 'bundle.yml',
-      'default_values' => 'bundle.php',
+      'validation_rules' => 'config.yml',
     ),
   ),
 );

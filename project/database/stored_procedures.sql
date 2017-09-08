@@ -140,31 +140,55 @@ CREATE AGGREGATE catalog_sp.nu3__jsonb_agg_concat (JSONB) (
 );
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product (__id INTEGER, __country VARCHAR, __lang VARCHAR)
+  catalog_sp.nu3__fetch_product_query (__condition VARCHAR, __country VARCHAR, __lang VARCHAR)
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
   ) AS
 $$ BEGIN
   RETURN QUERY EXECUTE 'SELECT '
-    || 'rp.product_id,'
-    || 'rp.product_sku,'
-    || 'rp.product_type,'
-    || 'nu3__jsonb_agg_concat(rp.global),'
-    || 'nu3__jsonb_agg_concat(rp.' || __country || '),'
-    || 'nu3__jsonb_agg_concat(rp.' || __lang || ') FROM ('
-    ||  'SELECT '
-    ||    'product.id as product_id,'
-    ||    'product.sku as product_sku,'
-    ||    'product.type as product_type,'
-    ||    'relation.*,'
-    ||    'parent.* '
-    ||  'FROM product_entity product '
-    ||    'JOIN product_relations relation ON product.id = relation.child_id '
-    ||    'JOIN product_entity parent ON parent.id = relation.parent_id '
-    ||  'WHERE product.id = ' || __id || ' AND (parent.id = ' || __id || ' OR parent.sku ISNULL) '
-    ||  'ORDER BY relation.depth DESC'
-    ||') rp '
-    ||  'GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type';
+                       || 'rp.product_id,'
+                       || 'rp.product_sku,'
+                       || 'rp.product_type,'
+                       || 'nu3__jsonb_agg_concat(rp.global),'
+                       || 'nu3__jsonb_agg_concat(rp.' || __country || '),'
+                       || 'nu3__jsonb_agg_concat(rp.' || __lang || ') FROM ('
+                       ||  'SELECT '
+                       ||    'product.id as product_id,'
+                       ||    'product.sku as product_sku,'
+                       ||    'product.type as product_type,'
+                       ||    'relation.*,'
+                       ||    'parent.* '
+                       ||  'FROM product_entity product '
+                       ||    'JOIN product_relations relation ON product.id = relation.child_id '
+                       ||    'JOIN product_entity parent ON parent.id = relation.parent_id '
+                       ||  'WHERE ' || __condition
+                       ||  ' ORDER BY relation.depth DESC'
+                       ||') rp '
+                       ||  'GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type';
+  RETURN;
+END; $$
+LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION
+  catalog_sp.nu3__fetch_product (__id INTEGER, __country VARCHAR, __lang VARCHAR)
+  RETURNS TABLE (
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+  ) AS
+$$ BEGIN
+  RETURN QUERY EXECUTE
+    format('SELECT * FROM nu3__fetch_product_query(''product.id = %1$s AND (parent.id = %1$s OR parent.sku ISNULL)'', %L, %L);', __id, __country, __lang);
+  RETURN;
+END; $$
+LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION
+  catalog_sp.nu3__fetch_product (__sku VARCHAR, __country VARCHAR, __lang VARCHAR)
+  RETURNS TABLE (
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+  ) AS
+$$ BEGIN
+  RETURN QUERY EXECUTE
+    format('SELECT * FROM nu3__fetch_product_query(''product.sku = ''%1$L'' AND (parent.sku = ''%1$L'' OR parent.sku ISNULL)'', %L, %L);', __sku, __country, __lang);
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
@@ -175,26 +199,19 @@ CREATE OR REPLACE FUNCTION
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
   ) AS
 $$ BEGIN
-    RETURN QUERY EXECUTE 'SELECT '
-  || 'rp.product_id,'
-  || 'rp.product_sku,'
-  || 'rp.product_type,'
-  || 'nu3__jsonb_agg_concat(rp.global),'
-  || 'nu3__jsonb_agg_concat(rp.' || __country || '),'
-  || 'nu3__jsonb_agg_concat(rp.' || __lang || ') FROM ('
-  ||  'SELECT '
-  ||    'product.id as product_id,'
-  ||    'product.sku as product_sku,'
-  ||    'product.type as product_type,'
-  ||    'parent.*,'
-  ||    'relation.child_id '
-  ||  'FROM product_entity product '
-  ||    'JOIN product_relations relation ON product.id = relation.child_id '
-  ||    'JOIN product_entity parent ON parent.id = relation.parent_id '
-  ||  'WHERE child_id = parent_id OR parent.sku IS NULL '
-  ||  'ORDER BY child_id, relation.depth DESC'
-  ||') rp '
-  ||  'GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type';
+    RETURN QUERY EXECUTE
+      format('SELECT * FROM nu3__fetch_product_query(''child_id = parent_id OR parent.sku IS NULL'', %L, %L);', __country, __lang);
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION
+  catalog_sp.nu3__fetch_product_merged (__sku VARCHAR, __country VARCHAR, __lang VARCHAR)
+  RETURNS TABLE (
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, properties JSONB
+  ) AS
+$$
+  SELECT id, sku, "type",  nu3__jsonb_concat("language", nu3__jsonb_concat("global", country)) FROM
+    nu3__fetch_product(__sku, __country, __lang);
+$$
+LANGUAGE SQL;

@@ -82,7 +82,7 @@ class Action
   private function createProduct(Product\Entity\Product $product) : array
   {
     try {
-      $this->dbGateway->save_product($product->sku, json_encode($product->attributes));
+      $this->dbGateway->save_product($product->sku, json_encode($product->properties));
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }

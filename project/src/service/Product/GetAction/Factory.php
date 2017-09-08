@@ -19,7 +19,7 @@ class Factory
   function createProductEntityFromDB(array $product) : ProductEntity
   {
     $entity = new ProductEntity();
-    $entity->fillFromArray($product);
+    $entity->fillFromDb($product);
 
     return $entity;
   }

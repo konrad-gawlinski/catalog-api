@@ -3,8 +3,10 @@ database:
   password: pass
   host: localhost
   database: default
-storage:
-  available: ['catalog']
+country:
+  available: ['de']
+language:
+  available: ['de_de']
 product:
   config:
     validation_rules: config.yml

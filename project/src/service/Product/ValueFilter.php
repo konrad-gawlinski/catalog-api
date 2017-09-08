@@ -14,7 +14,7 @@ class ValueFilter
 
   private function applyFilter(Product $product, $propertyName, callable $filter)
   {
-    $property = &$product->attributes;
+    $property = &$product->properties;
 
     if (isset($property[$propertyName])) {
       $property[$propertyName] = call_user_func($filter, ($property[$propertyName]));

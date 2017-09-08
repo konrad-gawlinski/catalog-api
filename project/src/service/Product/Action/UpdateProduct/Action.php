@@ -79,7 +79,7 @@ class Action
   private function updateProduct(Product\Entity\Product $product) : array
   {
     try {
-      $this->dbGateway->save_product($product->sku, json_encode($product->attributes));
+      $this->dbGateway->save_product($product->sku, json_encode($product->properties));
     } catch (Database\Exception $exception) {
       return [new Violation(Product\ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }

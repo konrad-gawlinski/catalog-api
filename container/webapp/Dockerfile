@@ -68,7 +68,7 @@ RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAM
         --enable-xdebug \
         --with-php-config=/usr/local/php-fpm/bin/php-config \
     && make && make install \
-    && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\nxdebug.remote_enable=1;insert_extension/g' /usr/local/php-fpm/lib/php.ini
+    && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\nxdebug.remote_enable=1;\ninsert_extension/g' /usr/local/php-fpm/lib/php.ini
 
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget autoconf

@@ -20,7 +20,7 @@ class Producer
 
     foreach ($properties as $property => $value) {
       if (isset($attributesMap[$property])) {
-        $entity->attributes[$attributesMap[$property]] = $value;
+        $entity->properties[$attributesMap[$property]] = $value;
       }
     }
   }
