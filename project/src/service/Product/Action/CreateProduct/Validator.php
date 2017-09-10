@@ -13,9 +13,8 @@ class Validator extends \Nu3\Service\Product\Action\Validator
   function validateRequest(Request $request) : array
   {
     $violations = [];
-    $payload = $request->getPayload();
     $violations += $this->validateRequiredSku($request->getSku());
-    $violations += $this->validateProductType($payload);
+    $violations += $this->validateProductType($request->getPayload());
 
     return $violations;
   }

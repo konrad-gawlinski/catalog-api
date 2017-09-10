@@ -37,6 +37,11 @@ class Factory
     return $validator;
   }
 
+  function createAttributeSorter() : AttributeSorter
+  {
+    return new AttributeSorter();
+  }
+
   function createValueFilter() : ValueFilter
   {
     return new ValueFilter();

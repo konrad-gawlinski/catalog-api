@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Service\Product\GetAction;
+namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Core\Database;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
@@ -16,19 +16,23 @@ class Action
   /** @var Factory */
   private $factory;
 
+  /** @var ProductGateway */
+  private $dbGateway;
+
   function __construct(Factory $factory)
   {
     $this->factory = $factory;
+    $this->dbGateway = $factory->createDatabaseGateway();
   }
 
-  function run(Request $request, ProductGateway $productGateway): HttpResponse
+  function run(Request $request): HttpResponse
   {
     $violations = $this->factory->createValidator()->validateRequest($request);
     if ($violations) {
       return new HttpResponse($this->violationsToJson($violations), 513);
     }
 
-    $productArray = $productGateway->fetchProductBySku($request->sku(), $request->country(), $request->language());
+    $productArray = $this->dbGateway->fetchProductBySku($request->sku(), $request->country(), $request->language());
     if (!$productArray) {
       return new HttpResponse($this->violationsToJson([new Violation(ErrorKey::PRODUCT_NOT_FOUND)]), 513);
     }

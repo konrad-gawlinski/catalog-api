@@ -1,13 +1,11 @@
 <?php
 
-namespace Nu3\Service\Product\GetAction;
+namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Service\Product\Entity\Product as ProductEntity;
 
-class Factory
+class Factory extends \Nu3\Service\Product\Factory
 {
-  use \Nu3\Feature\Config;
-
   function createValidator() : Validator
   {
     $object = new Validator();

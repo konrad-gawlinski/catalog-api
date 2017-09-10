@@ -3,6 +3,7 @@
 namespace Nu3\Service\Product\Entity;
 
 use Nu3\Core;
+use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 use Nu3\Service\Product\Exception;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -18,17 +19,17 @@ class Validator extends Core\Validator
    */
   function validate(Product $product) : array
   {
-    $requestViolations = [];
+    $productViolations = [];
     $violations = $this
-      ->buildValidator($this->chooseValidationRules($product->properties[Property::PRODUCT_TYPE]))
+      ->buildValidator($this->chooseValidationRules($product->type))
       ->validate($product);
 
     /** @var ConstraintViolation $violation */
     foreach ($violations as $violation) {
-      $requestViolations[] = new Core\Violation($this->buildMessage($violation));
+      $productViolations[] = new Core\Violation(ErrorKey::PRODUCT_VALIDATION_ERROR, $this->buildMessage($violation));
     }
 
-    return $requestViolations;
+    return $productViolations;
   }
 
   /**

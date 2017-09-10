@@ -8,13 +8,11 @@ class Product extends Base
 {
 
   /**
-   * @param string $sku
-   * @param string $attributes
    * @throws Exception
    */
-  function save_product(string $sku, string $attributes)
+  function create_product(string $sku, string $type, string $properties)
   {
-    $result = pg_query_params($this->dbconn->con(), 'SELECT save_product($1, $2);', [$sku, $attributes]);
+    $result = pg_query_params($this->dbconn->con(), 'SELECT nu3__create_product($1, $2, $3);', [$sku, $type, $properties]);
     if (!$result) throw new Exception('Product could not be saved: '. pg_last_error($this->dbconn));
   }
 

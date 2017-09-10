@@ -16,7 +16,7 @@ trait ViolationsTranslator
     $result = [];
     /** @var Violation $violation */
     foreach ($violations as $violation) {
-      $result[] = $violation->errorKey();
+      $result[] = $violation->message();
     }
 
     return json_encode(($result));

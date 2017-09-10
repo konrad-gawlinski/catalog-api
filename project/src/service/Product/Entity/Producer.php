@@ -9,6 +9,7 @@ class Producer
   function applyDtoAttributesToEntity(TransferObject $dto, Product $entity)
   {
     $entity->sku = $dto->getSku();
+    $entity->type = $dto->getProductProperties()[Product::TYPE];
 
     $this->applyAttributes($dto, $entity);
   }
@@ -31,7 +32,6 @@ class Producer
       'status'=> 'status',
       'product_family' => 'product_family',
       'name'=> 'name',
-      'type'=> 'type',
       'final_price'=> 'final_price',
       'tax_rate'=> 'tax_rate',
       'is_gluten_free'=> 'is_gluten_free',

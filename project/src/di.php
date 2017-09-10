@@ -23,8 +23,9 @@ $app['product.service.update.factory'] = function() use ($app) {
 };
 
 $app['product.service.get.factory'] = function() use ($app) {
-  $factory = new \Nu3\Service\Product\GetAction\Factory();
+  $factory = new \Nu3\Service\Product\Action\GetProduct\Factory();
   $factory->setConfig($app['config']);
+  $factory->setDatabaseConnection($app['database.connection']);
 
   return $factory;
 };
@@ -56,5 +57,5 @@ $app['product.update_action'] = function() use ($app) {
 };
 
 $app['product.get_action'] = function() use ($app) {
-  return new Nu3\Service\Product\GetAction\Action($app['product.service.get.factory']);
+  return new Nu3\Service\Product\Action\GetProduct\Action($app['product.service.get.factory']);
 };

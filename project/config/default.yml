@@ -8,7 +8,7 @@ country:
 language:
   available: ['de_de']
 product:
-  config:
+  Config:
     validation_rules: config.yml
-  bundle:
+  Bundle:
     validation_rules: config.yml

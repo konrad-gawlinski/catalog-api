@@ -28,6 +28,8 @@ class Action
 
   function __construct(Product\Action\CreateProduct\Factory $factory)
   {
+    http_response_code(500);
+
     $this->factory = $factory;
     $this->validator = $factory->createValidator();
     $this->entityProducer = $factory->createEntityProducer();
@@ -61,7 +63,7 @@ class Action
     if ($violations) return $violations;
 
     $dto = $this->factory->createDataTransferObject($request);
-    $storedProduct = $this->dbGateway->fetchProduct($dto->getSku());
+    $storedProduct = $this->dbGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
     if ($storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_RESTRICTED)];
 
     $productEntity = $this->factory->createProductEntity();
@@ -70,19 +72,21 @@ class Action
 
     if (!$violations) {
       $this->factory->createValueFilter()->filterEntity($productEntity);
-      return $this->createProduct($productEntity);
+      return $this->createProduct($productEntity, $dto);
     }
 
-    return [];
+    return $violations;
   }
 
   /**
    * @return Violation[]
    */
-  private function createProduct(Product\Entity\Product $product) : array
+  private function createProduct(Product\Entity\Product $product, Product\TransferObject $dto) : array
   {
     try {
-      $this->dbGateway->save_product($product->sku, json_encode($product->properties));
+      $attributeSorter = $this->factory->createAttributeSorter();
+      $sortedAttributes = $attributeSorter->sort($dto->getCountry(), $dto->getLanguage(), $product->properties);
+      $this->dbGateway->create_product($product->sku, $product->type, json_encode($sortedAttributes));
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
@@ -117,13 +121,13 @@ class Action
   {
     switch ($errorKey) {
       case ErrorKey::SKU_IS_REQUIRED:
+      case ErrorKey::INVALID_LANGUAGE_VALUE:
+      case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::NEW_PRODUCT_REQUIRES_TYPE:
       case ErrorKey::PRODUCT_UPDATE_RESTRICTED:
-        return 403;
-
-      case ErrorKey::PRODUCT_SAVE_STORAGE_ERROR:
-        return 500;
+      case ErrorKey::PRODUCT_VALIDATION_ERROR:
+        return 400;
 
       default:
         return 500;

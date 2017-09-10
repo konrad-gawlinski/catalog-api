@@ -1,6 +1,6 @@
 <?php
 
-namespace Nu3\Service\Product\GetAction;
+namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Config;
 use Nu3\Feature\Config as AppConfig;

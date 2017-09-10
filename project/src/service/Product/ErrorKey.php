@@ -15,4 +15,5 @@ interface ErrorKey
   const PRODUCT_NOT_FOUND = 'product_not_found';
 
   const PRODUCT_SAVE_STORAGE_ERROR = 'product_save_storage_error';
+  const PRODUCT_VALIDATION_ERROR = 'product_validation_error';
 }

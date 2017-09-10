@@ -9,15 +9,25 @@ Nu3\Service\Product\Entity\Product:
                 Choice:
                   choices:
                     - noindex
-                    - index
                     - nofollow
-                    - follow
-                  multiple: true
-            sku:
-              -
-                NotBlank: null
-              -
-                Regex: '/^nu3_[1-9][0-9]{0,4}$/'
+    sku:
+      -
+        NotBlank: null
+      -
+        Regex: '/^nu3_[1-9][0-9]+$/'
+    type:
+      -
+        NotBlank: null
+      -
+        Choice:
+          choices:
+            - Config
+            - Bundle
+            - True_Config
+    properties:
+      -
+        Collection:
+          fields:
             status:
               -
                 Choice:
@@ -29,15 +39,6 @@ Nu3\Service\Product\Entity\Product:
             name:
               -
                 NotBlank: null
-            type:
-              -
-                NotBlank: null
-              -
-                Choice:
-                  choices:
-                    - config
-                    - bundle
-                    - book
             final_price:
               -
                 Type: integer
@@ -51,6 +52,15 @@ Nu3\Service\Product\Entity\Product:
                 Range:
                   min: 0
                   max: 100
+            seo_robots:
+              -
+                Choice:
+                  choices:
+                    - noindex
+                    - index
+                    - nofollow
+                    - follow
+                  multiple: true
             seo_title:
               -
                 NotBlank: null
