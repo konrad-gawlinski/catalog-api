@@ -9,8 +9,6 @@ interface Property
   const PRODUCT_TYPE = 'type';
 
   const PRODUCT_NAME = 'name';
+  const PRODUCT_STATUS = 'status';
   const META_TITLE = 'seo_title';
-
-  const COUNTRY = 'country';
-  const LANGUAGE = 'lang';
 }

@@ -11,7 +11,7 @@ trait ViolationsTranslator
    *
    * @return string
    */
-  private function violationsToJson(array $violations) : string
+  protected function violationsToJson(array $violations) : string
   {
     $result = [];
     /** @var Violation $violation */

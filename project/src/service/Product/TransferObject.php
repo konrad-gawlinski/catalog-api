@@ -2,6 +2,8 @@
 
 namespace Nu3\Service\Product;
 
+use Nu3\Service\Product\Action\CURequest;
+
 class TransferObject
 {
   /** @var string */
@@ -16,7 +18,7 @@ class TransferObject
   /** @var array */
   private $productProperties;
 
-  function __construct(Request $request)
+  function __construct(CURequest $request)
   {
     $this->sku = $request->getSku();
     $this->country = $request->getCountry();

@@ -2,52 +2,58 @@
 
 namespace Nu3\Service\Product\Action\GetProduct;
 
-use Nu3\Core\Database;
-use Nu3\Core\Database\Gateway\Product as ProductGateway;
+use Nu3\Service\Product\Action\ActionBase;
+use Nu3\Service\Product\Action\Factory;
+use Nu3\Service\Product\Request;
 use Nu3\Core\Violation;
-use Nu3\Service\Kernel\ViolationsTranslator;
 use Nu3\Service\Product\ErrorKey;
+use Nu3\Service\Product\Property;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class Action
+class Action extends ActionBase
 {
-  use ViolationsTranslator;
-  
-  /** @var Factory */
-  private $factory;
-
-  /** @var ProductGateway */
-  private $dbGateway;
-
   function __construct(Factory $factory)
   {
+    parent::__construct($factory);
+
     $this->factory = $factory;
-    $this->dbGateway = $factory->createDatabaseGateway();
   }
 
   function run(Request $request): HttpResponse
   {
     $violations = $this->factory->createValidator()->validateRequest($request);
     if ($violations) {
-      return new HttpResponse($this->violationsToJson($violations), 513);
+      return $this->buildResponse($this->violationsToJson($violations), 403);
     }
 
-    $productArray = $this->dbGateway->fetchProductBySku($request->sku(), $request->country(), $request->language());
+    $productArray = $this->dbGateway->fetchProductBySku($request->getSku(), $request->getCountry(), $request->getLanguage());
     if (!$productArray) {
-      return new HttpResponse($this->violationsToJson([new Violation(ErrorKey::PRODUCT_NOT_FOUND)]), 513);
+      return $this->buildResponse($this->violationsToJson([new Violation(ErrorKey::PRODUCT_NOT_FOUND)]), 403);
     }
 
-    $response = $this->buildResponse($productArray);
-
-    return new HttpResponse(json_encode($response->getProperties()), 200, [
-      'Content-Type' => 'application/json'
-    ]);
+    return $this->buildResponse($this->buildSuccessResponseBody($productArray), 200);
   }
 
-  private function buildResponse(array $product) : Response
+  private function buildResponse($body, $httpCode) : HttpResponse
   {
-    $productEntity = $this->factory->createProductEntityFromDB($product);
+    $headers = [
+      'Content-Type' => 'application/json'
+    ];
 
-    return $this->factory->createProductResponse($productEntity);
+    return new HttpResponse($body, $httpCode, $headers);
+  }
+
+  private function buildSuccessResponseBody(array $product) : string
+  {
+    $productEntity = $this->factory->createProductEntity();
+    $productEntity->fillFromDb($product);
+
+    $productArray = [
+        Property::PRODUCT_ID => $productEntity->id,
+        Property::PRODUCT_SKU => $productEntity->sku,
+        Property::PRODUCT_TYPE => $productEntity->type,
+      ] + $productEntity->properties;
+
+    return json_encode($productArray);
   }
 }

@@ -4,16 +4,20 @@ namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Config;
 use Nu3\Core\Violation;
-use Nu3\Service\Product\Request;
+use Nu3\Service\Product\Action\CURequest as Request;
 use Nu3\Service\Product\Property;
 use Nu3\Service\Product\ErrorKey;
 
 class Validator extends \Nu3\Service\Product\Action\Validator
 {
-  function validateRequest(Request $request) : array
+  /**
+   * @param Request $request
+   *
+   * @return Violation[] array
+   */
+  function validateRequest($request) : array
   {
-    $violations = [];
-    $violations += $this->validateRequiredSku($request->getSku());
+    $violations = parent::validateRequest($request);
     $violations += $this->validateProductType($request->getPayload());
 
     return $violations;

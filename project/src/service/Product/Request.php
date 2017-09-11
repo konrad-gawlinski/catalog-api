@@ -4,36 +4,42 @@ namespace Nu3\Service\Product;
 
 class Request
 {
-  private $sku;
-  private $country;
-  private $language;
-  private $payload;
+  const PROPERTY_SKU = 'sku';
+  const PROPERTY_COUNTRY = 'country';
+  const PROPERTY_LANGUAGE = 'lang';
 
-  function __construct(string $sku, string $country, string $language, array $payload)
+  protected $params = [];
+
+  function __construct(array $params)
   {
-    $this->sku = $sku;
-    $this->country = $country;
-    $this->language = $language;
-    $this->payload = $payload;
+    $this->params = $params;
   }
 
-  function getPayload() : array
+  function getSku(): string
   {
-    return $this->payload;
+    return $this->getValue(self::PROPERTY_SKU);
   }
 
-  function getSku() : string
+  function getCountry(): string
   {
-    return $this->sku;
+    return $this->getValue(self::PROPERTY_COUNTRY);
   }
 
-  function getCountry() : string
+  function getLanguage(): string
   {
-    return $this->country;
+    return $this->getValue(self::PROPERTY_LANGUAGE);
   }
 
-  function getLanguage() : string
+  /**
+   * @param string $name
+   * @param mixed $default
+   *
+   * @return mixed
+   */
+  protected function getValue(string $name, $default='')
   {
-    return $this->language;
+    if (isset($this->params[$name])) return $this->params[$name];
+
+    return $default;
   }
 }

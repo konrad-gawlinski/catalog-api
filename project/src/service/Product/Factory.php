@@ -9,11 +9,6 @@ class Factory
   use \Nu3\Feature\Config;
   use \Nu3\Feature\DatabaseConnection;
 
-  function createDataTransferObject(Request $request) : TransferObject
-  {
-    return new TransferObject($request);
-  }
-
   function createDatabaseGateway() : DatabaseGateway
   {
     return new DatabaseGateway($this->databaseConnection());
@@ -24,9 +19,12 @@ class Factory
     return new Entity\Product();
   }
 
-  function createEntityProducer() : Entity\Producer
+  /**
+   * @return Entity\Builder
+   */
+  function createEntityBuilder()
   {
-    return new Entity\Producer();
+    return new Entity\Builder();
   }
 
   function createEntityValidator() : Entity\Validator

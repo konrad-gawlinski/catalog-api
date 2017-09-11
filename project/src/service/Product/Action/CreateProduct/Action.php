@@ -2,41 +2,34 @@
 
 namespace Nu3\Service\Product\Action\CreateProduct;
 
-use Nu3\Service\Product;
+use Nu3\Service\Product\Action\ActionBase;
+use Nu3\Service\Product\Action\Factory;
+use Nu3\Service\Product\Entity;
+use Nu3\Service\Product\Action\CURequest as Request;
+use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
 use Nu3\Core\Database;
-use Nu3\Service\Kernel\ViolationsTranslator;
-use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Service\Product\ErrorKey;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class Action
+class Action extends ActionBase
 {
-  use ViolationsTranslator;
-  
-  /** @var Product\Factory */
-  private $factory;
-
   /** @var Validator */
   private $validator;
-  
-  /** @var ProductGateway */
-  private $dbGateway;
 
-  /** @var  Product\Entity\Producer */
-  private $entityProducer;
+  /** @var Builder */
+  private $entityBuilder;
 
-  function __construct(Product\Action\CreateProduct\Factory $factory)
+  function __construct(Factory $factory)
   {
-    http_response_code(500);
+    parent::__construct($factory);
 
     $this->factory = $factory;
     $this->validator = $factory->createValidator();
-    $this->entityProducer = $factory->createEntityProducer();
-    $this->dbGateway = $factory->createDatabaseGateway();
+    $this->entityBuilder = $factory->createEntityBuilder();
   }
 
-  function run(Product\Request $request): HttpResponse
+  function run(Request $request): HttpResponse
   {
     $violations = $this->handleRequest($request);
     $headers = [
@@ -45,7 +38,7 @@ class Action
 
     if ($violations) {
       return new HttpResponse(
-        $this->buildResponseBody($violations),
+        $this->violationsToJson($violations),
         $this->returnHttpStatusCode($violations),
         $headers
       );
@@ -57,7 +50,7 @@ class Action
   /**
    * @return Violation[]
    */
-  private function handleRequest(Product\Request $request) : array
+  private function handleRequest(Request $request) : array
   {
     $violations = $this->validator->validateRequest($request);
     if ($violations) return $violations;
@@ -66,22 +59,32 @@ class Action
     $storedProduct = $this->dbGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
     if ($storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_RESTRICTED)];
 
-    $productEntity = $this->factory->createProductEntity();
-    $this->entityProducer->applyDtoAttributesToEntity($dto, $productEntity);
+    $productEntity = $this->createProductEntity($dto);
     $violations = $this->factory->createEntityValidator()->validate($productEntity);
+    if ($violations) return $violations;
 
-    if (!$violations) {
-      $this->factory->createValueFilter()->filterEntity($productEntity);
-      return $this->createProduct($productEntity, $dto);
-    }
+    $this->factory->createValueFilter()->filterEntity($productEntity);
 
-    return $violations;
+    return $this->saveProduct($productEntity, $dto);
+  }
+
+  /**
+   * @param $dto
+   * @return Entity\Product
+   */
+  private function createProductEntity($dto)
+  {
+    $productEntity = $this->factory->createProductEntity();
+    $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
+    $this->entityBuilder->applyDefaultAttributesValues($productEntity);
+
+    return $productEntity;
   }
 
   /**
    * @return Violation[]
    */
-  private function createProduct(Product\Entity\Product $product, Product\TransferObject $dto) : array
+  private function saveProduct(Entity\Product $product, TransferObject $dto) : array
   {
     try {
       $attributeSorter = $this->factory->createAttributeSorter();
@@ -92,16 +95,6 @@ class Action
     }
 
     return [];
-  }
-
-  /**
-   * @param Violation[] $violations
-   *
-   * @return string
-   */
-  private function buildResponseBody(array $violations) : string
-  {
-    return $this->violationsToJson($violations);
   }
 
   /**
