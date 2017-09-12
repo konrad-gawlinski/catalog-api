@@ -19,7 +19,7 @@ Nu3\Service\Product\Entity\Product:
               - Type: integer
               - Range:
                   min: 1
-                  groups: [approved]
+                  groups: [sellable]
             tax_rate:
               - Range:
                   min: 0
@@ -33,7 +33,7 @@ Nu3\Service\Product\Entity\Product:
             manufacturer:
               - NotBlank: ~
             description:
-              - NotBlank: { groups: [approved] }
+              - NotBlank: { groups: [sellable] }
             short_description: ~
             label_language:
               - Type: array

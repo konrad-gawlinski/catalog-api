@@ -4,8 +4,8 @@ namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
 use Nu3\Service\Product\Action\Factory;
-use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\Action\CURequest as Request;
+use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
 use Nu3\Core\Database;
@@ -59,20 +59,20 @@ class Action extends ActionBase
     $storedProduct = $this->dbGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
     if ($storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_RESTRICTED)];
 
-    $productEntity = $this->createProductEntity($dto);
-    $violations = $this->factory->createEntityValidator()->validate($productEntity);
+    $product = $this->buildProduct($dto);
+    $violations = $this->factory->createEntityValidator()->validate($product);
     if ($violations) return $violations;
 
-    $this->factory->createValueFilter()->filterEntity($productEntity);
+    $this->factory->createValueFilter()->filterEntity($product);
 
-    return $this->saveProduct($productEntity, $dto);
+    return $this->saveProduct($product, $dto);
   }
 
   /**
    * @param $dto
    * @return Entity\Product
    */
-  private function createProductEntity($dto)
+  private function buildProduct($dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
@@ -121,6 +121,9 @@ class Action extends ActionBase
       case ErrorKey::PRODUCT_UPDATE_RESTRICTED:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
         return 400;
+
+      case ErrorKey::PRODUCT_SAVE_STORAGE_ERROR:
+        return 500;
 
       default:
         return 500;

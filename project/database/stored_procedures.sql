@@ -63,7 +63,23 @@ $$
 LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__update_product(__product_id INTEGER, __properties JSONB)
+  catalog_sp.nu3__create_product_and_ct_node(__sku VARCHAR, __type VARCHAR, __properties JSONB)
+  RETURNS INTEGER AS
+$$
+DECLARE
+  product_id int;
+
+BEGIN
+  SELECT * INTO STRICT product_id FROM nu3__create_product(__sku, __type, __properties);
+  PERFORM nu3__ct_create_node(product_id);
+
+  RETURN product_id;
+END;
+$$
+LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION
+  catalog_sp.nu3__update_product(__sku VARCHAR, __properties JSONB)
   RETURNS TEXT AS
 $$
     var createUpdateStatements = (properties) => {
@@ -85,7 +101,7 @@ $$
 
     var updateStatements = createUpdateStatements(__properties);
 
-    return plv8.execute(`UPDATE product_entity SET ${updateStatements} WHERE id=${__product_id};`);
+    return plv8.execute(`UPDATE product_entity SET ${updateStatements} WHERE sku='${__sku}';`);
 $$
 LANGUAGE PLV8;
 

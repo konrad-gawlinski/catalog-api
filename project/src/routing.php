@@ -1,7 +1,7 @@
 <?php
 use Symfony\Component\HttpFoundation\Request;
 
-$app->put('/product/save/{sku}',
+$app->put('/product/{sku}/{country}/{lang}',
   function(Request $request, string $sku, string $country, string $lang) use($app) {
     $payload = $request->request->all();
 
