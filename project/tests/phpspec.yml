@@ -1,0 +1,8 @@
+suites:
+    product:
+        namespace: Nu3\Service\Product
+        psr4_prefix: Nu3\Service\Product
+        src_path: %paths.config%/../../src/service/Product
+        spec_path: %paths.config%
+        spec_prefix: spec\Product
+formatter.name: pretty

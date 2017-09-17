@@ -4,12 +4,15 @@
     "secure-http": false,
     "optimize-autoloader": true
   },
+  "require-dev": {
+    "phpspec/phpspec": "4.*"
+  },
   "require": {
-    "silex/silex": "v2.0.3",
-    "symfony/config": "v3.2.1",
-    "symfony/yaml": "v3.2.1",
-    "symfony/validator": "v3.2.1",
-    "doctrine/cache": "v1.6.1"
+    "silex/silex": "v2.*",
+    "symfony/config": "v3.*",
+    "symfony/yaml": "v3.*",
+    "symfony/validator": "v3.*",
+    "doctrine/cache": "v1.*"
   },
   "autoload": {
     "psr-4": {
