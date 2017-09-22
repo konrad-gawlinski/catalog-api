@@ -6,12 +6,15 @@ use Nu3\Service\Product\TransferObject;
 
 class Builder
 {
-  function applyDtoAttributesToEntity(TransferObject $dto, Product $entity)
+  function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
   {
     $entity->sku = $dto->getSku();
-    $entity->type = $dto->getProductProperties()[Product::TYPE];
+    if (isset($dto->getProductProperties()[Product::TYPE]))
+      $entity->type = $dto->getProductProperties()[Product::TYPE];
 
     $this->applyAttributes($dto, $entity);
+
+    return $entity;
   }
 
   private function applyAttributes(TransferObject $dto, Product $entity)

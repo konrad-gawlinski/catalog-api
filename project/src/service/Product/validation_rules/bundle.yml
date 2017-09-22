@@ -1,6 +1,6 @@
 Nu3\Service\Product\Entity\Product:
   properties:
-    attributes:
+    properties:
       -
         Collection:
           fields:
@@ -9,24 +9,6 @@ Nu3\Service\Product\Entity\Product:
                 NotBlank: null
               -
                 Type: array
-    sku:
-      -
-        NotBlank: null
-      -
-        Regex: '/^nu3_[1-9][0-9]+$/'
-    type:
-      -
-        NotBlank: null
-      -
-        Choice:
-          choices:
-            - Config
-            - Bundle
-            - True_Config
-    properties:
-      -
-        Collection:
-          fields:
             status:
               -
                 Choice:
@@ -45,7 +27,7 @@ Nu3\Service\Product\Entity\Product:
                 Range:
                   min: 1
                   groups:
-                    - approved
+                    - sellable
             tax_rate:
               -
                 Range:
@@ -70,10 +52,24 @@ Nu3\Service\Product\Entity\Product:
               -
                 NotBlank:
                   groups:
-                    - approved
+                    - sellable
             short_description: null
             label_language:
               -
                 Type: array
           allowMissingFields: true
           allowExtraFields: true
+    sku:
+      -
+        NotBlank: null
+      -
+        Regex: '/^nu3_[1-9][0-9]*$/'
+    type:
+      -
+        NotBlank: null
+      -
+        Choice:
+          choices:
+            - Config
+            - Bundle
+            - True_Config

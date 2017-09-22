@@ -31,11 +31,6 @@ class TransferObject
     return $this->productProperties;
   }
 
-  function setProductProperties(array $properties)
-  {
-    $this->productProperties = $properties;
-  }
-
   function getSku() : string
   {
     return $this->sku;

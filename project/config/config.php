@@ -4,7 +4,7 @@ return array (
   array (
     'username' => 'postgres',
     'password' => 'postgres',
-    'host' => '172.18.0.3',
+    'host' => '172.18.0.2',
     'database' => 'catalog_api',
   ),
   'country' => 

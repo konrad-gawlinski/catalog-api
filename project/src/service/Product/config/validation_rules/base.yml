@@ -2,7 +2,7 @@ Nu3\Service\Product\Entity\Product:
   properties:
     sku:
       - NotBlank: ~
-      - Regex: '/^nu3_[1-9][0-9]+$/'
+      - Regex: '/^nu3_[1-9][0-9]*$/'
     type:
       - NotBlank: ~
       - Choice:

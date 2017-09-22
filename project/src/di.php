@@ -15,7 +15,7 @@ $app['product.service.create.factory'] = function() use ($app) {
 };
 
 $app['product.service.update.factory'] = function() use ($app) {
-  $factory = new \Nu3\Service\Product\Action\Factory();
+  $factory = new \Nu3\Service\Product\Action\UpdateProduct\Factory();
   $factory->setConfig($app['config']);
   $factory->setDatabaseConnection($app['database.connection']);
 

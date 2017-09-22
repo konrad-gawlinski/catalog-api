@@ -4,7 +4,6 @@ namespace Nu3\Service\Product\Entity;
 
 use Nu3\Core;
 use Nu3\Service\Product\ErrorKey;
-use Nu3\Service\Product\Property;
 use Nu3\Service\Product\Exception;
 use Symfony\Component\Validator\ConstraintViolation;
 

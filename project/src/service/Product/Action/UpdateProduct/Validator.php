@@ -1,12 +1,11 @@
 <?php
 
-namespace Nu3\Service\Product\Action\CreateProduct;
+namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Core\Violation;
 use Nu3\Service\Product\Action\CURequest as Request;
-use Nu3\Service\Product\Property;
-use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Action\ValidationTrait;
+use Nu3\Service\Product\Property;
 
 class Validator extends \Nu3\Service\Product\Action\Validator
 {
@@ -30,22 +29,11 @@ class Validator extends \Nu3\Service\Product\Action\Validator
    */
   private function validateProductType(array $payload) : array
   {
-      $violations = [];
-      $violations += $this->validateRequiredProductType($payload);
-      if (!$violations)
-        $violations += $this->validateAllowedProductType($payload);
+    $violations = [];
+    if (isset($payload[Property::PRODUCT_TYPE])) {
+      $violations += $this->validateAllowedProductType($payload);
+    }
 
     return $violations;
-  }
-
-  /**
-   * @return Violation[]
-   */
-  private function validateRequiredProductType(array $payload) : array
-  {
-    if (empty($payload[Property::PRODUCT_TYPE]))
-      return [new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE)];
-
-    return [];
   }
 }

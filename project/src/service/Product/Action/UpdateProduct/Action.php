@@ -7,6 +7,7 @@ use Nu3\Service\Product\Action\Factory;
 use Nu3\Service\Product\Action\Validator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\ErrorKey;
+use Nu3\Service\Product\Property;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Service\Product\Action\CURequest as Request;
 use Nu3\Core\Violation;
@@ -60,7 +61,7 @@ class Action extends ActionBase
     $violations = $this->factory->createEntityValidator()->validate($product);
     if ($violations) return $violations;
 
-    $product = $this->buildRequestedProduct($dto);
+    $product = $this->buildRequestedProduct($storedProduct, $dto);
 
     return $this->saveProduct($product, $dto);
   }
@@ -74,9 +75,12 @@ class Action extends ActionBase
     return $productEntity;
   }
 
-  private function buildRequestedProduct(TransferObject $dto) : Entity\Product
+  private function buildRequestedProduct(array $storedProduct, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
+    if (!isset($dto->getProductProperties()[Property::PRODUCT_TYPE])) {
+      $productEntity->type = $storedProduct[Property::PRODUCT_TYPE];
+    }
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
     $this->factory->createValueFilter()->filterEntity($productEntity);
 
@@ -118,6 +122,7 @@ class Action extends ActionBase
       case ErrorKey::INVALID_LANGUAGE_VALUE:
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::PRODUCT_CREATION_RESTRICTED:
+      case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
         return 400;
 

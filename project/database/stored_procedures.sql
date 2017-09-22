@@ -156,19 +156,29 @@ CREATE AGGREGATE catalog_sp.nu3__jsonb_agg_concat (JSONB) (
 );
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product_query (__condition VARCHAR, __country VARCHAR, __lang VARCHAR)
+  catalog_sp.nu3__fetch_product_query (__condition VARCHAR)
   RETURNS TABLE (
-    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
-$$ BEGIN
+$$
+DECLARE
+  _columns VARCHAR[] := ARRAY['global', 'de','at','fr', 'de_de', 'at_de', 'fr_fr'];
+  _column VARCHAR;
+  _selectList TEXT := '';
+
+BEGIN
+  FOREACH _column IN ARRAY _columns
+  LOOP
+    _selectList := _selectList || 'nu3__jsonb_agg_concat(rp.' || _column || '),';
+  END LOOP;
+  SELECT INTO _selectList trim(TRAILING ',' FROM _selectList);
+
   RETURN QUERY EXECUTE 'SELECT '
-                       || 'rp.product_id,'
-                       || 'rp.product_sku,'
-                       || 'rp.product_type,'
-                       || 'nu3__jsonb_agg_concat(rp.global),'
-                       || 'nu3__jsonb_agg_concat(rp.' || __country || '),'
-                       || 'nu3__jsonb_agg_concat(rp.' || __lang || ') FROM ('
-                       ||  'SELECT '
+                       || 'rp.product_id as id,'
+                       || 'rp.product_sku as sku,'
+                       || 'rp.product_type as type,'
+                       || _selectList
+                       ||  ' FROM (SELECT '
                        ||    'product.id as product_id,'
                        ||    'product.sku as product_sku,'
                        ||    'product.type as product_type,'
@@ -182,41 +192,42 @@ $$ BEGIN
                        ||') rp '
                        ||  'GROUP BY rp.child_id, rp.product_id, rp.product_sku, rp.product_type';
   RETURN;
-END; $$
+END;
+$$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product (__id INTEGER, __country VARCHAR, __lang VARCHAR)
+  catalog_sp.nu3__fetch_product (__id INTEGER)
   RETURNS TABLE (
-    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
 $$ BEGIN
   RETURN QUERY EXECUTE
-    format('SELECT * FROM nu3__fetch_product_query(''product.id = %1$s AND (parent.id = %1$s OR parent.sku ISNULL)'', %L, %L);', __id, __country, __lang);
+    format('SELECT * FROM nu3__fetch_product_query(''product.id = %1$s AND (parent.id = %1$s OR parent.sku ISNULL)'');', __id);
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product (__sku VARCHAR, __country VARCHAR, __lang VARCHAR)
+  catalog_sp.nu3__fetch_product (__sku VARCHAR)
   RETURNS TABLE (
-    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
 $$ BEGIN
   RETURN QUERY EXECUTE
-    format('SELECT * FROM nu3__fetch_product_query(''product.sku = ''%1$L'' AND (parent.sku = ''%1$L'' OR parent.sku ISNULL)'', %L, %L);', __sku, __country, __lang);
+    format('SELECT * FROM nu3__fetch_product_query(''product.sku = ''%1$L'' AND (parent.sku = ''%1$L'' OR parent.sku ISNULL)'');', __sku);
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_all_products (__country VARCHAR, __lang VARCHAR)
+  catalog_sp.nu3__fetch_all_products ()
   RETURNS TABLE (
-    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, country JSONB, language JSONB
+    id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
 $$ BEGIN
     RETURN QUERY EXECUTE
-      format('SELECT * FROM nu3__fetch_product_query(''child_id = parent_id OR parent.sku IS NULL'', %L, %L);', __country, __lang);
+      format('SELECT * FROM nu3__fetch_product_query(''child_id = parent_id OR parent.sku IS NULL'');', null);
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
@@ -226,8 +237,9 @@ CREATE OR REPLACE FUNCTION
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, properties JSONB
   ) AS
-$$
-  SELECT id, sku, "type",  nu3__jsonb_concat("language", nu3__jsonb_concat("global", country)) FROM
-    nu3__fetch_product(__sku, __country, __lang);
-$$
-LANGUAGE SQL;
+$$ BEGIN
+  RETURN QUERY EXECUTE
+    format('SELECT id, sku, "type",  nu3__jsonb_concat(%I, nu3__jsonb_concat("global", %I)) FROM nu3__fetch_product(%L);', __lang, __country, __sku);
+  RETURN;
+END; $$
+LANGUAGE PLPGSQL;
