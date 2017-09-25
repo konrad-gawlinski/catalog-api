@@ -23,12 +23,12 @@ class Action extends ActionBase
   {
     $violations = $this->factory->createValidator()->validateRequest($request);
     if ($violations) {
-      return $this->buildResponse($this->violationsToJson($violations), 403);
+      return $this->buildResponse($this->violationsToJson($violations), 400);
     }
 
     $productArray = $this->dbGateway->fetchProductBySku($request->getSku(), $request->getCountry(), $request->getLanguage());
     if (!$productArray) {
-      return $this->buildResponse($this->violationsToJson([new Violation(ErrorKey::PRODUCT_NOT_FOUND)]), 403);
+      return $this->buildResponse($this->violationsToJson([new Violation(ErrorKey::PRODUCT_NOT_FOUND)]), 404);
     }
 
     return $this->buildResponse($this->buildSuccessResponseBody($productArray), 200);

@@ -1,0 +1,8 @@
+actor: Product_serviceTester
+modules:
+    enabled:
+        - REST:
+            url: 'http://localhost'
+            depends: PhpBrowser
+            part: Json
+        - \Helper\Product_service
