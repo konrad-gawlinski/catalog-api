@@ -52,9 +52,7 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
     && make && make install \
     && mkdir -p /var/webapp \
     && mkdir /var/log/php \
-    && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php \
-    && wget "https://getcomposer.org/download/1.5.2/composer.phar" -O "/usr/local/composer.phar" \
-    && wget "http://codeception.com/codecept.phar" -O "/usr/local/codecept.phar"
+    && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php
 
 COPY conf/fpm/ /usr/local/php-fpm/etc/
 COPY conf/php.ini /usr/local/php-fpm/lib/
