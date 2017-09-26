@@ -22,4 +22,19 @@ abstract class ActionBase
     
     $this->dbGateway = $factory->createDatabaseGateway();
   }
+
+  /**
+   * @param Violation[] $violations
+   * @return int
+   */
+  protected function returnHttpStatusCode(array $violations) : int
+  {
+    if (count($violations) > 1) {
+      return 400;
+    }
+
+    return $this->errorKey2HttpCode($violations[0]->errorKey());
+  }
+
+  abstract protected function errorKey2HttpCode(string $errorKey);
 }

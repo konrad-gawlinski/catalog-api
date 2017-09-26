@@ -97,20 +97,7 @@ class Action extends ActionBase
     return [];
   }
 
-  /**
-   * @param Violation[] $violations
-   * @return int
-   */
-  private function returnHttpStatusCode(array $violations) : int
-  {
-    if (count($violations) > 1) {
-      return 400;
-    }
-
-    return $this->errorKey2HttpCode($violations[0]->errorKey());
-  }
-
-  private function errorKey2HttpCode(string $errorKey) : int
+  protected function errorKey2HttpCode(string $errorKey) : int
   {
     switch ($errorKey) {
       case ErrorKey::SKU_IS_REQUIRED:
