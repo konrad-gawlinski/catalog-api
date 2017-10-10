@@ -4,8 +4,10 @@ return array (
   array (
     'username' => 'postgres',
     'password' => 'postgres',
-    'host' => '172.18.0.2',
+    'host' => '172.18.0.3',
     'database' => 'catalog_api',
+    'data_schema' => 'catalog',
+    'procedures_schema' => 'catalog_sp',
   ),
   'country' => 
   array (

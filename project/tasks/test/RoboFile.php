@@ -6,14 +6,20 @@
  */
 class RoboFile extends \Robo\Tasks
 {
-  private const TESTS_DIR = '../../tests/unit/';
-
-  function run()
+  function runUnitTests()
   {
     $this->taskExec('./phpspec')
-      ->dir(self::TESTS_DIR)
+      ->dir('../../tests/unit/')
       ->arg('run')
       ->args('--no-interaction')
+      ->run();
+  }
+
+  function runFunctionalTests()
+  {
+    $this->taskExec('./codecept')
+      ->dir('../../tests/functional/')
+      ->arg('run')
       ->run();
   }
 }

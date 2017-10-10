@@ -9,6 +9,8 @@ interface Config
   const DB_PASS = 'password';
   const DB_HOST = 'host';
   const DB_NAME = 'database';
+  const DB_DATA_SCHEMA = 'data_schema';
+  const DB_PROCEDURES_SCHEMA = 'procedures_schema';
 
   const COUNTRY = 'country';
   const LANGUAGE = 'language';

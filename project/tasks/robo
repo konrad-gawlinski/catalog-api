@@ -1,2 +1,2 @@
 #!/bin/bash
-php ../bin/robo.phar "$@"
+php $(dirname "${BASH_SOURCE[0]}")/../bin/robo.phar "$@"

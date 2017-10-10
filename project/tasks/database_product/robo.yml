@@ -1,0 +1,8 @@
+command:
+  product:
+    options:
+      host: 172.18.0.3
+      port: 5432
+      database: catalog_api
+      user: postgres
+      password: postgres

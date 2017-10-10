@@ -1,13 +1,13 @@
 <?php
+define('APPLICATION_ROOT', __DIR__ . '/../');
+define('APPLICATION_SRC', __DIR__ . '/../src/');
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
+require_once APPLICATION_ROOT . 'vendor/autoload.php';
 
-$app->before(function (Request $request) {
-  if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-    $data = json_decode($request->getContent(), true);
+$app = new Silex\Application();
+$app['debug'] = true;
 
-    if (!is_array($data)) return new HttpResponse('', 400);
-    $request->request->replace($data);
-  }
-});
+require APPLICATION_SRC . 'Config.php';
+require APPLICATION_SRC . 'di.php';
+
+return $app;

@@ -15,27 +15,35 @@ Nu3\Service\Product\Entity\Product:
                   choices: ["new", "approved", "not listed", "unavailable"]
             name:
               - NotBlank: ~
-            final_price:
-              - Type: integer
-              - Range:
-                  min: 1
-                  groups: [sellable]
+            final_gross_price:
+              - Optional:
+                - Type: integer
+                - Range:
+                    min: 1
+                    groups: [sellable]
             tax_rate:
-              - Range:
-                  min: 0
-                  max: 100
+              - Optional:
+                - Range:
+                    min: 0
+                    max: 100
             seo_robots:
-              - Choice:
-                  choices: ["noindex", "index", "nofollow", "follow"]
-                  multiple: true
+              - Optional:
+                - Choice:
+                    choices: ["noindex", "index", "nofollow", "follow"]
+                    multiple: true
             seo_title:
-              - NotBlank: ~
+              - Optional:
+                - NotBlank: ~
             manufacturer:
-              - NotBlank: ~
+              - Optional:
+                - NotBlank: ~
             description:
-              - NotBlank: { groups: [sellable] }
-            short_description: ~
+              - Optional:
+                - NotBlank: { groups: [sellable] }
+            short_description:
+              - Optional: ~
             label_language:
-              - Type: array
-          allowMissingFields: true
+              - Optional:
+                - Type: array
+          allowMissingFields: false
           allowExtraFields: true

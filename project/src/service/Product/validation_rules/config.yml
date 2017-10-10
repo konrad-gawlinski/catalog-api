@@ -29,42 +29,58 @@ Nu3\Service\Product\Entity\Product:
             name:
               -
                 NotBlank: null
-            final_price:
+            final_gross_price:
               -
-                Type: integer
-              -
-                Range:
-                  min: 1
-                  groups:
-                    - sellable
+                Optional:
+                  -
+                    Type: integer
+                  -
+                    Range:
+                      min: 1
+                      groups:
+                        - sellable
             tax_rate:
               -
-                Range:
-                  min: 0
-                  max: 100
+                Optional:
+                  -
+                    Range:
+                      min: 0
+                      max: 100
             seo_robots:
               -
-                Choice:
-                  choices:
-                    - noindex
-                    - index
-                    - nofollow
-                    - follow
-                  multiple: true
+                Optional:
+                  -
+                    Choice:
+                      choices:
+                        - noindex
+                        - index
+                        - nofollow
+                        - follow
+                      multiple: true
             seo_title:
               -
-                NotBlank: null
+                Optional:
+                  -
+                    NotBlank: null
             manufacturer:
               -
-                NotBlank: null
+                Optional:
+                  -
+                    NotBlank: null
             description:
               -
-                NotBlank:
-                  groups:
-                    - sellable
-            short_description: null
+                Optional:
+                  -
+                    NotBlank:
+                      groups:
+                        - sellable
+            short_description:
+              -
+                Optional: null
             label_language:
               -
-                Type: array
-          allowMissingFields: true
+                Optional:
+                  -
+                    Type: array
+          allowMissingFields: false
           allowExtraFields: true

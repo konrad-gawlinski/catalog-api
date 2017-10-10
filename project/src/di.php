@@ -3,7 +3,7 @@
 use Nu3\Config;
 
 $app['config'] = function() {
-  return require(APPLICATION_ROOT.'config/config.php');
+  return require(APPLICATION_ROOT .'config/config.php');
 };
 
 $app['product.service.create.factory'] = function() use ($app) {
@@ -40,6 +40,8 @@ $app['database.connection'] = function() use ($app) {
     $config[Config::DB_USER],
     $config[Config::DB_PASS]
   );
+  
+  $db->setSearchPath("{$config[Config::DB_PROCEDURES_SCHEMA]}, {$config[Config::DB_DATA_SCHEMA]}");
 
   return $db;
 };

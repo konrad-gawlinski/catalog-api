@@ -20,6 +20,21 @@ class Product_serviceTester extends \Codeception\Actor
 {
     use _generated\Product_serviceTesterActions;
 
+    private static $app = null;
+
+    function __construct(\Codeception\Scenario $scenario)
+    {
+        parent::__construct($scenario);
+
+        if (!self::$app)
+            self::$app = require __DIR__ . '/../../../src/bootstrap.php';
+    }
+
+    function getApp()
+    {
+        return self::$app;
+    }
+
    /**
     * Define custom actions here
     */

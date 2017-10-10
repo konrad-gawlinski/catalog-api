@@ -8,15 +8,20 @@ class Connection
 
   function connect(string $host, string $dbname, string $user, string $password)
   {
-    $this->connection = pg_connect("host={$host} dbname={$dbname} user={$user} password={$password} connect_timeout=1")
-    or die('Could not connect: ' . pg_last_error());
+    $this->connection = pg_connect("host={$host} dbname={$dbname} user={$user} password={$password} connect_timeout=1");
+
+    if (!$this->connection)
+      throw new Exception('Could not connect: ' . pg_last_error());
 
     return $this->connection;
   }
 
-  function disconnect()
+  function setSearchPath(string $searchPath)
   {
-    if ($this->connection) pg_close($this->connection);
+    $result = pg_query($this->connection, "SELECT set_config('search_path', '{$searchPath}', false);");
+
+    if ($result === false)
+       throw new Exception("Could not set search_path config '{$searchPath}': " . pg_last_error());
   }
 
   function con()

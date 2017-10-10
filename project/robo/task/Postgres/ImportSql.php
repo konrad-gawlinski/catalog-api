@@ -1,0 +1,84 @@
+<?php
+
+namespace Nu3\Robo\Task\Postgres;
+
+use Robo\Result;
+use Robo\Common\BuilderAwareTrait;
+use Robo\Contract\BuilderAwareInterface;
+
+class ImportSql extends \Robo\Task\BaseTask implements
+  BuilderAwareInterface
+{
+  use BuilderAwareTrait;
+
+  private $filePath;
+  private $host;
+  private $port;
+  private $database;
+  private $user;
+  private $password;
+
+  private $psqlExec = 'psql';
+
+  function __construct(array $config, string $filePath)
+  {
+    $this->host = $config['host'] ?? 'localhost';
+    $this->port = $config['port'] ?? '5432';
+    $this->database = $config['database'];
+    $this->user = $config['user'];
+    $this->password = $config['password'];
+    $this->filePath = $filePath;
+  }
+
+  function psqlExecPath(string $execPath)
+  {
+    $this->psqlExec = $execPath;
+    return $this;
+  }
+
+  function run() : Result
+  {
+    $filePath = $this->filePath;
+    if (!file_exists($filePath)) {
+      return Result::error($this, "Could not read file '{$filePath}'");
+    }
+
+    if ($this->importFile($filePath)) {
+      return Result::success($this, "File '{$filePath}' import success");
+    }
+
+    return Result::error($this, "Could not import file '{$filePath}'");
+  }
+
+  private function importFile(string $filePath)
+  {
+    $this->setEnvCredentials();
+    $connectionString = "postgresql://@{$this->host}:{$this->port}/{$this->database}?connect_timeout=1";
+    $this->printTaskInfo('Importing file {file}', ['file' => $filePath]);
+
+    /** @var Result $result */
+    $result = $this->collectionBuilder()
+      ->taskExec($this->psqlExec)
+      ->rawArg($connectionString . " < {$filePath}")
+      ->run();
+
+    $this->unsetEnvCredentials();
+    if ($result->wasSuccessful()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private function setEnvCredentials()
+  {
+    putenv("PGUSER={$this->user}");
+    putenv("PGPASSWORD={$this->password}");
+  }
+
+  private function unsetEnvCredentials()
+  {
+    putenv('PGUSER');
+    putenv('PGPASSWORD');
+  }
+}

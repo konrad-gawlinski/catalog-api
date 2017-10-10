@@ -1,28 +1,26 @@
-SELECT set_config('search_path', 'catalog_sp, catalog', false);
-
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__ct_create_node(__id INTEGER) RETURNS integer AS
+  <schema_name>.nu3__ct_create_node(__id INTEGER) RETURNS integer AS
 $$
-INSERT INTO catalog.product_relations (parent_id, child_id, depth)
+INSERT INTO product_relations (parent_id, child_id, depth)
   VALUES (__id, __id, 0)
 RETURNING 1;
 $$
 LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__ct_make_node_a_child(__parent_id INTEGER, __child_id INTEGER, __depth INTEGER)
+  <schema_name>.nu3__ct_make_node_a_child(__parent_id INTEGER, __child_id INTEGER, __depth INTEGER)
   RETURNS INTEGER AS
 $$
-INSERT INTO catalog.product_relations(parent_id, child_id, depth)
+INSERT INTO product_relations(parent_id, child_id, depth)
   SELECT p.parent_id, c.child_id, p.depth+c.depth+1
-  FROM catalog.product_relations p, catalog.product_relations c
+  FROM product_relations p, product_relations c
   WHERE p.child_id = __parent_id AND c.parent_id = __child_id
 RETURNING 1;
 $$
 LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__create_product(__sku VARCHAR, __type VARCHAR, __properties JSONB)
+  <schema_name>.nu3__create_product(__sku VARCHAR, __type VARCHAR, __properties JSONB)
   RETURNS INTEGER AS
 $$
     var jsonb2sqlString = (input) => {
@@ -55,7 +53,7 @@ $$
         type = __type ? `'${__type}'` : null;
 
     var result = plv8.execute(
-        `INSERT INTO catalog.product_entity(sku, type, ${inputLists[0]})
+        `INSERT INTO product_entity(sku, type, ${inputLists[0]})
             VALUES (${sku}, ${type}, ${inputLists[1]}) RETURNING id;`);
 
     return result[0]['id'];
@@ -63,7 +61,7 @@ $$
 LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__create_product_and_ct_node(__sku VARCHAR, __type VARCHAR, __properties JSONB)
+  <schema_name>.nu3__create_product_and_ct_node(__sku VARCHAR, __type VARCHAR, __properties JSONB)
   RETURNS INTEGER AS
 $$
 DECLARE
@@ -79,7 +77,7 @@ $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__update_product(__sku VARCHAR, __properties JSONB)
+  <schema_name>.nu3__update_product(__sku VARCHAR, __properties JSONB)
   RETURNS TEXT AS
 $$
     var createUpdateStatements = (properties) => {
@@ -106,7 +104,7 @@ $$
 LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__overwrite_product(__product_id INTEGER, __properties JSONB)
+  <schema_name>.nu3__overwrite_product(__product_id INTEGER, __properties JSONB)
   RETURNS TEXT AS
 $$
     var createUpdateStatements = (properties) => {
@@ -133,7 +131,7 @@ $$
 LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__jsonb_concat(__A JSONB, __B JSONB)
+  <schema_name>.nu3__jsonb_concat(__A JSONB, __B JSONB)
   RETURNS JSONB AS
 $$
 BEGIN
@@ -150,13 +148,13 @@ END
 $$
 LANGUAGE PLPGSQL;
 
-CREATE AGGREGATE catalog_sp.nu3__jsonb_agg_concat (JSONB) (
-  sfunc = catalog_sp.nu3__jsonb_concat,
+CREATE AGGREGATE <schema_name>.nu3__jsonb_agg_concat (JSONB) (
+  sfunc = <schema_name>.nu3__jsonb_concat,
   stype = JSONB
 );
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product_query (__condition VARCHAR)
+  <schema_name>.nu3__fetch_product_query (__condition VARCHAR)
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
@@ -197,7 +195,7 @@ $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product (__id INTEGER)
+  <schema_name>.nu3__fetch_product (__id INTEGER)
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
@@ -209,7 +207,7 @@ END; $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product (__sku VARCHAR)
+  <schema_name>.nu3__fetch_product (__sku VARCHAR)
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
@@ -221,7 +219,7 @@ END; $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_all_products ()
+  <schema_name>.nu3__fetch_all_products ()
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, global JSONB, de JSONB, at JSONB, fr JSONB, de_de JSONB, at_de JSONB, fr_fr JSONB
   ) AS
@@ -233,7 +231,7 @@ END; $$
 LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION
-  catalog_sp.nu3__fetch_product_merged (__sku VARCHAR, __country VARCHAR, __lang VARCHAR)
+  <schema_name>.nu3__fetch_product_merged (__sku VARCHAR, __country VARCHAR, __lang VARCHAR)
   RETURNS TABLE (
     id INTEGER, sku VARCHAR, type PRODUCT_TYPE, properties JSONB
   ) AS
