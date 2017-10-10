@@ -1,3 +1,5 @@
+SELECT set_config('search_path', '<search_path>', false);
+
 CREATE OR REPLACE FUNCTION
   <schema_name>.nu3__ct_create_node(__id INTEGER) RETURNS integer AS
 $$

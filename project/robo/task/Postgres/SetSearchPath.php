@@ -32,6 +32,9 @@ class SetSearchPath extends \Robo\Task\BaseTask implements
   function run() : Result
   {
     $searchPath = $this->searchPath;
+    $this->printTaskInfo('Setting search path {path}', [
+      'path' => $searchPath,
+    ]);
     $result = pg_query($this->con, "SELECT set_config('search_path', '{$searchPath}', false);");
 
     if ($result === false)

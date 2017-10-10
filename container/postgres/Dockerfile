@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y gcc make wget
 RUN apt-get install -y supervisor libreadline-dev zlib1g-dev less git curl lbzip2 g++
 
 #install postgresql server-client
-ENV PGSQL_VERSION 9.6.3
+ENV PGSQL_VERSION 10.0
 ENV PGSQL_FILENAME "postgresql-${PGSQL_VERSION}.tar.gz"
 
 RUN wget "https://ftp.postgresql.org/pub/source/v${PGSQL_VERSION}/${PGSQL_FILENAME}" -O "/tmp/${PGSQL_FILENAME}" \
@@ -23,7 +23,7 @@ RUN echo '' >> /etc/profile \
     && printf "\nhost\tall\t\tpostgres\tall\t\t\tpassword\n" >> /var/pgsql_data/pg_hba.conf
 
 #install pl/v8
-ENV PLV8_VERSION 2.0.0
+ENV PLV8_VERSION 2.1.0
 ENV PLV8_FILENAME "plv8-v${PLV8_VERSION}.tar.gz"
 RUN wget "https://github.com/plv8/plv8/archive/v${PLV8_VERSION}.tar.gz" -O "/tmp/${PLV8_FILENAME}" \
     && tar -xf "/tmp/${PLV8_FILENAME}" -C "/tmp/" \

@@ -6,3 +6,4 @@ command:
       database: catalog_api
       user: postgres
       password: postgres
+      search_path: catalog_sp,catalog

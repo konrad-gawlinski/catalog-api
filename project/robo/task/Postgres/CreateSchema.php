@@ -33,6 +33,10 @@ class CreateSchema extends \Robo\Task\BaseTask implements
   function run() : Result
   {
     $schema = $this->schema;
+    $this->printTaskInfo('Creating schema {schema}', [
+      'schema' => $schema,
+    ]);
+
     $result = pg_query($this->con, "CREATE SCHEMA {$schema};");
 
     if ($result === false) {
