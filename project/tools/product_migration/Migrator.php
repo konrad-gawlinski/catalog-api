@@ -336,4 +336,14 @@ class Migrator
     $trueConfigExtractor = new TrueConfigExtractor($this->dbCon);
     $trueConfigExtractor->run();
   }
+
+  function importAttributesOptionsValues()
+  {
+    pg_query($this->dbCon, "INSERT INTO product_attributes_values
+      SELECT a.name, v.value FROM
+        pac_catalog_attribute_option_value v
+        JOIN pac_catalog_attribute_type t ON v.fk_attribute_type = t.id
+        JOIN pac_catalog_attribute a ON a.id = t.fk_attribute
+      ORDER BY a.name;");
+  }
 }

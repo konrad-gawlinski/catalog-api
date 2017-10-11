@@ -28,7 +28,7 @@ class ColumnWriter
     foreach ($columns as $column) {
       $_value = $column['value'];
       if ($column['type'] === 'text') {
-        $_value = addcslashes($_value, "'");
+        $_value = str_replace("'", "''", $_value);
         $_value = "'{$_value}'";
       }
 

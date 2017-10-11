@@ -14,3 +14,4 @@ $importer->importProducts(); //slow for DE it takes 2,5min
 $importer->importAttributes(); //fast
 $importer->importAttributesTypes(); //fast
 $importer->importConfigBundleRelation(); //fast
+$importer->importAttributeOptionValues(); //fast

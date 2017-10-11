@@ -23,3 +23,11 @@ CREATE TABLE <schema_name>.product_relations (
 
 CREATE INDEX product_relations__child_id
   ON <schema_name>.product_relations USING BTREE (child_id);
+
+CREATE TABLE <schema_name>.product_attributes_values (
+  name VARCHAR NOT NULL,
+  value VARCHAR NOT NULL
+);
+
+CREATE INDEX product_attributes_values__name
+  ON <schema_name>.product_attributes_values USING BTREE (name);

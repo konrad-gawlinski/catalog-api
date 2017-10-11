@@ -25,6 +25,11 @@ CREATE TABLE migration.pac_catalog_attribute_type (
   fk_attribute INTEGER REFERENCES migration.pac_catalog_attribute(id)
 );
 
+CREATE TABLE migration.pac_catalog_attribute_option_value (
+  fk_attribute_type INTEGER REFERENCES migration.pac_catalog_attribute_type(id),
+  value VARCHAR NOT NULL
+);
+
 CREATE TABLE migration.nu3_catalog_bundle (
   product_idA INTEGER NOT NULL,
   product_idB INTEGER NOT NULL
