@@ -39,6 +39,7 @@ class ProductWriter
 
       if ($this->isBooleanAttribute($attributeName)) $_value = boolval($_value);
       else if ($this->isIntegerAttribute($attributeName)) $_value = intval($_value);
+      else if ($this->isMultiOptionAttribute($attributeName)) $_value = $this->parseMultiOptionAttribute($_value);
       else {
         $_value = $this->unescapeJsonNotAllowedCharacters($_value);
       }
@@ -182,5 +183,23 @@ class ProductWriter
     ];
 
     return isset($list[$attributeName]);
+  }
+
+  private function isMultiOptionAttribute($attributeName) : bool
+  {
+    static $list = [
+      'label_language' => true,
+      'manufacturer_multi' => true,
+      'seo_meta_robots_prod' => true,
+    ];
+
+    return isset($list[$attributeName]);
+  }
+
+  private function parseMultiOptionAttribute($value) : array
+  {
+    $values = explode('---', $value);
+    
+    return array_map('trim', $values);
   }
 }

@@ -72,19 +72,40 @@ class TrueConfigExtractor
       'type' => 'True_Config',
     ];
 
+    $valueCompareCallback = [$this, 'multiDimensionalArrayCompare'];
+
     foreach (['global', 'de', 'de_de'] as $key) {
-      $commonAttributes = call_user_func_array('array_intersect_assoc', array_column($products, $key));
-      $commonAttributes = $this->skipOwnedAttributes($commonAttributes);
+      $commonAttributes = $this->identifyCommonAttributes($products, $key, $valueCompareCallback);
       $trueConfig[$key] = $commonAttributes;
 
       foreach ($products as &$product) {
-        $product[$key] = array_diff_assoc($product[$key], $commonAttributes);
+        $product[$key] = array_udiff_assoc($product[$key], $commonAttributes, $valueCompareCallback);
       }
     }
 
     $trueConfig['global']['product_family'] = $products[0]['global']['product_family'];
 
     return [$trueConfig, $products];
+  }
+
+  private function identifyCommonAttributes(array $products, string $key, callable $uintersect) : array
+  {
+    $attributes = array_column($products, $key);
+    $attributes[] = $uintersect;
+    $commonAttributes = call_user_func_array('array_uintersect_assoc', $attributes);
+
+    return $this->skipOwnedAttributes($commonAttributes);
+  }
+
+  private function multiDimensionalArrayCompare($a, $b) : bool
+  {
+    $_a = $a;
+    $_b = $b;
+
+    if (is_array($a)) $_a = implode('|', $a);
+    if (is_array($b)) $_b = implode('|', $b);
+
+    return (string)$_a === (string)$_b;
   }
 
   private function skipOwnedAttributes(array $input) : array
