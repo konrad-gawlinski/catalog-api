@@ -337,13 +337,32 @@ class Migrator
     $trueConfigExtractor->run();
   }
 
-  function importAttributesOptionsValues()
+  function importAttributesOptionsValues(string $country, string $language)
   {
-    pg_query($this->dbCon, "INSERT INTO product_attributes_values
-      SELECT a.name, v.value FROM
-        pac_catalog_attribute_option_value v
-        JOIN pac_catalog_attribute_type t ON v.fk_attribute_type = t.id
-        JOIN pac_catalog_attribute a ON a.id = t.fk_attribute
-      ORDER BY a.name;");
+    $attributes = pg_query($this->dbCon, "SELECT a.name as name, jsonb_agg(v.value) as values FROM
+      pac_catalog_attribute_option_value v
+      JOIN pac_catalog_attribute_type t ON v.fk_attribute_type = t.id
+      JOIN pac_catalog_attribute a ON a.id = t.fk_attribute
+    GROUP BY a.name
+    ORDER BY a.name;");
+
+    while ($row = pg_fetch_assoc($attributes)) {
+      pg_query($this->dbCon, "SELECT nu3__create_product_option_value('{$row['name']}')");
+      $this->storeAttributeValues($row, $country, $language);
+    }
+  }
+
+  private function storeAttributeValues(array $attributeRow, string $country, string $language)
+  {
+    $column = 'global';
+    $attributeName = $attributeRow['name'];
+    $attributeValue = str_replace("'", "''", $attributeRow['values']);
+
+      if ($this->isCountryAttribute($attributeName))
+        $column = $country;
+      else if ($this->isLanguageAttribute($attributeName))
+        $column = $language;
+
+    pg_query($this->dbCon, "SELECT nu3__update_product_option_value('{$attributeName}', '{$column}', '{$attributeValue}');");
   }
 }

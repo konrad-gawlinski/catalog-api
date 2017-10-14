@@ -11,8 +11,7 @@ CREATE TABLE <schema_name>.product_entity (
   de_DE JSONB,
   fr_FR JSONB,
   at_DE JSONB,
-  created_at TIMESTAMP DEFAULT now(),
-  updated_at TIMESTAMP
+  created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE <schema_name>.product_relations (
@@ -25,9 +24,12 @@ CREATE INDEX product_relations__child_id
   ON <schema_name>.product_relations USING BTREE (child_id);
 
 CREATE TABLE <schema_name>.product_attributes_values (
-  name VARCHAR NOT NULL,
-  value VARCHAR NOT NULL
+  name VARCHAR NOT NULL PRIMARY KEY,
+  global JSONB,
+  DE JSONB,
+  AT JSONB,
+  FR JSONB,
+  de_DE JSONB,
+  fr_FR JSONB,
+  at_DE JSONB
 );
-
-CREATE INDEX product_attributes_values__name
-  ON <schema_name>.product_attributes_values USING BTREE (name);

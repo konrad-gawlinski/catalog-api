@@ -4,6 +4,8 @@ DROP FUNCTION <schema_name>.nu3__ct_make_node_a_child(INTEGER, INTEGER, INTEGER)
 DROP FUNCTION <schema_name>.nu3__create_product(VARCHAR, VARCHAR, JSONB);
 DROP FUNCTION <schema_name>.nu3__update_product(VARCHAR, JSONB);
 DROP FUNCTION <schema_name>.nu3__overwrite_product(INTEGER, JSONB);
+DROP FUNCTION <schema_name>.nu3__create_product_option_value(VARCHAR);
+DROP FUNCTION <schema_name>.nu3__update_product_option_value(VARCHAR, VARCHAR, JSONB);
 
 DROP FUNCTION <schema_name>.nu3__fetch_product_merged (VARCHAR, VARCHAR, VARCHAR);
 DROP FUNCTION <schema_name>.nu3__fetch_product (VARCHAR);

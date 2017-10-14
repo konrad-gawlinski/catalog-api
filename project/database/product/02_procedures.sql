@@ -243,3 +243,36 @@ $$ BEGIN
   RETURN;
 END; $$
 LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION
+  <schema_name>.nu3__create_product_option_value(__name VARCHAR)
+RETURNS INTEGER AS
+$$
+  INSERT INTO catalog.product_attributes_values (name) VALUES (__name);
+  SELECT 1;
+$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION
+  <schema_name>.nu3__update_product_option_value(__name VARCHAR, __column VARCHAR, __values JSONB)
+RETURNS INTEGER AS
+$$
+DECLARE
+  affected_rows_count INTEGER;
+
+BEGIN
+  EXECUTE 'WITH attribute_values AS ('
+  || ' SELECT jsonb_agg(values.value) as concatenated_value FROM ('
+  ||    ' SELECT DISTINCT jsonb_array_elements(nu3__jsonb_concat(' || quote_ident(__column) || ', $1)) AS value'
+  ||      ' FROM product_attributes_values WHERE name = $2 ORDER BY 1'
+  ||    ') values'
+  || '), affected_attributes AS ('
+  || ' UPDATE product_attributes_values'
+  || ' SET ' || quote_ident(__column) || ' = value.concatenated_value FROM attribute_values value WHERE name = $2'
+  || ' RETURNING name)'
+  || ' SELECT count(*) FROM affected_attributes'
+    INTO affected_rows_count USING __values, __name;
+
+  RETURN affected_rows_count;
+END; $$
+LANGUAGE PLPGSQL;
