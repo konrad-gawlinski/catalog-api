@@ -14,4 +14,4 @@ $migrator->migrateProducts('DE', 'de_DE');
 $migrator->initializeProductRelations();
 $migrator->createConfigBundleRelations();
 $migrator->createTrueConfigs();
-$migrator->importAttributesOptionsValues('de', 'de_de');
+$migrator->migrateAttributesOptionsValues('de', 'de_de');

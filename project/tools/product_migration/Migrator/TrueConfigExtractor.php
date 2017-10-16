@@ -3,16 +3,17 @@ namespace Nu3\ProductMigration\Migrator;
 
 class TrueConfigExtractor
 {
-  private $dbCon;
+  use Property\Database;
+
   private static $stdClass;
 
   function __construct($dbCon)
   {
-    $this->dbCon = $dbCon;
+    $this->setDbCon($dbCon);
     self::$stdClass = new \stdClass();
   }
 
-  function run()
+  function extractTrueConfigs()
   {
     $productFamilies = pg_query($this->dbCon,
       "SELECT array_agg(id) as product_families FROM product_entity
@@ -35,7 +36,7 @@ class TrueConfigExtractor
   private function fetchProductFamilyProducts(string $productIds) : array
   {
     $productFamilyProducts = [];
-    $products = pg_query("SELECT * FROM product_entity WHERE id IN ({$productIds})");
+    $products = pg_query($this->dbCon, "SELECT * FROM product_entity WHERE id IN ({$productIds})");
     while ($product = pg_fetch_assoc($products)) {
       $decodedProduct = $this->jsonDecode($product);
       $productFamilyProducts[] = $decodedProduct;
@@ -150,7 +151,7 @@ class TrueConfigExtractor
 
   private function createProductRelationNode(int $id)
   {
-    pg_query("SELECT nu3__ct_create_node('{$id}');");
+    pg_query($this->dbCon, "SELECT nu3__ct_create_node('{$id}');");
   }
 
   /**
@@ -166,7 +167,7 @@ class TrueConfigExtractor
       $properties = $this->escapeProductProperties($product);
       $productIds[] = $product['id'];
 
-      pg_query("SELECT nu3__overwrite_product({$product['id']}, '{$properties}')");
+      pg_query($this->dbCon, "SELECT nu3__overwrite_product({$product['id']}, '{$properties}')");
     }
 
     return $productIds;
