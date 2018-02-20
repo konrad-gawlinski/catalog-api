@@ -1,10 +1,10 @@
 FROM debian:jessie
 
 RUN apt-get update && apt-get install -y gcc make wget autoconf
-RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev curl libcurl3 libcurl4-openssl-dev git
+RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev curl libcurl3 libcurl4-openssl-dev libpq-dev git
 
 #install postgresql client
-ENV PGSQL_VERSION 9.6.5
+ENV PGSQL_VERSION "10.2"
 ENV PGSQL_FILENAME "postgresql-${PGSQL_VERSION}.tar.gz"
 
 RUN wget "https://ftp.postgresql.org/pub/source/v${PGSQL_VERSION}/${PGSQL_FILENAME}" -O "/tmp/${PGSQL_FILENAME}" \
@@ -12,13 +12,10 @@ RUN wget "https://ftp.postgresql.org/pub/source/v${PGSQL_VERSION}/${PGSQL_FILENA
     && cd "/tmp/postgresql-${PGSQL_VERSION}" && "./configure" \
         --prefix=/usr/local/pgsql \
         --without-readline \
-    && make -C src/bin install \
-    && make -C src/backend install \
-    && make -C src/include install \
-    && make -C src/interfaces install
+    && make -j 4
 
 #install nginx
-ENV NGINX_VERSION nginx-1.13.5
+ENV NGINX_VERSION "nginx-1.12.2"
 ENV NGINX_FILENAME "${NGINX_VERSION}.tar.gz"
 
 RUN wget "http://nginx.org/download/${NGINX_FILENAME}" -O "/tmp/${NGINX_FILENAME}" \
@@ -30,12 +27,12 @@ RUN wget "http://nginx.org/download/${NGINX_FILENAME}" -O "/tmp/${NGINX_FILENAME
         --user=www-data \
         --group=www-data \
         --without-http_proxy_module \
-    && make && make install
+    && make -j 4 && make install
 
 COPY conf/http/ /usr/local/nginx/conf/
 
 #install php7
-ENV PHP_VERSION php-7.1.9
+ENV PHP_VERSION "php-7.2.2"
 ENV PHP_FILENAME "${PHP_VERSION}.tar.gz"
 
 RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FILENAME}" \
@@ -49,7 +46,7 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --with-curl \
         --enable-mbstring \
         --enable-opcache --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
-    && make && make install \
+    && make -j 4 && make install \
     && mkdir -p /var/webapp \
     && mkdir /var/log/php \
     && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php
@@ -59,7 +56,7 @@ COPY conf/php.ini /usr/local/php-fpm/lib/
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
 #install xdebug
-ENV XDEBUG_VERSION xdebug-2.5.5
+ENV XDEBUG_VERSION "xdebug-2.6.0"
 ENV XDEBUG_FILENAME "${XDEBUG_VERSION}.tgz"
 
 RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAME}" \
@@ -68,7 +65,7 @@ RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAM
     && "./configure" \
         --enable-xdebug \
         --with-php-config=/usr/local/php-fpm/bin/php-config \
-    && make && make install \
+    && make -j 4 && make install \
     && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\nxdebug.remote_enable=1;\n/g' /usr/local/php-fpm/lib/php.ini
 
 RUN rm -rf /tmp/* \
