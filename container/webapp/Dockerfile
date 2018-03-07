@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 RUN apt-get update && apt-get install -y gcc make wget autoconf
-RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev curl libcurl3 libcurl4-openssl-dev libpq-dev git
+RUN apt-get install -y supervisor libpcre3-dev zlib1g-dev libxml2-dev curl libcurl3 libcurl4-openssl-dev libssl-dev libpq-dev git
 
 #install postgresql client
 ENV PGSQL_VERSION "10.2"
@@ -12,7 +12,8 @@ RUN wget "https://ftp.postgresql.org/pub/source/v${PGSQL_VERSION}/${PGSQL_FILENA
     && cd "/tmp/postgresql-${PGSQL_VERSION}" && "./configure" \
         --prefix=/usr/local/pgsql \
         --without-readline \
-    && make -j 4
+    && make -j 4 \
+    && make install
 
 #install nginx
 ENV NGINX_VERSION "nginx-1.12.2"
@@ -41,12 +42,14 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --prefix=/usr/local/php-fpm \
         --disable-cgi \
         --without-pear \
+        --with-libdir=/lib/x86_64-linux-gnu \
         --with-pgsql=/usr/local/pgsql \
         --with-pdo-pgsql=/usr/local/pgsql \
         --with-curl \
+        --with-openssl \
         --enable-mbstring \
         --enable-opcache --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
-    && make -j 4 && make install \
+    && make -j 3 && make install \
     && mkdir -p /var/webapp \
     && mkdir /var/log/php \
     && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php
