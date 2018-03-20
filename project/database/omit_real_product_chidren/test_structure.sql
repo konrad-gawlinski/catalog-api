@@ -50,7 +50,19 @@ INSERT INTO product VALUES
   (12, 'id_12', 'active', 'simple', '{"name":"id_12", "model": "300GT"}', null, null, '{"check":"passed"}', null),
   (25, 'id_25', 'active', 'bundle', '{"name":"id_25", "package":"sport"}', null, null, null, null),
   (41, null, '', 'config', '{"brand": "Mitsubishi", "config": "AWD", "drive":"4 wheel"}', null, null, '{"check":"unknown"}', '{"check":"unknown"}'),
-  (42, null, '', 'config', '{"brand": "Mitsubishi", "config":"fast"}', '{"color":"ferrari red"}', '{"color":"ferrari red"}', null, null)
+  (42, null, '', 'config', '{"brand": "Mitsubishi", "config":"fast"}', '{"color":"ferrari red"}', '{"color":"ferrari red"}', null, null),
+
+  (13, 'id_13', 'active', 'simple', '{"name":"id_13", "model": "300GT"}', null, null, '{"check":"passed"}', null),
+  (26, 'id_26', 'active', 'bundle', '{"name":"id_26", "package":"sport"}', null, null, null, null),
+  (43, null, '', 'config', '{"brand": "Mitsubishi", "config": "AWD", "drive":"4 wheel"}', null, null, '{"check":"unknown"}', '{"check":"unknown"}'),
+  (44, null, '', 'config', '{"brand": "Mitsubishi", "config":"fast"}', '{"color":"ferrari red"}', '{"color":"ferrari red"}', null, null),
+
+  (14, 'id_14', 'active', 'simple', '{"name":"id_14", "model": "300GT"}', null, null, '{"check":"passed"}', null),
+  (27, 'id_27', 'active', 'bundle', '{"name":"id_27", "package":"sport"}', null, null, null, null),
+  (45, null, '', 'config', '{"brand": "Mitsubishi", "config": "AWD", "drive":"4 wheel"}', null, null, '{"check":"unknown"}', '{"check":"unknown"}'),
+  (46, null, '', 'config', '{"brand": "Mitsubishi", "config":"fast"}', '{"color":"ferrari red"}', '{"color":"ferrari red"}', null, null),
+  (47, null, '', 'config', '{"brand": "Mitsubishi", "fuel":"petrol"}', null, null, null, null)
+
 ;
 
 -- product structure, init
@@ -79,7 +91,16 @@ INSERT INTO product_config VALUES
   (10, 10, 0),
   (11, 11, 0),
   (39, 39, 0),
-  (40, 40, 0)
+  (40, 40, 0),
+  (13, 13, 0),
+  (26, 26, 0),
+  (44, 44, 0),
+  (43, 43, 0),
+  (14, 14, 0),
+  (27, 27, 0),
+  (45, 45, 0),
+  (46, 46, 0),
+  (47, 47, 0)
 ;
 
 -- product structure
@@ -110,5 +131,20 @@ INSERT INTO product_config VALUES
   (10, 39, 1),
   (11, 40, 1),
   (39, 40, 1),
-  (10, 40, 2)
+  (10, 40, 2),
+
+  (13, 26, 1),
+  (13, 43, 1),
+  (13, 44, 1),
+  (26, 44, 1),
+  (13, 44, 2),
+
+  (14, 27, 1),
+  (14, 45, 1),
+  (14, 47, 1),
+  (27, 45, 1),
+  (45, 46, 1),
+  (14, 45, 2),
+  (27, 46, 2),
+  (14, 46, 3)
 ;

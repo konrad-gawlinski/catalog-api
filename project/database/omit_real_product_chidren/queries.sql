@@ -59,7 +59,7 @@ SELECT * FROM
 
 -- select products by sku
 SELECT * FROM
-  (SELECT id FROM product WHERE sku IN ('id_11', 'id_10')) as product_id
+  (SELECT id FROM product WHERE sku IN ('id_13')) as product_id
   JOIN LATERAL (SELECT * FROM fetch_product(product_id.id)) as properties ON true
 ;
 
