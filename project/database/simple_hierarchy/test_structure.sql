@@ -18,9 +18,9 @@ CREATE TABLE product_config (
 -------------------------------------
 INSERT INTO product VALUES
   (1, 'id_1', 'simple', '{"name":"id_1","color": "red"}','{"color":"black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
-  (31, null, 'config', '{"brand": "Audi", "model": "A6"}', null, null, null, null),
+  (31, null, 'config', '{"id_31":true, "brand": "Audi", "model": "A6"}', null, null, null, null),
 
-  (2, 'id_2', 'simple', '{"name":"id_2", "brand": "BMW", "model": "X6"}', '{"color":"black"}', null, '{"check":"passed"}', null),
+  (2, 'id_2', 'simple', '{"id_2":true, "name":"id_2", "brand": "BMW", "model": "X6"}', '{"color":"black"}', null, '{"check":"passed"}', null),
   (32, null, 'config', '{"id_32":true, "brand":"BMW", "package":"family"}', null, null, null, null),
   (33, null, 'config', '{"id_33":true, "brand": "BMW"}', null, null, null, null),
 
@@ -35,7 +35,14 @@ INSERT INTO product VALUES
   (39, null, 'config', '{"id_39":true, "brand": "Mercedes"}', null, null, null, null),
   (40, null, 'config', '{"id_40":true, "brand": "Mercedes", "package":"sport"}', '{"power": "a lot"}', null, null, null),
 
-  (5, 'id_5', 'simple', '{"name":"id_5", "naked":true}',null, null, null, null)
+  (5, 'id_5', 'simple', '{"name":"id_5", "naked":true}',null, null, null, null),
+
+  (11, 'id_11', 'bundle', '{"name":"id_11", "package":"sport"}', '{"speed":"supper"}', null, '{"speed":"moderate"}', null),
+
+  (12, 'id_12', 'bundle', '{"name":"id_12", "package":"sport"}', '{"speed":"supper"}', null, '{"speed":"moderate"}', null),
+
+  (13, 'id_13', 'bundle', '{"name":"id_13", "package":"total mix"}', '{"speed":"supper"}', '{"color":"custom"}', '{"speed":"moderate"}', '{"color":"custom"}')
+
 ;
 
 INSERT INTO product_config VALUES
@@ -57,28 +64,57 @@ INSERT INTO product_config VALUES
   (39, 39, 0),
   (40, 40, 0),
 
-  (5, 5, 0)
+  (5, 5, 0),
+
+  (11, 11, 0),
+
+  (12, 12, 0),
+
+  (13, 13, 0)
 ;
 
 INSERT INTO product_config VALUES
-  (1, 31, 1),
+--   (1, 31, 1),
+--
+--   (2, 32, 1),
+--   (2, 33, 1),
+--
+--   (3, 34, 1),
+--   (3, 35, 1),
+--   (34, 36, 1),
+--   (3, 36, 2),
+--
+--   (4, 37, 1),
+--   (4, 38, 1),
+--   (37, 39, 1),
+--   (38, 40, 1),
+--   (4, 39, 2),
+--   (4, 40, 2),
+--
+--   (5, 31, 1),
+--   (5, 34, 1),
+--   (5, 40, 1),
 
-  (2, 32, 1),
-  (2, 33, 1),
+--   (11, 31, 1),
+--   (11, 33, 1),
 
-  (3, 34, 1),
-  (3, 35, 1),
-  (34, 36, 1),
-  (3, 36, 2),
+--   (12, 36, 1),
+--   (36, 35, 1),
+--   (12, 35, 2),
 
-  (4, 37, 1),
-  (4, 38, 1),
-  (37, 39, 1),
-  (38, 40, 1),
-  (4, 39, 2),
-  (4, 40, 2),
+--   (13, 33, 1),
+--   (13, 40, 1),
+--   (33, 36, 1),
+--   (40, 39, 1),
+--   (36, 40, 1),
+--   (33, 40, 2),
+--   (13, 36, 2),
+--   (13, 39, 2),
+--   (13, 40, 3),
 
-  (5, 31, 1),
-  (5, 34, 1),
-  (5, 40, 1)
+--   (11, 2, 1),
+
+  (13, 3, 1),
+  (13, 3, 1),
+  (13, 5, 1)
 ;
