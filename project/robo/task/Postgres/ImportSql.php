@@ -52,33 +52,24 @@ class ImportSql extends \Robo\Task\BaseTask implements
 
   private function importFile(string $filePath)
   {
-    $this->setEnvCredentials();
-    $connectionString = "postgresql://@{$this->host}:{$this->port}/{$this->database}?connect_timeout=1";
+    $dbCSHost = "{$this->host}:{$this->port}/{$this->database}?connect_timeout=1";
+    $connectionString = "postgresql://{$this->user}:{$this->password}@{$dbCSHost}";
+    $protectedConnectionString = "postgresql://xxx:xxx@{$dbCSHost}";
+
     $this->printTaskInfo('Importing file {file}', ['file' => $filePath]);
+    $this->printTaskInfo('Connection string: {cs}', ['cs' => $protectedConnectionString]);
 
     /** @var Result $result */
     $result = $this->collectionBuilder()
       ->taskExec($this->psqlExec)
+      ->silent(true)
       ->rawArg($connectionString . " < {$filePath}")
       ->run();
 
-    $this->unsetEnvCredentials();
     if ($result->wasSuccessful()) {
       return true;
     }
 
     return false;
-  }
-
-  private function setEnvCredentials()
-  {
-    putenv("PGUSER={$this->user}");
-    putenv("PGPASSWORD={$this->password}");
-  }
-
-  private function unsetEnvCredentials()
-  {
-    putenv('PGUSER');
-    putenv('PGPASSWORD');
   }
 }
