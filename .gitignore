@@ -6,3 +6,4 @@ project/tools/product_migration/*.json
 project/tools/product_migration/data
 project/tests/functional/_data
 project/tests/functional/_output
+container/solr/bin
