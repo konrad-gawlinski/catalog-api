@@ -1,20 +1,23 @@
 FROM debian:jessie
 
-RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list \
-    && echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
-
 RUN apt-get update && apt-get install -y gcc make wget
-RUN printf 'yes\n' | apt-get install -y supervisor oracle-java8-installer lsof
+RUN apt-get install -y supervisor lsof
+
+#install java
+#copy java tar file to /container/solr/bin/
+COPY bin/jdk-8u152-linux-x64.tar.gz /tmp/jdk-8u152-linux-x64.tar.gz
+
+RUN tar -zxf "/tmp/jdk-8u152-linux-x64.tar.gz" -C /usr/local \
+    && update-alternatives --install /usr/bin/java java /usr/local/jdk1.8.0_152/bin/java 100 \
+    && update-alternatives --install /usr/bin/javac javac /usr/local/jdk1.8.0_152/bin/javac 100
 
 #install solr sever
-ENV SOLR_VERSION 7.1.0
+ENV SOLR_VERSION 7.2.1
 ENV SOLR_FILENAME "solr-${SOLR_VERSION}.tgz"
 
-RUN wget "wget http://mirror.funkfreundelandshut.de/apache/lucene/solr/${SOLR_VERSION}/${SOLR_FILENAME}" -O "/tmp/${SOLR_FILENAME}" \
+RUN wget "http://mirror.funkfreundelandshut.de/apache/lucene/solr/${SOLR_VERSION}/${SOLR_FILENAME}" -O "/tmp/${SOLR_FILENAME}" \
     && mkdir /usr/local/solr7 \
-    && tar -xf "/tmp/${SOLR_FILENAME}" -C "/usr/local/solr7" \
-    && mkdir -p "/usr/local/solr7/solr-7.1.0/example/testdrive/solr"
+    && tar -xf "/tmp/${SOLR_FILENAME}" -C "/usr/local/solr7"
 
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
