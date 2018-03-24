@@ -5,4 +5,10 @@ suites:
         src_path: %paths.config%/../../../src/service/Product
         spec_path: %paths.config%
         spec_prefix: spec\Product
+    database:
+        namespace: Nu3\Core\Database
+        psr4_prefix: Nu3\Core\Database
+        src_path: %paths.config%/../../../src/core/database
+        spec_path: %paths.config%
+        spec_prefix: spec\Database
 formatter.name: pretty
