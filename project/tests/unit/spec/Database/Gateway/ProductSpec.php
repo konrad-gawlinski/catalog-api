@@ -21,11 +21,11 @@ class ProductSpec extends ObjectBehavior
   function it_should_create_product()
   {
     $this->startTransaction();
-    $this->create_product('sku_123', 'simple', [])->shouldBeNumeric();
+    $this->create_product('sku_123', 'simple', [])->shouldBeInteger();
     $this->rollbackTransaction();
   }
 
-  function it_should_fail_create_product_given_not_existing_column()
+  function it_should_fail_product_creation_given_not_existing_column()
   {
     $this->startTransaction();
 
@@ -33,6 +33,25 @@ class ProductSpec extends ObjectBehavior
      'create_product',
       ['sku_123', 'simple', ['foo'=>'bar']]
     );
+
+    $this->rollbackTransaction();
+  }
+
+  function it_should_create_product_node()
+  {
+    $this->startTransaction();
+
+    $productId = $this->it_should_create_product('sku_123', 'simple', []);
+    $this->shouldNotThrow(Database\Exception::class)->during('create_node', [$productId]);
+
+    $this->rollbackTransaction();
+  }
+
+  function it_should_fail_product_node_creation_given_not_existing_product_id()
+  {
+    $this->startTransaction();
+
+    $this->shouldThrow(Database\Exception::class)->during('create_node', [99999934]);
 
     $this->rollbackTransaction();
   }
