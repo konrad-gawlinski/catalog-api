@@ -9,10 +9,10 @@ class Base
   /**
    * @var Connection
    */
-  protected $dbconn;
+  protected $dbConnection;
 
-  function __construct(Connection $dbconn)
+  function __construct(Connection $dbConnection)
   {
-    $this->dbconn = $dbconn;
+    $this->dbConnection = $dbConnection;
   }
 }

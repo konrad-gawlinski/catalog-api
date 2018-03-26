@@ -7,7 +7,7 @@ class App
   private static $app;
   private static $instance;
 
-  private static $dbconn;
+  private static $dbConnection;
 
   private function __construct() {
     $this::$app = require __DIR__.'/../../../src/bootstrap.php';
@@ -22,10 +22,10 @@ class App
   }
 
   function connectDb() {
-    if (!$this::$dbconn) {
-      self::$dbconn = $this::$app['database.connection'];
+    if (!self::$dbConnection) {
+      self::$dbConnection = $this::$app['database.connection'];
     }
 
-    return self::$dbconn;
+    return self::$dbConnection;
   }
 }

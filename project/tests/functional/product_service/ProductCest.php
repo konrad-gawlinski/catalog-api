@@ -119,8 +119,8 @@ JSON;
   {
     /** @var \Nu3\Core\Database\Connection $db */
     $db = $I->getApp()['database.connection'];
-    $I->removeProductBySku($db->con(), $this->randSku);
-    $I->removeProductBySku($db->con(), 'nu3_3');
+    $I->removeProductBySku($db->connectionRes(), $this->randSku);
+    $I->removeProductBySku($db->connectionRes(), 'nu3_3');
   }
 
   private function generateRandomSku() : string

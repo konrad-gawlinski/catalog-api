@@ -2,17 +2,20 @@
 
 namespace Nu3\Spec;
 
+use Nu3\Core\Database\Connection;
+
 trait DatabaseHelper
 {
-  private $dbconn;
+  /** @var Connection */
+  private $dbConnection;
 
   private function startTransaction()
   {
-    pg_query($this->dbconn, 'START TRANSACTION');
+    pg_query($this->dbConnection->connectionRes(), 'START TRANSACTION');
   }
 
-  private function endTransaction()
+  private function rollbackTransaction()
   {
-    pg_query($this->dbconn, 'ROLLBACK');
+    pg_query($this->dbConnection->connectionRes(), 'ROLLBACK');
   }
 }

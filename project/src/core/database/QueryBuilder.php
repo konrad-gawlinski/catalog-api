@@ -26,7 +26,7 @@ class QueryBuilder
     $comma = '';
 
     foreach ($properties as $column => $value) {
-      $columns .= $comma . $column;
+      $columns .= $comma . pg_escape_identifier($column);
       $values .= $comma . pg_escape_literal(json_encode($value));
       $comma = ',';
     }

@@ -19,7 +19,7 @@ class QueryBuilderSpec extends ObjectBehavior
   {
     $this->concatColumnsAndJsonValues('global', 'null' , ['de_de' => ['key' => 'value']])
       ->shouldReturn([
-        'global,de_de',
+        'global,"de_de"',
         'null,\'{"key":"value"}\''
       ]);
   }
@@ -28,7 +28,7 @@ class QueryBuilderSpec extends ObjectBehavior
   {
     $this->concatColumnsAndJsonValues('', '' , ['de_de' => ['key' => 'value']])
       ->shouldReturn([
-        'de_de',
+        '"de_de"',
         '\'{"key":"value"}\''
       ]);
   }
@@ -41,4 +41,14 @@ class QueryBuilderSpec extends ObjectBehavior
         'null'
       ]);
   }
+
+  function it_escapes_values()
+  {
+    $this->concatColumnsAndJsonValues('', '' , ['de_de' => ['key' => 'val\'ue']])
+      ->shouldReturn([
+        '"de_de"',
+        '\'{"key":"val\'\'ue"}\''
+      ]);
+  }
+
 }

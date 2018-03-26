@@ -27,6 +27,6 @@ class Database
     pg_query($con, "SET CLIENT_ENCODING TO 'UTF8';");
     pg_query($con, "SET search_path TO public;");
 
-    return $this->db->con();
+    return $this->db->connectionRes();
   }
 }

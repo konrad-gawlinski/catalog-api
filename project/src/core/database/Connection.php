@@ -24,7 +24,7 @@ class Connection
        throw new Exception("Could not set search_path config '{$searchPath}': " . pg_last_error());
   }
 
-  function con()
+  function connectionRes()
   {
     return $this->connection;
   }
