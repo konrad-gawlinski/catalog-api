@@ -17,15 +17,25 @@ ENV SOLR_FILENAME "solr-${SOLR_VERSION}.tgz"
 
 RUN wget "http://mirror.funkfreundelandshut.de/apache/lucene/solr/${SOLR_VERSION}/${SOLR_FILENAME}" -O "/tmp/${SOLR_FILENAME}" \
     && mkdir /usr/local/solr7 \
-    && tar -xf "/tmp/${SOLR_FILENAME}" -C "/usr/local/solr7"
+    && tar -xf "/tmp/${SOLR_FILENAME}" -C "/usr/local/solr7" \
+    && mkdir /var/solr_home && mkdir /var/solr_data
 
+RUN adduser --disabled-password --gecos "" solr \
+    && chown -R solr /usr/local/solr7 \
+    && chown -R solr /var/solr_home && chown -R solr /var/solr_data
+
+COPY conf/solr/solr.xml /var/solr_home/solr.xml
 COPY conf/supervisor/ /etc/supervisor/conf.d
+
+#RUN cd /var/solr_home \
+#  && su solr -c "/usr/local/solr7/solr-7.2.1/bin/solr create_core -c product_catalog" \
+#  && mv product_catalog/conf/managed-schema product_catalog/conf/schema.xml \
+#  && sed -i '/<config>/a \  <schemaFactory class="ClassicIndexSchemaFactory"\/>\n' product_catalog/conf/solrconfig.xml
+#
+#remove schemaless update chain statements
 
 #cleanup
 RUN rm -rf /tmp/* \
     && apt-get purge -y --auto-remove gcc make wget
 
 CMD ["supervisord", "-n"]
-
-#docker run -it -p 8983:8983 --network=catalog-api --name=solr-v7 private/solr-v7 /bin/bash
-#"bin/solr" start -cloud -p 8983 -s "example/cloud/node1/solr" -force
