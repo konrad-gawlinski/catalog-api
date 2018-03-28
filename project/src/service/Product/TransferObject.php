@@ -8,22 +8,21 @@ class TransferObject
 {
   /** @var string */
   private $sku;
-
-  /** @var string */
-  private $country;
-
-  /** @var string */
-  private $language;
+  private $type;
 
   /** @var array */
-  private $productProperties;
+  private $productProperties = [];
 
   function __construct(CURequest $request)
   {
+    $payload = $request->getPayload();
+
     $this->sku = $request->getSku();
-    $this->country = $request->getCountry();
-    $this->language = $request->getLanguage();
-    $this->productProperties = $request->getPayload();
+    if (isset($payload[Property::PRODUCT_TYPE]))
+      $this->type = $payload[Property::PRODUCT_TYPE];
+
+    if (isset($payload[Property::PRODUCT_PROPERTIES]))
+      $this->productProperties = $payload[Property::PRODUCT_PROPERTIES];
   }
 
   function getProductProperties() : array
@@ -36,14 +35,8 @@ class TransferObject
     return $this->sku;
   }
 
-  function getCountry() : string
+  function getType() : string
   {
-    return $this->country;
+    return $this->type;
   }
-
-  function getLanguage() : string
-  {
-    return $this->language;
-  }
-
 }

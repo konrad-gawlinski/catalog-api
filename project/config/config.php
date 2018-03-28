@@ -25,11 +25,11 @@ return array (
   ),
   'product' => 
   array (
-    'Config' => 
+    'config' =>
     array (
       'validation_rules' => 'config.yml',
     ),
-    'Bundle' => 
+    'bundle' =>
     array (
       'validation_rules' => 'config.yml',
     ),

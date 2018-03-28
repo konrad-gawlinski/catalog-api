@@ -11,16 +11,16 @@ class ValueFilterSpec extends ObjectBehavior
 {
   function it_should_apply_filter(Product $product)
   {
-    $product->properties = [
+    $product->properties = ['global' => [
       Property::PRODUCT_NAME => '  some product__name  ',
       Property::META_TITLE => '  meta-title  ',
-    ];
+    ]];
 
     $product = $this->filterEntity($product);
 
-    $product->__get('properties')->shouldReturn([
+    $product->__get('properties')->shouldReturn(['global' => [
       Property::PRODUCT_NAME => 'some product__name',
       Property::META_TITLE => 'meta-title',
-    ]);
+    ]]);
   }
 }

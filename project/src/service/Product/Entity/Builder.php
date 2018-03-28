@@ -9,8 +9,8 @@ class Builder
   function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
   {
     $entity->sku = $dto->getSku();
-    if (isset($dto->getProductProperties()[Product::TYPE]))
-      $entity->type = $dto->getProductProperties()[Product::TYPE];
+
+    if ($dto->getType()) $entity->type = $dto->getType();
 
     $this->applyAttributes($dto, $entity);
 
@@ -22,9 +22,11 @@ class Builder
     $properties = $dto->getProductProperties();
     $attributesMap = $this->getDto2DbPropertyMap();
 
-    foreach ($properties as $property => $value) {
-      if (isset($attributesMap[$property])) {
-        $entity->properties[$attributesMap[$property]] = $value;
+    foreach ($properties as $region => $regionProperties) {
+      foreach ($regionProperties as $property => $value) {
+        if (isset($attributesMap[$property])) {
+          $entity->properties[$region][$attributesMap[$property]] = $value;
+        }
       }
     }
   }

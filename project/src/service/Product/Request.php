@@ -5,8 +5,6 @@ namespace Nu3\Service\Product;
 class Request
 {
   const PROPERTY_SKU = 'sku';
-  const PROPERTY_COUNTRY = 'country';
-  const PROPERTY_LANGUAGE = 'lang';
 
   protected $params = [];
 
@@ -18,16 +16,6 @@ class Request
   function getSku(): string
   {
     return $this->getValue(self::PROPERTY_SKU);
-  }
-
-  function getCountry(): string
-  {
-    return $this->getValue(self::PROPERTY_COUNTRY);
-  }
-
-  function getLanguage(): string
-  {
-    return $this->getValue(self::PROPERTY_LANGUAGE);
   }
 
   /**

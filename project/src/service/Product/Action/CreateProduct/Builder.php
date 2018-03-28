@@ -10,6 +10,13 @@ class Builder extends \Nu3\Service\Product\Entity\Builder
 {
   function applyDefaultAttributesValues(Product $entity)
   {
-    $entity->properties[Property::PRODUCT_STATUS] = ProductStatus::NEW;
+    $this->forceStatus_new($entity);
+  }
+
+  private function forceStatus_new(Product $entity)
+  {
+    foreach ($entity->properties as &$region) {
+      $region[Property::PRODUCT_STATUS] = ProductStatus::NEW;
+    }
   }
 }

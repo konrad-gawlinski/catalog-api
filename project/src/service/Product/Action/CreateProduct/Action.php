@@ -56,8 +56,8 @@ class Action extends ActionBase
     if ($violations) return $violations;
 
     $dto = $this->factory->createDataTransferObject($request);
-    $storedProduct = $this->dbGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
-    if ($storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_RESTRICTED)];
+    $productExists = $this->dbGateway->productExists($dto->getSku());
+    if ($productExists) return [new Violation(ErrorKey::PRODUCT_CREATION_FORBIDDEN)];
 
     $product = $this->buildProduct($dto);
     $violations = $this->factory->createEntityValidator()->validate($product);
@@ -87,9 +87,7 @@ class Action extends ActionBase
   private function saveProduct(Entity\Product $product, TransferObject $dto) : array
   {
     try {
-      $attributeSorter = $this->factory->createAttributeSorter();
-      $sortedAttributes = $attributeSorter->sort($dto->getCountry(), $dto->getLanguage(), $product->properties);
-      $this->dbGateway->createProduct($product->sku, $product->type, json_encode($sortedAttributes));
+      $this->dbGateway->createProduct($product->sku, $product->type, $product->properties);
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
@@ -105,7 +103,7 @@ class Action extends ActionBase
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::NEW_PRODUCT_REQUIRES_TYPE:
-      case ErrorKey::PRODUCT_UPDATE_RESTRICTED:
+      case ErrorKey::PRODUCT_CREATION_FORBIDDEN:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
         return 400;
 

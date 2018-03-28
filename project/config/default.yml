@@ -10,7 +10,7 @@ country:
 language:
   available: ['de_de']
 product:
-  Config:
+  config:
     validation_rules: config.yml
-  Bundle:
+  bundle:
     validation_rules: config.yml

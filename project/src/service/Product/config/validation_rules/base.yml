@@ -6,44 +6,45 @@ Nu3\Service\Product\Entity\Product:
     type:
       - NotBlank: ~
       - Choice:
-          choices: ["Config", "Bundle", "True_Config"]
+          choices: ["config", "bundle", "config"]
     properties:
-      - Collection:
-          fields:
-            status:
-              - Choice:
-                  choices: ["new", "approved", "not listed", "unavailable"]
-            name:
-              - NotBlank: ~
-            final_gross_price:
-              - Optional:
-                - Type: integer
-                - Range:
-                    min: 1
-                    groups: [sellable]
-            tax_rate:
-              - Optional:
-                - Range:
-                    min: 0
-                    max: 100
-            seo_robots:
-              - Optional:
+      - All:
+        - Collection:
+            fields:
+              status:
                 - Choice:
-                    choices: ["noindex", "index", "nofollow", "follow"]
-                    multiple: true
-            seo_title:
-              - Optional:
+                    choices: ["new", "approved", "not listed", "unavailable"]
+              name:
                 - NotBlank: ~
-            manufacturer:
-              - Optional:
-                - NotBlank: ~
-            description:
-              - Optional:
-                - NotBlank: { groups: [sellable] }
-            short_description:
-              - Optional: ~
-            label_language:
-              - Optional:
-                - Type: array
-          allowMissingFields: false
-          allowExtraFields: true
+              final_gross_price:
+                - Optional:
+                  - Type: integer
+                  - Range:
+                      min: 1
+                      groups: [sellable]
+              tax_rate:
+                - Optional:
+                  - Range:
+                      min: 0
+                      max: 100
+              seo_robots:
+                - Optional:
+                  - Choice:
+                      choices: ["noindex", "index", "nofollow", "follow"]
+                      multiple: true
+              seo_title:
+                - Optional:
+                  - NotBlank: ~
+              manufacturer:
+                - Optional:
+                  - NotBlank: ~
+              description:
+                - Optional:
+                  - NotBlank: { groups: [sellable] }
+              short_description:
+                - Optional: ~
+              label_language:
+                - Optional:
+                  - Type: array
+            allowMissingFields: false
+            allowExtraFields: true

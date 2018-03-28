@@ -22,8 +22,6 @@ class Validator
     $violations = [];
 
     $violations += $this->validateRequiredSku($request->getSku());
-    $violations += $this->validateCountry($request->getCountry());
-    $violations += $this->validateLanguage($request->getLanguage());
 
     return $violations;
   }

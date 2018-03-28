@@ -18,6 +18,28 @@ class Product extends Base
     $this->queryBuilder = new QueryBuilder();
   }
 
+  function productExists(string $sku)
+  {
+    return $this->runQueryFunction(
+      function() use ($sku) {
+        return $this->queryProductExists($sku);
+      },
+      'Product existence could not be verified'
+    );
+  }
+
+  private function queryProductExists(string $sku) : bool
+  {
+    $_sku = pg_escape_literal($sku);
+
+    $result = pg_query($this->dbConnection->connectionRes(),
+      "SELECT count(*) FROM products WHERE sku={$_sku}"
+    );
+
+    $skuExists = pg_fetch_row($result)[0] === '1';
+    return $skuExists;
+  }
+
   /**
    * @throws DatabaseException
    */
@@ -97,7 +119,7 @@ WITH insert_statement AS (
     (values{$queryValues}) AS parents(id) CROSS JOIN (values ({$childId})) as product(id)
   RETURNING *
 )
-SELECT count(1) FROM insert_statement
+SELECT count(*) FROM insert_statement
 QUERY;
 
       $result = pg_query($this->dbConnection->connectionRes(), $query);

@@ -1,8 +1,9 @@
 Nu3\Service\Product\Entity\Product:
   properties:
     properties:
-      - Collection:
-          fields:
-            children:
-              - NotBlank: ~
-              - Type: array
+      - All:
+        - Collection:
+            fields:
+              children:
+                - NotBlank: ~
+                - Type: array

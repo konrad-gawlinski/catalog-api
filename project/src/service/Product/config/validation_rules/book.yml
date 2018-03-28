@@ -1,8 +1,0 @@
-Nu3\Service\Product\Entity\Product:
-  properties:
-    properties:
-      - Collection:
-          fields:
-            seo_robots:
-              - Choice:
-                  choices: ["noindex", "nofollow"]

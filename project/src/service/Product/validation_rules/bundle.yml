@@ -2,79 +2,81 @@ Nu3\Service\Product\Entity\Product:
   properties:
     properties:
       -
-        Collection:
-          fields:
-            children:
-              -
-                NotBlank: null
-              -
-                Type: array
-            status:
-              -
-                Choice:
-                  choices:
-                    - new
-                    - approved
-                    - 'not listed'
-                    - unavailable
-            name:
-              -
-                NotBlank: null
-            final_gross_price:
-              -
-                Optional:
+        All:
+          -
+            Collection:
+              fields:
+                children:
                   -
-                    Type: integer
+                    NotBlank: null
                   -
-                    Range:
-                      min: 1
-                      groups:
-                        - sellable
-            tax_rate:
-              -
-                Optional:
-                  -
-                    Range:
-                      min: 0
-                      max: 100
-            seo_robots:
-              -
-                Optional:
+                    Type: array
+                status:
                   -
                     Choice:
                       choices:
-                        - noindex
-                        - index
-                        - nofollow
-                        - follow
-                      multiple: true
-            seo_title:
-              -
-                Optional:
+                        - new
+                        - approved
+                        - 'not listed'
+                        - unavailable
+                name:
                   -
                     NotBlank: null
-            manufacturer:
-              -
-                Optional:
+                final_gross_price:
                   -
-                    NotBlank: null
-            description:
-              -
-                Optional:
+                    Optional:
+                      -
+                        Type: integer
+                      -
+                        Range:
+                          min: 1
+                          groups:
+                            - sellable
+                tax_rate:
                   -
-                    NotBlank:
-                      groups:
-                        - sellable
-            short_description:
-              -
-                Optional: null
-            label_language:
-              -
-                Optional:
+                    Optional:
+                      -
+                        Range:
+                          min: 0
+                          max: 100
+                seo_robots:
                   -
-                    Type: array
-          allowMissingFields: false
-          allowExtraFields: true
+                    Optional:
+                      -
+                        Choice:
+                          choices:
+                            - noindex
+                            - index
+                            - nofollow
+                            - follow
+                          multiple: true
+                seo_title:
+                  -
+                    Optional:
+                      -
+                        NotBlank: null
+                manufacturer:
+                  -
+                    Optional:
+                      -
+                        NotBlank: null
+                description:
+                  -
+                    Optional:
+                      -
+                        NotBlank:
+                          groups:
+                            - sellable
+                short_description:
+                  -
+                    Optional: null
+                label_language:
+                  -
+                    Optional:
+                      -
+                        Type: array
+              allowMissingFields: false
+              allowExtraFields: true
     sku:
       -
         NotBlank: null
@@ -86,6 +88,6 @@ Nu3\Service\Product\Entity\Product:
       -
         Choice:
           choices:
-            - Config
-            - Bundle
-            - True_Config
+            - config
+            - bundle
+            - config

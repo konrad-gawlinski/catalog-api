@@ -23,6 +23,31 @@ class ProductGatewayTest extends \Codeception\Test\Unit
   /**
    * @test
    */
+  function it_should_succeed_product_exists_check()
+  {
+    $pg = $this::$productGateway;
+
+    $this->tester->startTransaction();
+    $pg->createProduct('sku_123', 'simple', []);
+    $productExists = $pg->productExists('sku_123');
+    $this->tester->rollbackTransaction();
+
+    $this->assertTrue($productExists);
+  }
+
+  /**
+   * @test
+   */
+  function it_should_fail_product_exists_check()
+  {
+    $productExists = $this::$productGateway->productExists('foo_999');
+
+    $this->assertFalse($productExists);
+  }
+
+  /**
+   * @test
+   */
   function it_should_create_product()
   {
     $this->tester->startTransaction();
