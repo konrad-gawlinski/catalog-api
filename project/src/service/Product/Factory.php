@@ -9,7 +9,7 @@ class Factory
   use \Nu3\Feature\Config;
   use \Nu3\Feature\DatabaseConnection;
 
-  function createDatabaseGateway() : DatabaseGateway
+  function createProductGateway() : DatabaseGateway
   {
     return new DatabaseGateway($this->databaseConnection());
   }

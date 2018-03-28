@@ -10,47 +10,19 @@ class ProductCest
     echo "\nRandom sku used for the tests: [{$this->randSku}]\n";
   }
 
-//  function it_should_fail_creating_product_for_wrong_country(Product_serviceTester $I)
-//  {
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPOST("/product/{$this->randSku}/xx/de_de", $this->createProductJson());
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseEquals('["invalid_country_value"]');
-//  }
-//
-//  function it_should_fail_creating_product_for_wrong_language(Product_serviceTester $I)
-//  {
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPOST("/product/{$this->randSku}/de/xx_xx", $this->createProductJson());
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseEquals('["invalid_language_value"]');
-//  }
-//
-//  function it_should_fail_creating_product_missing_required_fields(Product_serviceTester $I)
-//  {
-//    $payload = $this->createProductJson();
-//    $payload = str_replace('"name": " Silly Hodgin",', '', $payload);
-//    $payload = str_replace('"final_gross_price": 5172,', '', $payload);
-//
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPOST("/product/{$this->randSku}/de/de_de", $payload);
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseContains('"This field is missing. properties[name]"');
-//  }
-//
-//  function it_should_fail_creating_product_on_validation_errors__set_1(Product_serviceTester $I)
-//  {
-//    $payload = $this->createProductJson();
-//    $payload = str_replace('"final_gross_price": 5172,', '"final_gross_price": "ab",', $payload);
-//    $payload = str_replace('"tax_rate": 19,', '"tax_rate": "ab",', $payload);
-//
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPOST("/product/{$this->randSku}/de/de_de", $payload);
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseContains('"This value should be of type integer. properties[final_gross_price]"');
-//    $I->seeResponseContains('"This value should be a valid number. properties[tax_rate]"');
-//  }
-//
+
+  function it_should_fail_creating_product_missing_required_fields(Product_serviceTester $I)
+  {
+    $payload = $this->createProductJson();
+    $payload = str_replace('"name": " Silly Hodgin",', '', $payload);
+    $payload = str_replace('"final_gross_price": 5172,', '', $payload);
+
+    $I->haveHttpHeader('Content-Type', 'application/json');
+    $I->sendPOST("/product/{$this->randSku}", $payload);
+    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
+    $I->seeResponseContains('"This field is missing. properties[global][name]"');
+  }
+
   function it_should_succeed_creating_product(Product_serviceTester $I)
   {
     $I->haveHttpHeader('Content-Type', 'application/json');
@@ -58,14 +30,14 @@ class ProductCest
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::CREATED);
     $I->seeResponseEquals('');
   }
-//
-//  function it_should_fail_creating_existing_product(Product_serviceTester $I)
-//  {
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPOST("/product/{$this->randSku}/de/de_de", $this->createProductJson());
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseEquals('["product_update_restricted"]');
-//  }
+
+  function it_should_fail_creating_existing_product(Product_serviceTester $I)
+  {
+    $I->haveHttpHeader('Content-Type', 'application/json');
+    $I->sendPOST("/product/{$this->randSku}", $this->createProductJson());
+    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
+    $I->seeResponseEquals('["product_creation_forbidden"]');
+  }
 //
 //  function it_should_succeed_updating_product(Product_serviceTester $I)
 //  {

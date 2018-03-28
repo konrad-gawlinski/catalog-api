@@ -5,6 +5,7 @@ namespace Nu3\Service\Product\Action;
 use Nu3\Service\Product\Factory;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Service\Kernel\ViolationsTranslator;
+use Nu3\Core\Violation;
 
 abstract class ActionBase
 {
@@ -14,13 +15,13 @@ abstract class ActionBase
   protected $factory;
 
   /** @var ProductGateway */
-  protected $dbGateway;
+  protected $productGateway;
 
   function __construct(Factory $factory)
   {
     http_response_code(500);
     
-    $this->dbGateway = $factory->createDatabaseGateway();
+    $this->productGateway = $factory->createProductGateway();
   }
 
   /**

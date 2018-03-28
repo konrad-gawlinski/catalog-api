@@ -26,6 +26,7 @@ class Action extends ActionBase
 
     $this->factory = $factory;
     $this->validator = $factory->createValidator();
+    $this->validator->setProductGateway($this->productGateway);
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -56,23 +57,16 @@ class Action extends ActionBase
     if ($violations) return $violations;
 
     $dto = $this->factory->createDataTransferObject($request);
-    $productExists = $this->dbGateway->productExists($dto->getSku());
-    if ($productExists) return [new Violation(ErrorKey::PRODUCT_CREATION_FORBIDDEN)];
-
     $product = $this->buildProduct($dto);
     $violations = $this->factory->createEntityValidator()->validate($product);
     if ($violations) return $violations;
 
     $this->factory->createValueFilter()->filterEntity($product);
 
-    return $this->saveProduct($product, $dto);
+    return $this->saveProduct($product);
   }
 
-  /**
-   * @param $dto
-   * @return Entity\Product
-   */
-  private function buildProduct($dto) : Entity\Product
+  private function buildProduct(TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
@@ -84,10 +78,10 @@ class Action extends ActionBase
   /**
    * @return Violation[]
    */
-  private function saveProduct(Entity\Product $product, TransferObject $dto) : array
+  private function saveProduct(Entity\Product $product) : array
   {
     try {
-      $this->dbGateway->createProduct($product->sku, $product->type, $product->properties);
+      $this->productGateway->createProduct($product->sku, $product->type, $product->properties);
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }

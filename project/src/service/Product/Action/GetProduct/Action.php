@@ -48,7 +48,7 @@ class Action extends ActionBase
       return [];
     }
 
-    $productProperties = $this->dbGateway->fetchProductBySku($request->getSku(), $request->getCountry(), $request->getLanguage());
+    $productProperties = $this->productGateway->fetchProductBySku($request->getSku(), $request->getCountry(), $request->getLanguage());
     if (!$productProperties) {
       $this->violations = [new Violation(ErrorKey::PRODUCT_NOT_FOUND)];
       return [];

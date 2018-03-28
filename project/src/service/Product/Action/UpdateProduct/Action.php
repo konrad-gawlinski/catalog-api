@@ -54,7 +54,7 @@ class Action extends ActionBase
     if ($violations) return $violations;
 
     $dto = $this->factory->createDataTransferObject($request);
-    $storedProduct = $this->dbGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
+    $storedProduct = $this->productGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
     if (!$storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
     $product = $this->buildStoredProduct($storedProduct, $dto);
@@ -93,7 +93,7 @@ class Action extends ActionBase
   private function saveProduct(Entity\Product $product, TransferObject $dto) : array
   {
     try {
-      $this->dbGateway->update_product($product->sku, $product->properties);
+      $this->productGateway->update_product($product->sku, $product->properties);
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
