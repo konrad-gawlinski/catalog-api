@@ -33,4 +33,16 @@ class QueryBuilder
 
     return [$columns, $values];
   }
+
+  function prepareForValuesExpression(array $values) : string
+  {
+    $result = '';
+    $comma = '';
+    foreach ($values as $id) {
+      $result .= $comma ."({$id})";
+      $comma = ',';
+    }
+
+    return $result;
+  }
 }

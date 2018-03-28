@@ -51,4 +51,14 @@ class QueryBuilderSpec extends ObjectBehavior
       ]);
   }
 
+  function it_should_prepare_for_values_expression()
+  {
+    $this->prepareForValuesExpression([1,2,3])->shouldReturn('(1),(2),(3)');
+  }
+
+  function it_should_concatenate_into_empty_values_expression()
+  {
+    $this->prepareForValuesExpression([])->shouldReturn('');
+  }
+
 }

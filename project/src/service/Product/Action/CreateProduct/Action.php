@@ -89,7 +89,7 @@ class Action extends ActionBase
     try {
       $attributeSorter = $this->factory->createAttributeSorter();
       $sortedAttributes = $attributeSorter->sort($dto->getCountry(), $dto->getLanguage(), $product->properties);
-      $this->dbGateway->create_product($product->sku, $product->type, json_encode($sortedAttributes));
+      $this->dbGateway->createProduct($product->sku, $product->type, json_encode($sortedAttributes));
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }

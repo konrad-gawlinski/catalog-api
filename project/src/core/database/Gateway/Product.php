@@ -21,11 +21,11 @@ class Product extends Base
   /**
    * @throws DatabaseException
    */
-  function create_product(string $sku, string $type, array $properties) : int
+  function createProduct(?string $sku, string $type, array $properties) : int
   {
-    return $this->run_query_function(
+    return $this->runQueryFunction(
       function() use ($sku, $type, $properties) {
-        return $this->query_create_product($sku, $type, $properties);
+        return $this->queryCreateProduct($sku, $type, $properties);
       },
       'Product could not be created'
     );
@@ -34,10 +34,11 @@ class Product extends Base
   /**
    * @throws \Exception
    */
-  private function query_create_product(string $sku, string $type, array $properties) : int
+  private function queryCreateProduct(?string $sku, string $type, array $properties) : int
   {
     $queryColumns = 'sku,type';
-    $queryValues = pg_escape_literal($sku) .','. pg_escape_literal($type);
+    $_sku = is_null($sku) ? 'null' : pg_escape_literal($sku);
+    $queryValues =  $_sku .','. pg_escape_literal($type);
     list($columns, $values) = $this->queryBuilder->concatColumnsAndJsonValues($queryColumns, $queryValues, $properties);
 
     $result = pg_query($this->dbConnection->connectionRes(),
@@ -51,10 +52,10 @@ class Product extends Base
   /**
    * @throws DatabaseException
    */
-  public function create_node(int $productId) {
-    return $this->run_query_function(
+  public function createNode(int $productId) {
+    return $this->runQueryFunction(
       function() use ($productId) {
-        $this->query_create_node($productId);
+        $this->queryCreateNode($productId);
       },
       'Product node could not be created'
     );
@@ -63,7 +64,7 @@ class Product extends Base
   /**
    * @throws \Exception
    */
-  private function query_create_node(int $productId)
+  private function queryCreateNode(int $productId)
   {
     pg_query($this->dbConnection->connectionRes(),
       "INSERT INTO product_relations VALUES ({$productId}, {$productId}, 0)"
@@ -73,13 +74,35 @@ class Product extends Base
   /**
    * @throws DatabaseException
    */
-  private function run_query_function(callable $queryFunction, string $errorMsg)
+  public function addAddToRelationBranch(int $childId, array $branchParentIds) : int
   {
-    try {
-      return $queryFunction();
-    } catch(\Exception $e) {
-      $lastError = pg_last_error($this->dbConnection->connectionRes());
-      throw new DatabaseException("{$errorMsg}: ". $lastError, 0, $e);
-    }
+    return $this->runQueryFunction(
+      function() use ($childId, $branchParentIds) {
+        return $this->queryAddToRelationBranch($childId, $branchParentIds);
+      },
+      'Relation could not be created'
+    );
+  }
+  
+  private function queryAddToRelationBranch(int $childId, array $branchParentIds) : int
+  {
+    if (!$branchParentIds) return 0;
+
+      $queryValues = $this->queryBuilder->prepareForValuesExpression($branchParentIds);
+
+      $query = <<<QUERY
+WITH insert_statement AS (
+  INSERT INTO product_relations
+    SELECT parents.id as parent_id, product.id as child_id, row_number(*) OVER () as depth FROM
+    (values{$queryValues}) AS parents(id) CROSS JOIN (values ({$childId})) as product(id)
+  RETURNING *
+)
+SELECT count(1) FROM insert_statement
+QUERY;
+
+      $result = pg_query($this->dbConnection->connectionRes(), $query);
+      $totalInsertedRows = intval(pg_fetch_row($result)[0]);
+
+      return $totalInsertedRows;
   }
 }

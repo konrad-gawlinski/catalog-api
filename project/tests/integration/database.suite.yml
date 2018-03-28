@@ -1,0 +1,4 @@
+actor: DatabaseTester
+modules:
+    enabled:
+        - \Helper\Database

@@ -15,6 +15,14 @@ class RoboFile extends \Robo\Tasks
       ->run();
   }
 
+  function runIntegrationTests()
+  {
+    $this->taskExec('./codecept')
+      ->dir('../../tests/integration/')
+      ->arg('run')
+      ->run();
+  }
+
   function runFunctionalTests()
   {
     $this->taskExec('./codecept')
