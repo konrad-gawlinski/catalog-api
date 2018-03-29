@@ -2,7 +2,7 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Service\Product\Action\CURequest;
+use Nu3\Service\Product\Feature\RequestPayload;
 
 class TransferObject
 {
@@ -13,11 +13,16 @@ class TransferObject
   /** @var array */
   private $productProperties = [];
 
-  function __construct(CURequest $request)
+  /**
+   * @param RequestPayload $request
+   */
+  function __construct($request)
   {
     $payload = $request->getPayload();
 
-    $this->sku = $request->getSku();
+    if (isset($payload[Property::PRODUCT_SKU]))
+      $this->sku = $payload[Property::PRODUCT_SKU];
+
     if (isset($payload[Property::PRODUCT_TYPE]))
       $this->type = $payload[Property::PRODUCT_TYPE];
 

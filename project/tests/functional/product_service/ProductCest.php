@@ -11,6 +11,11 @@ class ProductCest
     echo "\nRandom sku used for the tests: [{$this->randSku}]\n";
   }
 
+  private function generateRandomSku() : string
+  {
+    $maxRand = mt_getrandmax();
+    return 'nu3_'. mt_rand($maxRand - 100000, $maxRand);
+  }
 
   function it_should_fail_creating_product_missing_required_fields(Product_serviceTester $I)
   {
@@ -19,7 +24,7 @@ class ProductCest
     $payload = str_replace('"final_gross_price": 5172,', '', $payload);
 
     $I->haveHttpHeader('Content-Type', 'application/json');
-    $I->sendPOST("/product/{$this->randSku}", $payload);
+    $I->sendPOST("/product/create", $payload);
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
     $I->seeResponseContains('"This field is missing. properties[global][name]"');
   }
@@ -27,7 +32,7 @@ class ProductCest
   function it_should_succeed_creating_product(Product_serviceTester $I)
   {
     $I->haveHttpHeader('Content-Type', 'application/json');
-    $I->sendPOST("/product/{$this->randSku}", $this->createProductJson());
+    $I->sendPOST("/product/create", $this->createProductJson());
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::CREATED);
     $I->seeResponseEquals('');
 
@@ -38,7 +43,7 @@ class ProductCest
   function it_should_fail_creating_existing_product(Product_serviceTester $I)
   {
     $I->haveHttpHeader('Content-Type', 'application/json');
-    $I->sendPOST("/product/{$this->randSku}", $this->createProductJson());
+    $I->sendPOST("/product/create", $this->createProductJson());
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
     $I->seeResponseEquals('["product_creation_forbidden"]');
   }
@@ -82,19 +87,13 @@ class ProductCest
     /** @var \Nu3\Core\Database\Connection $db */
     $db = $I->getApp()['database.connection'];
     $I->removeProductBySku($db->connectionRes(), $this->randSku);
-    $I->removeProductBySku($db->connectionRes(), 'nu3_3');
-  }
-
-  private function generateRandomSku() : string
-  {
-    $maxRand = mt_getrandmax();
-    return 'nu3_'. mt_rand($maxRand - 100000, $maxRand);
   }
 
   private function createProductJson()
   {
     return <<<JSON
 {
+  "sku": "{$this->randSku}",
   "type": "config",
   "properties": {
     "global": {

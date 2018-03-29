@@ -4,13 +4,11 @@ namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Core\Violation;
 use Nu3\Service\Product\Action\CURequest as Request;
-use Nu3\Service\Product\Action\ValidationTrait;
+use Nu3\Service\Product\Action\CUValidator;
 use Nu3\Service\Product\Property;
 
-class Validator extends \Nu3\Service\Product\Action\Validator
+class Validator extends CUValidator
 {
-  use ValidationTrait\AllowedProductType;
-  
   /**
    * @param Request $request
    *
@@ -19,7 +17,7 @@ class Validator extends \Nu3\Service\Product\Action\Validator
   function validateRequest($request) : array
   {
     $violations = parent::validateRequest($request);
-    $violations += $this->validateProductType($request->getPayload());
+    $violations = array_merge($violations, $this->validateProductType($request->getPayload()));
 
     return $violations;
   }
@@ -27,7 +25,7 @@ class Validator extends \Nu3\Service\Product\Action\Validator
   /**
    * @return Violation[]
    */
-  private function validateProductType(array $payload) : array
+  protected function validateProductType(array $payload) : array
   {
     $violations = [];
     if (isset($payload[Property::PRODUCT_TYPE])) {

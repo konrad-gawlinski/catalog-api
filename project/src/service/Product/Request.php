@@ -4,6 +4,9 @@ namespace Nu3\Service\Product;
 
 class Request
 {
+  const PROPERTY_ID = 'id';
+  const PROPERTY_PAYLOAD = 'payload';
+
   protected $params = [];
 
   function __construct(array $params)

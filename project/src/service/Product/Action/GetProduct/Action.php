@@ -3,7 +3,6 @@
 namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\GetRequest;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
@@ -20,7 +19,7 @@ class Action extends ActionBase
     $this->factory = $factory;
   }
 
-  function run(GetRequest $request): HttpResponse
+  function run(Request $request): HttpResponse
   {
     $headers = [
       'Content-Type' => 'application/json'
@@ -39,7 +38,7 @@ class Action extends ActionBase
     return new HttpResponse($this->buildSuccessResponseBody($productProperties), 200, $headers);
   }
 
-  private function handleRequest(GetRequest $request) : array
+  private function handleRequest(Request $request) : array
   {
     $violations = $this->factory->createValidator()->validateRequest($request);
     if ($violations) {
@@ -74,7 +73,8 @@ class Action extends ActionBase
   protected function errorKey2HttpCode(string $errorKey) : int
   {
     switch ($errorKey) {
-      case ErrorKey::SKU_IS_REQUIRED:
+      case ErrorKey::ID_IS_REQUIRED:
+      case ErrorKey::ID_HAS_TO_BE_A_NUMBER:
       case ErrorKey::INVALID_LANGUAGE_VALUE:
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:

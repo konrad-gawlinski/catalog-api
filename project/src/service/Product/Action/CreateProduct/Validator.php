@@ -3,20 +3,15 @@
 namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Core\Violation;
-use Nu3\Feature\Config;
-use Nu3\Service\Product\Action\CURequest as Request;
-use Nu3\Core\Database\Gateway\Product as ProductGateway;
-use Nu3\Service\Product\Property;
+use Nu3\Service\Product\Action\CUValidator;
+use Nu3\Feature\Config as ConfigFeature;
+use Nu3\Config;
 use Nu3\Service\Product\ErrorKey;
-use Nu3\Service\Product\Action\ValidationTrait;
+use Nu3\Service\Product\Property;
 
-class Validator implements \Nu3\Service\Product\Action\Validator
+class Validator extends CUValidator
 {
-  use Config;
-  use ValidationTrait\AllowedProductType;
-
-  /** @var ProductGateway */
-  private $productGateway;
+  use ConfigFeature;
 
   /**
    * @param Request $request
@@ -25,41 +20,33 @@ class Validator implements \Nu3\Service\Product\Action\Validator
    */
   function validateRequest($request) : array
   {
-    $violations = $this->validateRequiredSku($request->getSku());
-    $violations = array_merge($violations, $this->validateProductType($request->getPayload()));
-    $violations = array_merge($violations, $this->makeSureProductDoesNotExist($request->getSku()));
+    $payload = $request->getPayload();
+    $violations = $this->validateRequiredSku($payload);
+    $violations = array_merge($violations, $this->validateProductType($payload));
+    $violations = array_merge($violations, $this->makeSureProductDoesNotExist($payload));
 
     return $violations;
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function validateRequiredSku(string $sku) : array
+  protected function validateRequiredSku(array $payload) : array
   {
-    if (empty($sku)) {
+    if (empty($payload[Property::PRODUCT_SKU])) {
       return [new Violation(ErrorKey::SKU_IS_REQUIRED)];
     }
 
     return [];
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function validateProductType(array $payload) : array
+  protected function validateProductType(array $payload) : array
   {
-      $violations = $this->validateRequiredProductType($payload);
-      if (!$violations)
-        $violations = $this->validateAllowedProductType($payload);
+    $violations = $this->validateRequiredProductType($payload);
+    if (!$violations)
+      $violations = $this->validateAllowedProductType($payload);
 
     return $violations;
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function validateRequiredProductType(array $payload) : array
+  protected function validateRequiredProductType(array $payload) : array
   {
     if (empty($payload[Property::PRODUCT_TYPE]))
       return [new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE)];
@@ -67,16 +54,25 @@ class Validator implements \Nu3\Service\Product\Action\Validator
     return [];
   }
 
-  private function makeSureProductDoesNotExist($sku) : array
+  protected function validateAllowedProductType(array $payload) : array
   {
-    if ($this->productGateway->productExists($sku))
-      return [new Violation(ErrorKey::PRODUCT_CREATION_FORBIDDEN)];
+    $availableProductTypes = array_keys($this->config()[Config::PRODUCT]);
+
+    if (!in_array($payload[Property::PRODUCT_TYPE], $availableProductTypes))
+      return [new Violation(ErrorKey::INVALID_PRODUCT_TYPE)];
 
     return [];
   }
 
-  function setProductGateway(ProductGateway $productGateway)
+  private function makeSureProductDoesNotExist(array $payload) : array
   {
-    $this->productGateway = $productGateway;
+    if (!empty($payload[Property::PRODUCT_SKU])) {
+      $sku = $payload[Property::PRODUCT_SKU];
+
+      if ($this->productGateway->productExists($sku))
+        return [new Violation(ErrorKey::PRODUCT_CREATION_FORBIDDEN)];
+    }
+
+    return [];
   }
 }

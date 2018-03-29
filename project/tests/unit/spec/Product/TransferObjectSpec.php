@@ -2,20 +2,18 @@
 
 namespace spec\Product\Nu3\Service\Product;
 
-use Nu3\Service\Product\Action\CURequest;
+use Nu3\Service\Product\Action\CreateProduct\Request as CreateProductRequest;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class TransferObjectSpec extends ObjectBehavior
 {
-  function it_should_return_correct_getter_values(CURequest $request)
+  function it_should_return_correct_getter_values_for_create_product(CreateProductRequest $request)
   {
-    $request->getSku()->willReturn('nu3_123');
     $request->getPayload()->willReturn(['properties' => ['property' => 'value']]);
 
     $this->beConstructedWith($request);
 
-    $this->getSku()->shouldReturn('nu3_123');
     $this->getProductProperties()->shouldReturn(['property' => 'value']);
   }
 }

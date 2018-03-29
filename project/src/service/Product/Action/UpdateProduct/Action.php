@@ -3,13 +3,12 @@
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\Factory;
+use Nu3\Service\Product\Action\GetProduct\Factory;
 use Nu3\Service\Product\Action\Validator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 use Nu3\Service\Product\TransferObject;
-use Nu3\Service\Product\Action\CURequest as Request;
 use Nu3\Core\Violation;
 use Nu3\Core\Database;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -54,7 +53,7 @@ class Action extends ActionBase
     if ($violations) return $violations;
 
     $dto = $this->factory->createDataTransferObject($request);
-    $storedProduct = $this->productGateway->fetchProductBySku($dto->getSku(), $dto->getCountry(), $dto->getLanguage());
+    $storedProduct = $this->productGateway->fetchProductById(intval($request->getId());
     if (!$storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
     $product = $this->buildStoredProduct($storedProduct, $dto);
@@ -104,7 +103,8 @@ class Action extends ActionBase
   protected function errorKey2HttpCode(string $errorKey) : int
   {
     switch ($errorKey) {
-      case ErrorKey::SKU_IS_REQUIRED:
+      case ErrorKey::ID_IS_REQUIRED:
+      case ErrorKey::ID_HAS_TO_BE_A_NUMBER:
       case ErrorKey::INVALID_LANGUAGE_VALUE:
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::PRODUCT_UPDATE_FORBIDDEN:

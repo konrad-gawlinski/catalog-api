@@ -3,8 +3,6 @@
 namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\Factory;
-use Nu3\Service\Product\Action\CURequest as Request;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
@@ -88,7 +86,9 @@ class Action extends ActionBase
   protected function errorKey2HttpCode(string $errorKey) : int
   {
     switch ($errorKey) {
+      case ErrorKey::ID_IS_REQUIRED:
       case ErrorKey::SKU_IS_REQUIRED:
+      case ErrorKey::ID_HAS_TO_BE_A_NUMBER:
       case ErrorKey::INVALID_LANGUAGE_VALUE:
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::INVALID_PRODUCT_TYPE:

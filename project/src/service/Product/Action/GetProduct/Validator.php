@@ -3,16 +3,15 @@
 namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Feature\Config as AppConfig;
-use Nu3\Service\Product\Action\GetRequest;
-use Nu3\Core\Violation;
 use Nu3\Service\Product\ErrorKey;
+use Nu3\Core\Violation;
 
 class Validator implements \Nu3\Service\Product\Action\Validator
 {
   use AppConfig;
 
   /**
-   * @param GetRequest $request
+   * @param Request $request
    *
    * @return Violation[] array
    */
@@ -23,10 +22,7 @@ class Validator implements \Nu3\Service\Product\Action\Validator
     return $violations;
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function validateRequiredId(string $productId) : array
+  protected function validateRequiredId(string $productId) : array
   {
     if (!$productId) {
       return [new Violation(ErrorKey::ID_IS_REQUIRED)];

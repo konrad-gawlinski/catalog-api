@@ -6,7 +6,7 @@ Nu3\Service\Product\Entity\Product:
     type:
       - NotBlank: ~
       - Choice:
-          choices: ["config", "bundle", "config"]
+          choices: ["config", "bundle"]
     properties:
       - All:
         - Collection:
