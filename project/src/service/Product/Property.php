@@ -10,6 +10,7 @@ interface Property
   const PRODUCT_PROPERTIES = 'properties';
 
   const PRODUCT_NAME = 'name';
+  const PRODUCT_PRICE = 'price';
   const PRODUCT_STATUS = 'status';
   const META_TITLE = 'seo_title';
 }

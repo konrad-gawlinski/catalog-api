@@ -8,14 +8,16 @@ use Nu3\Service\Product\Property;
 
 class Builder extends \Nu3\Service\Product\Entity\Builder
 {
-  function applyDefaultAttributesValues(Product $entity)
+  function applyDefaultAttributesValues(Product $product) : Product
   {
-    $this->forceStatus_new($entity);
+    $this->forceStatus_new($product);
+
+    return $product;
   }
 
-  private function forceStatus_new(Product $entity)
+  private function forceStatus_new(Product $product)
   {
-    foreach ($entity->properties as &$region) {
+    foreach ($product->properties as &$region) {
       $region[Property::PRODUCT_STATUS] = ProductStatus::NEW;
     }
   }
