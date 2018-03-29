@@ -10,9 +10,15 @@ use Nu3\Service\Product\Request;
 class CURequest extends Request
 {
   const PROPERTY_PAYLOAD = 'payload';
+  const PROPERTY_SKU = 'sku';
 
   function getPayload()
   {
     return $this->getValue(self::PROPERTY_PAYLOAD);
+  }
+
+  function getSku(): string
+  {
+    return $this->getValue(self::PROPERTY_SKU);
   }
 }

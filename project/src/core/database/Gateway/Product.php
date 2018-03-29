@@ -127,4 +127,24 @@ QUERY;
 
       return $totalInsertedRows;
   }
+
+  function fetchProductById(int $productId) : array
+  {
+    return $this->runQueryFunction(
+      function() use ($productId) {
+        return $this->queryFetchProductById($productId);
+      },
+      'Product could not be fetched'
+    );
+  }
+
+  private function queryFetchProductById(int $productId) : array
+  {
+    $result = pg_query($this->dbConnection->connectionRes(),
+      "SELECT * FROM products WHERE id={$productId}"
+    );
+
+    $row = pg_fetch_assoc($result);
+    return $row ?: [];
+  }
 }

@@ -17,6 +17,8 @@ class Action extends ActionBase
   /** @var Validator */
   private $validator;
 
+  private $violations = [];
+
   /** @var Builder */
   private $entityBuilder;
 
@@ -32,34 +34,32 @@ class Action extends ActionBase
 
   function run(Request $request): HttpResponse
   {
-    $violations = $this->handleRequest($request);
+    $productId = $this->handleRequest($request);
     $headers = [
       'Content-Type' => 'application/json'
     ];
 
-    if ($violations) {
+    if ($this->violations) {
       return new HttpResponse(
-        $this->violationsToJson($violations),
-        $this->returnHttpStatusCode($violations),
+        $this->violationsToJson($this->violations),
+        $this->returnHttpStatusCode($this->violations),
         $headers
       );
     }
 
+    $headers['Location'] = "/product/{$productId}";
     return new HttpResponse('', 201, $headers);
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function handleRequest(Request $request) : array
+  private function handleRequest(Request $request) : int
   {
-    $violations = $this->validator->validateRequest($request);
-    if ($violations) return $violations;
+    $this->violations = $this->validator->validateRequest($request);
+    if ($this->violations) return 0;
 
     $dto = $this->factory->createDataTransferObject($request);
     $product = $this->buildProduct($dto);
-    $violations = $this->factory->createEntityValidator()->validate($product);
-    if ($violations) return $violations;
+    $this->violations = $this->factory->createEntityValidator()->validate($product);
+    if ($this->violations) return 0;
 
     $this->factory->createValueFilter()->filterEntity($product);
 
@@ -75,18 +75,14 @@ class Action extends ActionBase
     return $productEntity;
   }
 
-  /**
-   * @return Violation[]
-   */
-  private function saveProduct(Entity\Product $product) : array
+  private function saveProduct(Entity\Product $product) : int
   {
     try {
-      $this->productGateway->createProduct($product->sku, $product->type, $product->properties);
+      return $this->productGateway->createProduct($product->sku, $product->type, $product->properties);
     } catch (Database\Exception $exception) {
-      return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
+      $this->violations = [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
+      return 0;
     }
-
-    return [];
   }
 
   protected function errorKey2HttpCode(string $errorKey) : int

@@ -27,10 +27,10 @@ $app->post('/product/{sku}',
   }
 );
 
-$app->get('/product/{sku}/{country}/{lang}', function($sku, $country, $lang) use($app) {
+$app->get('/product/{productId}', function($productId) use($app) {
   /** @var Nu3\Service\Product\Action\GetProduct\Action $service */
   $service = $app['product.get_action'];
-  $actionRequest = new \Nu3\Service\Product\Request(['sku' => $sku, 'country' => $country, 'lang' => $lang]);
+  $actionRequest = new \Nu3\Service\Product\Action\GetRequest(['id' => $productId]);
 
   return $service->run($actionRequest);
 });

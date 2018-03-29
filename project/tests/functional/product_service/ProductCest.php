@@ -3,6 +3,7 @@
 class ProductCest
 {
   private $randSku;
+  private $productId = 0;
 
   function __construct()
   {
@@ -29,6 +30,9 @@ class ProductCest
     $I->sendPOST("/product/{$this->randSku}", $this->createProductJson());
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::CREATED);
     $I->seeResponseEquals('');
+
+    preg_match('/\/(\d+)$/', $I->grabHttpHeader('Location'), $matches);
+    $this->productId = intval($matches[1]);
   }
 
   function it_should_fail_creating_existing_product(Product_serviceTester $I)
@@ -55,39 +59,24 @@ class ProductCest
 //    $I->seeResponseEquals('');
 //  }
 //
-//  function it_should_succeed_getting_by_sku(Product_serviceTester $I)
-//  {
-//    $I->sendGet("/product/{$this->randSku}/de/de_de");
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-//    $I->seeResponseIsJson();
-//
-//    $response = json_decode($I->grabResponse(), true);
-//    $expectedResponse = $this->readProductJson($response['id']);
-//    $I->seeResponseEquals($expectedResponse);
-//  }
-//
-//  function it_should_fail_getting_non_existing_sku(Product_serviceTester $I)
-//  {
-//    $I->sendGet('/product/nu3_1/de/de_de');
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::NOT_FOUND);
-//    $I->seeResponseEquals('["product_not_found"]');
-//  }
-//
-//  function it_should_fail_getting_sku_from_wrong_country(Product_serviceTester $I)
-//  {
-//    $I->sendGet("/product/{$this->randSku}/xx/de_de");
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseEquals('["invalid_country_value"]');
-//  }
-//
-//  function it_should_fail_getting_sku_from_wrong_language(Product_serviceTester $I)
-//  {
-//    $I->sendGet("/product/{$this->randSku}/de/xx_xx");
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-//    $I->seeResponseEquals('["invalid_language_value"]');
-//  }
+  function it_should_succeed_getting_by_id(Product_serviceTester $I)
+  {
+    $I->sendGet("/product/{$this->productId}");
+    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+    $I->seeResponseIsJson();
 
-  //this function has to be last
+    $expectedResponse = $this->readProductJson($this->productId);
+    $I->seeResponseEquals($expectedResponse);
+  }
+//
+  function it_should_fail_getting_non_existing_id(Product_serviceTester $I)
+  {
+    $I->sendGet('/product/99994932432');
+    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::NOT_FOUND);
+    $I->seeResponseEquals('["product_not_found"]');
+  }
+
+  //this function has to be last as it is executed as the last one
   function clean_up(Product_serviceTester $I)
   {
     /** @var \Nu3\Core\Database\Connection $db */
@@ -111,7 +100,7 @@ class ProductCest
     "global": {
       "status": "new",
       "name": " Silly Hodgin",
-      "type": "Config",
+      "type": "config",
       "final_gross_price": 5172,
       "tax_rate": 19,
       "is_gluten_free": true,
@@ -133,7 +122,7 @@ JSON;
   private function readProductJson(int $id)
   {
     return <<<JSON
-{"id":"{$id}","sku":"{$this->randSku}","type":"Config","name":"Mad Hodgin","status":"new","tax_rate":19,"description":"Your neighbours will visit you more often","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699,"short_description":"curved 55\" tv"}
+{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Silly Hodgin","status":"new","tax_rate":19,"description":"Your neighbours will visit you more often","manufacturer":"philips","is_gluten_free":true,"label_language":["en","it"],"final_gross_price":5172,"short_description":"curved 55\" tv"},"de":null,"fr":null,"at":null,"de_de":null,"fr_fr":null,"at_de":null}}
 JSON;
   }
 }

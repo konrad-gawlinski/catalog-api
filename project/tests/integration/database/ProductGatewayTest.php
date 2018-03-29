@@ -151,6 +151,45 @@ QUERY;
     $this->tester->rollbackTransaction();
   }
 
+  /**
+   * @test
+   */
+  function it_should_fetch_product_by_id()
+  {
+    $pg = $this::$productGateway;
+    $this->tester->startTransaction();
+    $productId = $pg->createProduct('sku_123', 'simple', []);
+    $product = $pg->fetchProductById($productId);
+    $this->tester->rollbackTransaction();
+
+    unset($product['created_at']);
+    $this->assertEquals([
+      'id' => "{$productId}",
+      'sku' => 'sku_123',
+      'type' => 'simple',
+      'global' => null,
+      'de' => null,
+      'de_de' => null,
+      'fr' => null,
+      'fr_fr' => null,
+      'at' => null,
+      'at_de' => null
+    ], $product);
+  }
+
+  /**
+   * @test
+   */
+  function it_should_fail_fetching_product_given_non_existing_id()
+  {
+    $pg = $this::$productGateway;
+    $this->tester->startTransaction();
+    $product = $pg->fetchProductById(999432423);
+    $this->tester->rollbackTransaction();
+
+    $this->assertEquals([], $product);
+  }
+
   private function createProductsWithNodes(array $products) : array
   {
     $ids = [];

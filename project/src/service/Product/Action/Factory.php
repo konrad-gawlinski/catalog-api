@@ -10,15 +10,4 @@ class Factory extends \Nu3\Service\Product\Factory
   {
     return new TransferObject($request);
   }
-
-  /**
-   * @return Validator
-   */
-  function createValidator()
-  {
-    $object = new Validator();
-    $object->setConfig($this->config());
-
-    return $object;
-  }
 }

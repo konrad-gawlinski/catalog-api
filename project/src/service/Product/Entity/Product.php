@@ -19,6 +19,13 @@ class Product
     $this->id = $input[self::ID];
     $this->sku = $input[self::SKU];
     $this->type = $input[self::TYPE];
-    $this->properties = json_decode($input[self::PROPERTIES], true);
+    foreach ($this->getRegionNames() as $region) {
+      $this->properties[$region] = json_decode($input[$region], true);
+    }
+  }
+
+  private function getRegionNames()
+  {
+    return ['global', 'de', 'fr', 'at', 'de_de', 'fr_fr', 'at_de'];
   }
 }

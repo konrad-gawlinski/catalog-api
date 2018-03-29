@@ -3,14 +3,16 @@
 namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Core\Violation;
+use Nu3\Feature\Config;
 use Nu3\Service\Product\Action\CURequest as Request;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Service\Product\Property;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Action\ValidationTrait;
 
-class Validator extends \Nu3\Service\Product\Action\Validator
+class Validator implements \Nu3\Service\Product\Action\Validator
 {
+  use Config;
   use ValidationTrait\AllowedProductType;
 
   /** @var ProductGateway */
@@ -23,11 +25,23 @@ class Validator extends \Nu3\Service\Product\Action\Validator
    */
   function validateRequest($request) : array
   {
-    $violations = parent::validateRequest($request);
+    $violations = $this->validateRequiredSku($request->getSku());
     $violations = array_merge($violations, $this->validateProductType($request->getPayload()));
     $violations = array_merge($violations, $this->makeSureProductDoesNotExist($request->getSku()));
 
     return $violations;
+  }
+
+  /**
+   * @return Violation[]
+   */
+  private function validateRequiredSku(string $sku) : array
+  {
+    if (empty($sku)) {
+      return [new Violation(ErrorKey::SKU_IS_REQUIRED)];
+    }
+
+    return [];
   }
 
   /**

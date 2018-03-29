@@ -4,18 +4,11 @@ namespace Nu3\Service\Product;
 
 class Request
 {
-  const PROPERTY_SKU = 'sku';
-
   protected $params = [];
 
   function __construct(array $params)
   {
     $this->params = $params;
-  }
-
-  function getSku(): string
-  {
-    return $this->getValue(self::PROPERTY_SKU);
   }
 
   /**

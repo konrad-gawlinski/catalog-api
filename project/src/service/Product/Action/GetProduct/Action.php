@@ -3,8 +3,7 @@
 namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\Factory;
-use Nu3\Service\Product\Request;
+use Nu3\Service\Product\Action\GetRequest;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
@@ -21,7 +20,7 @@ class Action extends ActionBase
     $this->factory = $factory;
   }
 
-  function run(Request $request): HttpResponse
+  function run(GetRequest $request): HttpResponse
   {
     $headers = [
       'Content-Type' => 'application/json'
@@ -40,7 +39,7 @@ class Action extends ActionBase
     return new HttpResponse($this->buildSuccessResponseBody($productProperties), 200, $headers);
   }
 
-  private function handleRequest(Request $request) : array
+  private function handleRequest(GetRequest $request) : array
   {
     $violations = $this->factory->createValidator()->validateRequest($request);
     if ($violations) {
@@ -48,7 +47,7 @@ class Action extends ActionBase
       return [];
     }
 
-    $productProperties = $this->productGateway->fetchProductBySku($request->getSku(), $request->getCountry(), $request->getLanguage());
+    $productProperties = $this->productGateway->fetchProductById(intval($request->getId()));
     if (!$productProperties) {
       $this->violations = [new Violation(ErrorKey::PRODUCT_NOT_FOUND)];
       return [];
@@ -63,10 +62,11 @@ class Action extends ActionBase
     $productEntity->fillFromDb($product);
 
     $productArray = [
-        Property::PRODUCT_ID => $productEntity->id,
-        Property::PRODUCT_SKU => $productEntity->sku,
-        Property::PRODUCT_TYPE => $productEntity->type,
-      ] + $productEntity->properties;
+      Property::PRODUCT_ID => $productEntity->id,
+      Property::PRODUCT_SKU => $productEntity->sku,
+      Property::PRODUCT_TYPE => $productEntity->type,
+      Property::PRODUCT_PROPERTIES => $productEntity->properties
+    ];
 
     return json_encode($productArray);
   }
