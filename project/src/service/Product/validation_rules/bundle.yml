@@ -88,6 +88,6 @@ Nu3\Service\Product\Entity\Product:
       -
         Choice:
           choices:
+            - simple
             - config
             - bundle
-            - config

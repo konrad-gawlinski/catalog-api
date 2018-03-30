@@ -3,7 +3,6 @@
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\GetProduct\Factory;
 use Nu3\Service\Product\Action\Validator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\ErrorKey;
@@ -52,17 +51,17 @@ class Action extends ActionBase
     $violations = $this->validator->validateRequest($request);
     if ($violations) return $violations;
 
-    $dto = $this->factory->createDataTransferObject($request);
-    $storedProduct = $this->productGateway->fetchProductById(intval($request->getId());
+    $storedProduct = $this->productGateway->fetchProductById(intval($request->getId()));
     if (!$storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
+    $dto = $this->factory->createDataTransferObject($request);
     $product = $this->buildStoredProduct($storedProduct, $dto);
     $violations = $this->factory->createEntityValidator()->validate($product);
     if ($violations) return $violations;
 
     $product = $this->buildRequestedProduct($storedProduct, $dto);
 
-    return $this->saveProduct($product, $dto);
+//    return $this->saveProduct($product, $dto);
   }
 
   private function buildStoredProduct(array $storedProduct, TransferObject $dto) : Entity\Product
@@ -77,9 +76,9 @@ class Action extends ActionBase
   private function buildRequestedProduct(array $storedProduct, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
-    if (!isset($dto->getProductProperties()[Property::PRODUCT_TYPE])) {
-      $productEntity->type = $storedProduct[Property::PRODUCT_TYPE];
-    }
+    $productEntity->id = $storedProduct[Property::PRODUCT_ID];
+    $productEntity->sku = $storedProduct[Property::PRODUCT_SKU];
+    $productEntity->type = $storedProduct[Property::PRODUCT_TYPE];
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
     $this->factory->createValueFilter()->filterEntity($productEntity);
 

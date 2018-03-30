@@ -3,15 +3,18 @@
 namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Core\Violation;
-use Nu3\Service\Product\Action\CUValidator;
+use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Config;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 
-class Validator extends CUValidator
+class Validator implements \Nu3\Service\Product\Action\Validator
 {
   use ConfigFeature;
+
+  /** @var ProductGateway */
+  protected $productGateway;
 
   /**
    * @param Request $request
@@ -28,7 +31,7 @@ class Validator extends CUValidator
     return $violations;
   }
 
-  protected function validateRequiredSku(array $payload) : array
+  private function validateRequiredSku(array $payload) : array
   {
     if (empty($payload[Property::PRODUCT_SKU])) {
       return [new Violation(ErrorKey::SKU_IS_REQUIRED)];
@@ -37,7 +40,7 @@ class Validator extends CUValidator
     return [];
   }
 
-  protected function validateProductType(array $payload) : array
+  private function validateProductType(array $payload) : array
   {
     $violations = $this->validateRequiredProductType($payload);
     if (!$violations)
@@ -46,7 +49,7 @@ class Validator extends CUValidator
     return $violations;
   }
 
-  protected function validateRequiredProductType(array $payload) : array
+  private function validateRequiredProductType(array $payload) : array
   {
     if (empty($payload[Property::PRODUCT_TYPE]))
       return [new Violation(ErrorKey::NEW_PRODUCT_REQUIRES_TYPE)];
@@ -54,7 +57,7 @@ class Validator extends CUValidator
     return [];
   }
 
-  protected function validateAllowedProductType(array $payload) : array
+  private function validateAllowedProductType(array $payload) : array
   {
     $availableProductTypes = array_keys($this->config()[Config::PRODUCT]);
 
@@ -74,5 +77,10 @@ class Validator extends CUValidator
     }
 
     return [];
+  }
+
+  function setProductGateway(ProductGateway $productGateway)
+  {
+    $this->productGateway = $productGateway;
   }
 }

@@ -8,9 +8,8 @@ class Builder
 {
   function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
   {
-    $entity->sku = $dto->getSku();
-
-    if ($dto->getType()) $entity->type = $dto->getType();
+    $entity->sku = $entity->sku ?: $dto->getSku();
+    $entity->type = $entity->type ?: $dto->getType();
 
     $this->applyAttributes($dto, $entity);
 

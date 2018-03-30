@@ -1,14 +1,14 @@
 <?php
 use Symfony\Component\HttpFoundation\Request;
 
-$app->put('/product/{sku}/{country}/{lang}',
-  function(Request $request, string $sku, string $country, string $lang) use($app) {
+$app->put('/product/{productId}',
+  function(Request $request, string $productId) use($app) {
     $payload = $request->request->all();
 
     /** @var Nu3\Service\Product\Action\UpdateProduct\Action $service */
     $service = $app['product.update_action'];
-    $actionRequest = new \Nu3\Service\Product\Action\CURequest([
-        'sku' => $sku, 'country' => $country, 'lang' => $lang, 'payload' => $payload]
+    $actionRequest = new \Nu3\Service\Product\Action\UpdateProduct\Request([
+        'id' => $productId, 'payload' => $payload]
     );
 
     return $service->run($actionRequest);

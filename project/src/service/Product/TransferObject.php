@@ -7,8 +7,8 @@ use Nu3\Service\Product\Feature\RequestPayload;
 class TransferObject
 {
   /** @var string */
-  private $sku;
-  private $type;
+  private $sku = '';
+  private $type = '';
 
   /** @var array */
   private $productProperties = [];

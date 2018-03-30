@@ -25,13 +25,17 @@ return array (
   ),
   'product' => 
   array (
-    'config' =>
+    'simple' => 
+    array (
+      'validation_rules' => 'simple.yml',
+    ),
+    'config' => 
     array (
       'validation_rules' => 'config.yml',
     ),
-    'bundle' =>
+    'bundle' => 
     array (
-      'validation_rules' => 'config.yml',
+      'validation_rules' => 'bundle.yml',
     ),
   ),
 );
