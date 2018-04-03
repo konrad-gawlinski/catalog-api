@@ -47,23 +47,28 @@ class ProductCest
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
     $I->seeResponseEquals('["product_creation_forbidden"]');
   }
-//
-//  function it_should_succeed_updating_product(Product_serviceTester $I)
-//  {
-//    $updateJson = <<<JSON
-//{
-//  "name": "Mad Hodgin ",
-//  "final_gross_price": 699,
-//  "is_gluten_free": false,
-//  "manufacturer": "samsung"
-//}
-//JSON;
-//    $I->haveHttpHeader('Content-Type', 'application/json');
-//    $I->sendPUT("/product/{$this->randSku}/de/de_de", $updateJson);
-//    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::NO_CONTENT);
-//    $I->seeResponseEquals('');
-//  }
-//
+
+  function it_should_succeed_updating_product(Product_serviceTester $I)
+  {
+    $updateJson = <<<JSON
+{
+  "properties": {
+    "global": {
+      "name": "Mad Hodgin ",
+      "final_gross_price": 699,
+      "is_gluten_free": false,
+      "manufacturer": "samsung"  
+    }
+  }
+}
+JSON;
+
+    $I->haveHttpHeader('Content-Type', 'application/json');
+    $I->sendPUT("/product/{$this->productId}", $updateJson);
+    $I->seeResponseCodeIs(\Codeception\Util\HttpCode::NO_CONTENT);
+    $I->seeResponseEquals('');
+  }
+
   function it_should_succeed_getting_by_id(Product_serviceTester $I)
   {
     $I->sendGet("/product/{$this->productId}");
@@ -121,7 +126,7 @@ JSON;
   private function readProductJson(int $id)
   {
     return <<<JSON
-{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Silly Hodgin","status":"new","tax_rate":19,"description":"Your neighbours will visit you more often","manufacturer":"philips","is_gluten_free":true,"label_language":["en","it"],"final_gross_price":5172,"short_description":"curved 55\" tv"},"de":null,"fr":null,"at":null,"de_de":null,"fr_fr":null,"at_de":null}}
+{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Mad Hodgin","status":"new","tax_rate":19,"description":"Your neighbours will visit you more often","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699,"short_description":"curved 55\" tv"},"de":null,"fr":null,"at":null,"de_de":null,"fr_fr":null,"at_de":null}}
 JSON;
   }
 }

@@ -15,6 +15,7 @@ interface ErrorKey
   const INVALID_COUNTRY_VALUE = 'invalid_country_value';
   const INVALID_LANGUAGE_VALUE = 'invalid_language_value';
   const PRODUCT_NOT_FOUND = 'product_not_found';
+  const EMPTY_PRODUCT_PROPERTIES = 'empty_product_properties';
 
   const PRODUCT_SAVE_STORAGE_ERROR = 'product_save_storage_error';
   const PRODUCT_VALIDATION_ERROR = 'product_validation_error';

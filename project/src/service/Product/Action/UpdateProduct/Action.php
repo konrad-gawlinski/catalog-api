@@ -61,7 +61,7 @@ class Action extends ActionBase
 
     $product = $this->buildRequestedProduct($storedProduct, $dto);
 
-//    return $this->saveProduct($product, $dto);
+    return $this->saveProduct($product);
   }
 
   private function buildStoredProduct(array $storedProduct, TransferObject $dto) : Entity\Product
@@ -88,10 +88,10 @@ class Action extends ActionBase
   /**
    * @return Violation[]
    */
-  private function saveProduct(Entity\Product $product, TransferObject $dto) : array
+  private function saveProduct(Entity\Product $product) : array
   {
     try {
-      $this->productGateway->update_product($product->sku, $product->properties);
+      $this->productGateway->updateProduct($product->id, $product->properties);
     } catch (Database\Exception $exception) {
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
@@ -109,6 +109,7 @@ class Action extends ActionBase
       case ErrorKey::PRODUCT_UPDATE_FORBIDDEN:
       case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
+      case ErrorKey::EMPTY_PRODUCT_PROPERTIES:
         return 400;
 
       case ErrorKey::PRODUCT_SAVE_STORAGE_ERROR:

@@ -61,4 +61,24 @@ class QueryBuilderSpec extends ObjectBehavior
     $this->prepareForValuesExpression([])->shouldReturn('');
   }
 
+  function it_should_build_json_merge_update_list_for_single_region()
+  {
+    $this->buildJsonMergeUpdateList(['global'=>['name' => 'sample_name']])
+      ->shouldReturn('"global"="global" || \'{"name":"sample_name"}\'');
+  }
+
+  function it_should_build_json_merge_update_list_for_two_regions()
+  {
+    $this->buildJsonMergeUpdateList([
+      'global'=> ['name' => 'sample_name'],
+      'de_de' => ['status' => 'new']
+    ])
+      ->shouldReturn('"global"="global" || \'{"name":"sample_name"}\',"de_de"="de_de" || \'{"status":"new"}\'');
+  }
+
+  function it_should_build_json_merge_update_list_and_escape_values()
+  {
+    $this->buildJsonMergeUpdateList(['global'=>['name' => 'sample_\'name']])
+      ->shouldReturn('"global"="global" || \'{"name":"sample_\'\'name"}\'');
+  }
 }

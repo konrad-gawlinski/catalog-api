@@ -45,4 +45,19 @@ class QueryBuilder
 
     return $result;
   }
+
+  function buildJsonMergeUpdateList(array $properties)
+  {
+    $queryList = '';
+    $comma = '';
+
+    foreach ($properties as $region => $value) {
+      $column = pg_escape_identifier($region);
+      $encodedValue = pg_escape_literal(json_encode($value));
+      $queryList .= $comma . "{$column}={$column} || {$encodedValue}";
+      $comma = ',';
+    }
+
+    return $queryList;
+  }
 }

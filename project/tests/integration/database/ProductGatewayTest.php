@@ -72,6 +72,23 @@ class ProductGatewayTest extends \Codeception\Test\Unit
   /**
    * @test
    */
+  function it_should_update_product()
+  {
+    $pg = $this::$productGateway;
+
+    $this->tester->startTransaction();
+    $productId = $pg->createProduct('sku_123', 'simple', ['global'=> ['name'=>'sample name', 'status'=>'new']]);
+    $totalAffectedRows = $pg->updateProduct($productId, ['global'=> ['name'=>'new name']]);
+    $product = $pg->fetchProductById($productId);
+    $this->tester->rollbackTransaction();
+
+    $this->assertEquals(1, $totalAffectedRows);
+    $this->assertEquals('{"name": "new name", "status": "new"}', $product['global']);
+  }
+
+  /**
+   * @test
+   */
   function it_should_create_product_node()
   {
     $this->tester->startTransaction();

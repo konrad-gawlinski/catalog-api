@@ -72,6 +72,38 @@ class Product extends Base
   }
 
   /**
+   * @throws \Exception
+   */
+  function updateProduct(int $id, array $properties) : int
+  {
+    return $this->runQueryFunction(
+      function() use ($id, $properties) {
+        return $this->queryUpdateProduct($id, $properties);
+      },
+      'Product could not be updated'
+    );
+  }
+
+  /**
+   * @throws \Exception
+   */
+  private function queryUpdateProduct(int $id, array $properties) : int
+  {
+    $querySetStatement = $this->queryBuilder->buildJsonMergeUpdateList($properties);
+
+    $query = <<<QUERY
+WITH update_statement AS (
+  UPDATE products SET {$querySetStatement} WHERE id={$id} RETURNING *
+)
+SELECT count(*) FROM update_statement;
+QUERY;
+    $result = pg_query($this->dbConnection->connectionRes(), $query);
+
+    $totalAffectedRows = pg_fetch_row($result)[0];
+    return intval($totalAffectedRows);
+  }
+
+  /**
    * @throws DatabaseException
    */
   public function createNode(int $productId) {
