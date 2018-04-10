@@ -5,11 +5,13 @@ namespace Nu3\Service\Product\Action\UpdateProduct;
 use Nu3\Service\Product\Action\ActionBase;
 use Nu3\Service\Product\Action\Validator;
 use Nu3\Service\Product\Entity;
+use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
 use Nu3\Core\Database;
+use Nu3\Service\Product\ValueFilter;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class Action extends ActionBase
@@ -17,15 +19,18 @@ class Action extends ActionBase
   /** @var Validator */
   private $validator;
 
-  /** @var Entity\Builder */
+  /** @var EntityBuilder */
   private $entityBuilder;
+
+  /** @var ValueFilter */
+  private $valueFilter;
 
   function __construct(Factory $factory)
   {
     parent::__construct($factory);
 
-    $this->factory = $factory;
     $this->validator = $factory->createValidator();
+    $this->valueFilter = $factory->createValueFilter();
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -54,33 +59,35 @@ class Action extends ActionBase
     $storedProduct = $this->productGateway->fetchProductById(intval($request->getId()));
     if (!$storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
-    $dto = $this->factory->createDataTransferObject($request);
-    $product = $this->buildStoredProduct($storedProduct, $dto);
+    $dto = $this->factory->createDataTransferObject();
+    $dto->applyRequestProperties($request);
+    $product = $this->mergeStoredPropertiesWithRequestedProperties($storedProduct, $dto);
     $violations = $this->factory->createEntityValidator()->validate($product);
     if ($violations) return $violations;
 
-    $product = $this->buildRequestedProduct($storedProduct, $dto);
+    $product = $this->buildRequestedProductEntity($storedProduct, $dto);
 
     return $this->saveProduct($product);
   }
 
-  private function buildStoredProduct(array $storedProduct, TransferObject $dto) : Entity\Product
+  private function mergeStoredPropertiesWithRequestedProperties(array $storedProduct, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
-    $productEntity->fillFromDb($storedProduct);
+    $this->entityBuilder->fillEntityFromDbArray($productEntity, $storedProduct);
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
+    $this->valueFilter->filterEntity($productEntity);
 
     return $productEntity;
   }
 
-  private function buildRequestedProduct(array $storedProduct, TransferObject $dto) : Entity\Product
+  private function buildRequestedProductEntity(array $storedProduct, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
     $productEntity->id = $storedProduct[Property::PRODUCT_ID];
     $productEntity->sku = $storedProduct[Property::PRODUCT_SKU];
     $productEntity->type = $storedProduct[Property::PRODUCT_TYPE];
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
-    $this->factory->createValueFilter()->filterEntity($productEntity);
+    $this->valueFilter->filterEntity($productEntity);
 
     return $productEntity;
   }

@@ -1,13 +1,13 @@
 <?php
 
-namespace spec\Product\Nu3\Service\Product\Entity;
+namespace spec\Product\Nu3\Service\Product;
 
 use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\TransferObject;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class BuilderSpec extends ObjectBehavior
+class EntityBuilderSpec extends ObjectBehavior
 {
   function it_should_apply_dto_attributes_to_entity(TransferObject $dto, Product $product)
   {
@@ -50,9 +50,9 @@ class BuilderSpec extends ObjectBehavior
 
   private function mockDto(TransferObject $dto, string $sku, string $type, array $properties)
   {
-    $dto->getSku()->willReturn($sku);
-    $dto->getType()->willReturn($type);
-    $dto->getProductProperties()->willReturn($properties);
+    $dto->sku = $sku;
+    $dto->type = $type;
+    $dto->properties = $properties;
 
     return $dto;
   }

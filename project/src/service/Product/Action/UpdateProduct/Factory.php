@@ -2,7 +2,7 @@
 
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
-class Factory extends \Nu3\Service\Product\Action\Factory
+class Factory extends \Nu3\Service\Product\Factory
 {
   function createValidator() : Validator
   {

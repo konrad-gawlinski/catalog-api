@@ -22,6 +22,7 @@ abstract class ActionBase
     http_response_code(500);
     
     $this->productGateway = $factory->createProductGateway();
+    $this->factory = $factory;
   }
 
   /**

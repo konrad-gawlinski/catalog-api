@@ -23,8 +23,7 @@ class Action extends ActionBase
   function __construct(Factory $factory)
   {
     parent::__construct($factory);
-
-    $this->factory = $factory;
+    
     $this->validator = $factory->createValidator();
     $this->validator->setProductGateway($this->productGateway);
     $this->entityBuilder = $factory->createEntityBuilder();
@@ -54,7 +53,9 @@ class Action extends ActionBase
     $this->violations = $this->validator->validateRequest($request);
     if ($this->violations) return 0;
 
-    $dto = $this->factory->createDataTransferObject($request);
+    $dto = $this->factory->createDataTransferObject();
+    $dto->applyRequestProperties($request);
+
     $product = $this->buildProduct($dto);
     $this->violations = $this->factory->createEntityValidator()->validate($product);
     if ($this->violations) return 0;

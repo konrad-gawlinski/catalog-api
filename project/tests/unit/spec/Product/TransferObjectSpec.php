@@ -12,8 +12,8 @@ class TransferObjectSpec extends ObjectBehavior
   {
     $request->getPayload()->willReturn(['properties' => ['property' => 'value']]);
 
-    $this->beConstructedWith($request);
+    $this->applyRequestProperties($request);
 
-    $this->getProductProperties()->shouldReturn(['property' => 'value']);
+    $this->__get('properties')->shouldReturn(['property' => 'value']);
   }
 }

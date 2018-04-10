@@ -4,6 +4,7 @@ namespace Nu3\Service\Product\Action\GetProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
 use Nu3\Core\Violation;
+use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -12,11 +13,14 @@ class Action extends ActionBase
 {
   private $violations = [];
 
+  /** @var EntityBuilder */
+  private $entityBuilder;
+
   function __construct(Factory $factory)
   {
     parent::__construct($factory);
 
-    $this->factory = $factory;
+    $this->entityBuilder = $factory->createEntityBuilder();
   }
 
   function run(Request $request): HttpResponse
@@ -55,10 +59,12 @@ class Action extends ActionBase
     return $productProperties;
   }
 
-  private function buildSuccessResponseBody(array $product) : string
+  private function buildSuccessResponseBody(array $productProperties) : string
   {
     $productEntity = $this->factory->createProductEntity();
-    $productEntity->fillFromDb($product);
+    $this->entityBuilder->fillEntityFromDbArray($productEntity, $productProperties);
+    $dto = $this->factory->createDataTransferObject();
+    $this->factory->createEntityBuilder()->applyEntityAttributesToDto($productEntity, $dto);
 
     $productArray = [
       Property::PRODUCT_ID => $productEntity->id,

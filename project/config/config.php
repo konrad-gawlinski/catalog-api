@@ -9,18 +9,23 @@ return array (
     'data_schema' => 'catalog',
     'procedures_schema' => 'catalog_sp',
   ),
-  'country' => 
+  'region' => 
   array (
-    'available' => 
+    'global' => 
+    array (
+      0 => 'global',
+    ),
+    'country' => 
     array (
       0 => 'de',
+      1 => 'fr',
+      2 => 'at',
     ),
-  ),
-  'language' => 
-  array (
-    'available' => 
+    'language' => 
     array (
       0 => 'de_de',
+      1 => 'fr_fr',
+      2 => 'at_de',
     ),
   ),
   'product' => 

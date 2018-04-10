@@ -7,16 +7,16 @@ use Nu3\Service\Product\Feature\RequestPayload;
 class TransferObject
 {
   /** @var string */
-  private $sku = '';
-  private $type = '';
+  public $sku = '';
+  public $type = '';
 
   /** @var array */
-  private $productProperties = [];
+  public $properties = [];
 
   /**
    * @param RequestPayload $request
    */
-  function __construct($request)
+  function applyRequestProperties($request)
   {
     $payload = $request->getPayload();
 
@@ -27,21 +27,6 @@ class TransferObject
       $this->type = $payload[Property::PRODUCT_TYPE];
 
     if (isset($payload[Property::PRODUCT_PROPERTIES]))
-      $this->productProperties = $payload[Property::PRODUCT_PROPERTIES];
-  }
-
-  function getProductProperties() : array
-  {
-    return $this->productProperties;
-  }
-
-  function getSku() : string
-  {
-    return $this->sku;
-  }
-
-  function getType() : string
-  {
-    return $this->type;
+      $this->properties = $payload[Property::PRODUCT_PROPERTIES];
   }
 }

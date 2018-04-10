@@ -12,9 +12,11 @@ interface Config
   const DB_DATA_SCHEMA = 'data_schema';
   const DB_PROCEDURES_SCHEMA = 'procedures_schema';
 
-  const COUNTRY = 'country';
-  const LANGUAGE = 'language';
-  const AVAILABLE = 'available';
+
+  const REGION = 'region';
+  const GLOBAL_REGION = 'global';
+  const COUNTRY_REGION = 'country';
+  const LANGUAGE_REGION = 'language';
 
   const PRODUCT = 'product';
   const CONFIG = 'config';

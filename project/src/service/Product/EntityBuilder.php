@@ -1,36 +1,84 @@
 <?php
 
-namespace Nu3\Service\Product\Entity;
+namespace Nu3\Service\Product;
 
-use Nu3\Service\Product\TransferObject;
+use Nu3\Config;
+use Nu3\Feature\Config as ConfigFeature;
+use Nu3\Service\Product\Entity\Product;
 
-class Builder
+class EntityBuilder
 {
+  use ConfigFeature;
+
   function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
   {
-    $entity->sku = $entity->sku ?: $dto->getSku();
-    $entity->type = $entity->type ?: $dto->getType();
+    $entity->sku = $entity->sku ?: $dto->sku;
+    $entity->type = $entity->type ?: $dto->type;
 
-    $this->applyAttributes($dto, $entity);
+    $this->applyAttributesFromDtoToEntity($dto, $entity);
 
     return $entity;
   }
 
-  private function applyAttributes(TransferObject $dto, Product $entity)
+  private function applyAttributesFromDtoToEntity(TransferObject $dto, Product $entity)
   {
-    $properties = $dto->getProductProperties();
-    $attributesMap = $this->getDto2DbPropertyMap();
+    $attributesMap = array_flip($this->getDb2DtoPropertyMap());
 
-    foreach ($properties as $region => $regionProperties) {
-      foreach ($regionProperties as $property => $value) {
-        if (isset($attributesMap[$property])) {
-          $entity->properties[$region][$attributesMap[$property]] = $value;
+    $this->applyAttributes($dto->properties, $entity->properties, $attributesMap);
+  }
+
+  function applyEntityAttributesToDto(Product $entity, TransferObject $dto) : TransferObject
+  {
+    $dto->sku = $entity->sku ?: $dto->sku;
+    $dto->type = $entity->type ?: $dto->type;
+
+    $this->applyAttributesFromEntityToDto($entity, $dto);
+
+    return $dto;
+  }
+
+  private function applyAttributesFromEntityToDto(Product $entity, TransferObject $dto)
+  {
+    $attributesMap = $this->getDb2DtoPropertyMap();
+
+    $this->applyAttributes($entity->properties, $dto->properties, $attributesMap);
+  }
+
+  private function applyAttributes(array $source, array &$target, array $attributesMap)
+  {
+    foreach ($source as $region => $regionProperties) {
+      if ($regionProperties) {
+        foreach ($regionProperties as $property => $value) {
+          if (isset($attributesMap[$property])) {
+            $target[$region][$attributesMap[$property]] = $value;
+          }
         }
       }
     }
   }
 
-  private function getDto2DbPropertyMap() : array
+  function fillEntityFromDbArray(Product $entity, array $input)
+  {
+    $entity->id = $input[Property::PRODUCT_ID];
+    $entity->sku = $input[Property::PRODUCT_SKU];
+    $entity->type = $input[Property::PRODUCT_TYPE];
+    foreach ($this->getRegionNames() as $region) {
+      $entity->properties[$region] = json_decode($input[$region], true);
+    }
+  }
+
+  private function getRegionNames()
+  {
+    $config = $this->config()[Config::REGION];
+
+    return array_merge(
+      $config[Config::GLOBAL_REGION],
+      $config[Config::COUNTRY_REGION],
+      $config[Config::LANGUAGE_REGION]
+    );
+  }
+
+  private function getDb2DtoPropertyMap() : array
   {
     return [
       'bundle_only' => 'bundle_only',
