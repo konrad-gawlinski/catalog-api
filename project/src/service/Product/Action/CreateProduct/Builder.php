@@ -18,8 +18,9 @@ class Builder extends EntityBuilder
 
   private function forceStatus_new(Product $product)
   {
-    foreach ($product->properties as &$region) {
-      $region[Property::PRODUCT_STATUS] = ProductStatus::NEW;
+    foreach ($product->properties as $region => &$properties) {
+      if ($this->regionCheck()->isGlobal($region) || $this->regionCheck()->isCountry($region))
+        $properties[Property::PRODUCT_STATUS] = ProductStatus::NEW;
     }
   }
 }

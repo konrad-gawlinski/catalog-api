@@ -2,7 +2,6 @@
 
 namespace spec\Product\Nu3\Service\Product\Action\CreateProduct;
 
-use Nu3\Service\Product\Action\CreateProduct\Validator;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Service\Product\Action\CreateProduct\Request;
 use Nu3\Service\Product\Property;

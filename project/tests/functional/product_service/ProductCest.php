@@ -102,21 +102,27 @@ JSON;
   "type": "config",
   "properties": {
     "global": {
-      "status": "new",
       "name": " Silly Hodgin",
       "type": "config",
       "final_gross_price": 5172,
-      "tax_rate": 19,
       "is_gluten_free": true,
       "is_lactose_free": true,
       "seo_robots": ["noindex", "follow"],
       "seo_title": "Silly Hodgkin",
       "not_supported_attribute": null,
       "manufacturer": "philips2",
-      "description": "Your neighbours will visit you more often",
-      "short_description": "curved 55\" tv",
       "manufacturer": "philips",
       "label_language": ["en", "it"]
+    },
+    "de": {
+      "name": " Silly Hodgin",
+      "status": "new",
+      "tax_rate": 19
+    },
+    "de_de": {
+      "name": " Silly Hodgin",
+      "description": "Your neighbours will visit you more often",
+      "short_description": "curved 55\" tv"    
     }
   }
 }
@@ -126,7 +132,7 @@ JSON;
   private function readProductJson(int $id)
   {
     return <<<JSON
-{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Mad Hodgin","status":"new","tax_rate":19,"description":"Your neighbours will visit you more often","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699,"short_description":"curved 55\" tv"},"de":null,"fr":null,"at":null,"de_de":null,"fr_fr":null,"at_de":null}}
+{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Mad Hodgin","status":"new","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699},"de":{"name":"Silly Hodgin","status":"new","tax_rate":19},"fr":null,"at":null,"de_de":{"name":"Silly Hodgin","description":"Your neighbours will visit you more often","short_description":"curved 55\" tv"},"fr_fr":null,"at_de":null}}
 JSON;
   }
 }

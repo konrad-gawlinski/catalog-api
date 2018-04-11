@@ -5,7 +5,7 @@ use Nu3\Core\Database\Connection;
 
 trait DatabaseConnection
 {
-  private $con = [];
+  private $con;
 
   function setDatabaseConnection(Connection $con)
   {

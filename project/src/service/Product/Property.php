@@ -12,5 +12,5 @@ interface Property
   const PRODUCT_NAME = 'name';
   const PRODUCT_PRICE = 'price';
   const PRODUCT_STATUS = 'status';
-  const META_TITLE = 'seo_title';
+  const PRODUCT_META_TITLE = 'seo_title';
 }

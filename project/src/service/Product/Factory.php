@@ -8,6 +8,8 @@ class Factory
 {
   use \Nu3\Feature\Config;
   use \Nu3\Feature\DatabaseConnection;
+  use \Nu3\Feature\PropertyMap;
+  use \Nu3\Feature\RegionCheck;
 
   function createDataTransferObject() : TransferObject
   {
@@ -31,7 +33,9 @@ class Factory
   {
     $entityBuilder =  new EntityBuilder();
     $entityBuilder->setConfig($this->config());
-
+    $entityBuilder->setPropertyMap($this->propertyMap());
+    $entityBuilder->setRegionCheck($this->regionCheck());
+    
     return $entityBuilder;
   }
 

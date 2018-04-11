@@ -11,7 +11,7 @@ class ValueFilter
     $properties = &$product->properties;
 
     $this->applyFilter($properties, Property::PRODUCT_NAME, 'trim');
-    $this->applyFilter($properties, Property::META_TITLE, 'trim');
+    $this->applyFilter($properties, Property::PRODUCT_META_TITLE, 'trim');
 
     return $product;
   }

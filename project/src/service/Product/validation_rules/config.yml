@@ -20,14 +20,6 @@ Nu3\Service\Product\Entity\Product:
           -
             Collection:
               fields:
-                status:
-                  -
-                    Choice:
-                      choices:
-                        - new
-                        - approved
-                        - 'not listed'
-                        - unavailable
                 name:
                   -
                     NotBlank: null

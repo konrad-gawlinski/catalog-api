@@ -1,6 +1,8 @@
 <?php
 
 use Nu3\Config;
+use Nu3\Service\Product\PropertyMap;
+use Nu3\Core\RegionCheck;
 
 $app['config'] = function() {
   return require(APPLICATION_ROOT .'config/config.php');
@@ -10,6 +12,8 @@ $app['product.service.create.factory'] = function() use ($app) {
   $factory = new \Nu3\Service\Product\Action\CreateProduct\Factory();
   $factory->setConfig($app['config']);
   $factory->setDatabaseConnection($app['database.connection']);
+  $factory->setPropertyMap(new PropertyMap());
+  $factory->setRegionCheck(new RegionCheck());
 
   return $factory;
 };
@@ -18,6 +22,8 @@ $app['product.service.update.factory'] = function() use ($app) {
   $factory = new \Nu3\Service\Product\Action\UpdateProduct\Factory();
   $factory->setConfig($app['config']);
   $factory->setDatabaseConnection($app['database.connection']);
+  $factory->setPropertyMap(new PropertyMap());
+  $factory->setRegionCheck(new RegionCheck());
 
   return $factory;
 };
@@ -26,6 +32,8 @@ $app['product.service.get.factory'] = function() use ($app) {
   $factory = new \Nu3\Service\Product\Action\GetProduct\Factory();
   $factory->setConfig($app['config']);
   $factory->setDatabaseConnection($app['database.connection']);
+  $factory->setPropertyMap(new PropertyMap());
+  $factory->setRegionCheck(new RegionCheck());
 
   return $factory;
 };

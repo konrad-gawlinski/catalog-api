@@ -5,12 +5,18 @@ namespace spec\Product\Nu3\Service\Product\Action\CreateProduct;
 use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\Entity\ProductStatus;
 use Nu3\Service\Product\Property as P;
+use Nu3\Core\RegionCheck;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class BuilderSpec extends ObjectBehavior
 {
-  function it_should_force_status_new_for_all_regions(Product $product)
+  function let()
+  {
+    $this->setRegionCheck(new RegionCheck());
+  }
+
+  function it_should_force_status_new_for_specific_regions(Product $product)
   {
     $input = [
       'global' => [
@@ -18,6 +24,9 @@ class BuilderSpec extends ObjectBehavior
       ],
       'de' => [
         P::PRODUCT_PRICE => '210'
+      ],
+      'de_de' => [
+        P::PRODUCT_META_TITLE => 'the coolest ever'
       ]
     ];
 
@@ -28,7 +37,28 @@ class BuilderSpec extends ObjectBehavior
     $this->assert($product, $input, $expected);
   }
 
-  function it_should_overwrite_status_for_all_regions(Product $product)
+  function it_should_not_set_status_new_for_language_regions(Product $product)
+  {
+    $input = [
+      'global' => [
+        P::PRODUCT_NAME => 'somename'
+      ],
+      'de' => [
+        P::PRODUCT_PRICE => '210'
+      ],
+      'de_de' => [
+        P::PRODUCT_META_TITLE => 'the coolest ever'
+      ]
+    ];
+
+    $expected = $input;
+    $expected['global'][P::PRODUCT_STATUS] = ProductStatus::NEW;
+    $expected['de'][P::PRODUCT_STATUS] = ProductStatus::NEW;
+
+    $this->assert($product, $input, $expected);
+  }
+
+  function it_should_overwrite_status_for_specific_regions(Product $product)
   {
     $input = [
       'global' => [
