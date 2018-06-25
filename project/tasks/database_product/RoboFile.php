@@ -61,68 +61,10 @@ class RoboFile extends \Robo\Tasks
   ]) : bool
   {
     return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/01_tables.sql';
+      $inputFile = APPLICATION_ROOT . '/database/product/01_init.sql';
       $fileToImport = self::TMP_DIR . '/product_tables.sql';
 
       return $this->runCreateCollection($options, $inputFile, $fileToImport);
-    });
-  }
-
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   * @option $schema schema name to create for storing stored procedures
-   * @option $search_path
-   */
-  function productCreateProcedures($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-    OPTS_SCHEMA => null,
-    OPTS_SEARCH_PATH => null,
-  ]) : bool
-  {
-    return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/02_procedures.sql';
-      $fileToImport = self::TMP_DIR . '/product_procedures.sql';
-
-      return $this->runCreateCollection($options, $inputFile, $fileToImport);
-    });
-  }
-
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   * @option $schema schema name to remove
-   */
-  function productDropProcedures($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-    OPTS_SCHEMA => null
-  ]) : bool
-  {
-    return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/cleanup/01_procedures.sql';
-      $fileToImport = self::TMP_DIR . '/product_drop_procedures.sql';
-
-      return $this->runDropCollection($options, $inputFile, $fileToImport);
     });
   }
 
@@ -147,7 +89,7 @@ class RoboFile extends \Robo\Tasks
   ]) : bool
   {
     return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/cleanup/02_tables.sql';
+      $inputFile = APPLICATION_ROOT . '/database/product/01_cleanup.sql';
       $fileToImport = self::TMP_DIR . '/product_drop_tables.sql';
 
       return $this->runDropCollection($options, $inputFile, $fileToImport);

@@ -22,20 +22,10 @@ RUN echo '' >> /etc/profile \
     && su -m postgres -c "/usr/local/pgsql/bin/initdb -D /var/pgsql_data" \
     && printf "\nhost\tall\t\tpostgres\tall\t\t\tpassword\n" >> /var/pgsql_data/pg_hba.conf
 
-#install pl/v8
-ENV GYP_CHROMIUM_NO_ACTION 0
-ENV PLV8_VERSION 2.3.0
-ENV PLV8_FILENAME "plv8-v${PLV8_VERSION}.tar.gz"
-RUN wget "https://github.com/plv8/plv8/archive/v${PLV8_VERSION}.tar.gz" -O "/tmp/${PLV8_FILENAME}" \
-    && tar -xf "/tmp/${PLV8_FILENAME}" -C "/tmp/" \
-    && cd "/tmp/plv8-${PLV8_VERSION}" \
-    && make -j 4 PG_CONFIG=/usr/local/pgsql/bin/pg_config \
-    && make install PG_CONFIG=/usr/local/pgsql/bin/pg_config
-
 COPY conf/supervisor/ /etc/supervisor/conf.d
 
 #cleanup
 RUN rm -rf /tmp/* \
-    && apt-get purge -y --auto-remove gcc g++ make wget git curl lbzip2 xz-utils
+    && apt-get purge -y --auto-remove gcc g++ make wget git
 
 CMD ["supervisord", "-n"]

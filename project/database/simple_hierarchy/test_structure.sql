@@ -1,22 +1,4 @@
-CREATE TABLE product (
-  id INT PRIMARY KEY,
-  sku VARCHAR(10) UNIQUE,
-  type VARCHAR(30) NOT NULL,
-  global JSONB,
-  de JSONB,
-  com JSONB,
-  de_de JSONB,
-  en_en JSONB
-);
-
-CREATE TABLE product_config (
-  parent INT NOT NULL REFERENCES product(id),
-  child INT NOT NULL REFERENCES product(id),
-  depth INT NOT NULL
-);
-
--------------------------------------
-INSERT INTO product VALUES
+INSERT INTO products VALUES
   (1, 'id_1', 'simple', '{"name":"id_1","color": "red"}','{"color":"black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
   (31, null, 'config', '{"id_31":true, "brand": "Audi", "model": "A6"}', null, null, null, null),
 
@@ -45,7 +27,7 @@ INSERT INTO product VALUES
 
 ;
 
-INSERT INTO product_config VALUES
+INSERT INTO product_relations VALUES
   (1, 1, 0),
   (31, 31, 0),
 
@@ -73,7 +55,7 @@ INSERT INTO product_config VALUES
   (13, 13, 0)
 ;
 
-INSERT INTO product_config VALUES
+INSERT INTO product_relations VALUES
   (1, 31, 1),
 
   (2, 32, 1),

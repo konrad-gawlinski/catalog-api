@@ -12,7 +12,7 @@ RUN wget "https://ftp.postgresql.org/pub/source/v${PGSQL_VERSION}/${PGSQL_FILENA
     && cd "/tmp/postgresql-${PGSQL_VERSION}" && "./configure" \
         --prefix=/usr/local/pgsql \
         --without-readline \
-    && make -j 4 \
+    && make -j 2 \
     && make install
 
 #install nginx
@@ -28,7 +28,7 @@ RUN wget "http://nginx.org/download/${NGINX_FILENAME}" -O "/tmp/${NGINX_FILENAME
         --user=www-data \
         --group=www-data \
         --without-http_proxy_module \
-    && make -j 4 && make install
+    && make -j 2 && make install
 
 COPY conf/http/ /usr/local/nginx/conf/
 
@@ -49,7 +49,7 @@ RUN wget "http://php.net/get/${PHP_FILENAME}/from/this/mirror" -O "/tmp/${PHP_FI
         --with-openssl \
         --enable-mbstring \
         --enable-opcache --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
-    && make -j 3 && make install \
+    && make && make install \
     && mkdir -p /var/webapp \
     && mkdir /var/log/php \
     && cd /usr/bin && ln -s /usr/local/php-fpm/bin/php php
@@ -68,7 +68,7 @@ RUN wget "https://xdebug.org/files/${XDEBUG_FILENAME}" -O "/tmp/${XDEBUG_FILENAM
     && "./configure" \
         --enable-xdebug \
         --with-php-config=/usr/local/php-fpm/bin/php-config \
-    && make -j 4 && make install \
+    && make -j 2 && make install \
     && sed -i 's/;insert_extension/\nzend_extension=xdebug.so;\nxdebug.remote_enable=1;\n/g' /usr/local/php-fpm/lib/php.ini
 
 RUN rm -rf /tmp/* \
