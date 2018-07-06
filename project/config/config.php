@@ -43,4 +43,30 @@ return array (
       'validation_rules' => 'bundle.yml',
     ),
   ),
+  'shop' => 
+  array (
+    'region_configurations' => 
+    array (
+      0 => 
+      array (
+        0 => 'de',
+        1 => 'de_de',
+      ),
+      1 => 
+      array (
+        0 => 'fr',
+        1 => 'fr_fr',
+      ),
+      2 => 
+      array (
+        0 => 'at',
+        1 => 'at_de',
+      ),
+      3 => 
+      array (
+        0 => 'at',
+        1 => 'de_de',
+      ),
+    ),
+  ),
 );

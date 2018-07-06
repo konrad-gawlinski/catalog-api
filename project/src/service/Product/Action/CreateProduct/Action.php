@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class Action extends ActionBase
 {
-  /** @var Validator */
-  private $validator;
+  /** @var RequestValidator */
+  private $requestValidator;
 
   private $violations = [];
 
@@ -24,8 +24,8 @@ class Action extends ActionBase
   {
     parent::__construct($factory);
     
-    $this->validator = $factory->createValidator();
-    $this->validator->setProductGateway($this->productGateway);
+    $this->requestValidator = $factory->createRequestValidator();
+    $this->requestValidator->setProductGateway($this->productGateway);
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -50,7 +50,7 @@ class Action extends ActionBase
 
   private function handleRequest(Request $request) : int
   {
-    $this->violations = $this->validator->validateRequest($request);
+    $this->violations = $this->requestValidator->validate($request);
     if ($this->violations) return 0;
 
     $dto = $this->factory->createDataTransferObject();

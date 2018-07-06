@@ -16,10 +16,14 @@ class Action extends ActionBase
   /** @var EntityBuilder */
   private $entityBuilder;
 
+  /** @var RequestValidator */
+  private $requestValidator;
+
   function __construct(Factory $factory)
   {
     parent::__construct($factory);
 
+    $this->requestValidator = $factory->createRequestValidator();
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -44,7 +48,7 @@ class Action extends ActionBase
 
   private function handleRequest(Request $request) : array
   {
-    $violations = $this->factory->createValidator()->validateRequest($request);
+    $violations = $this->requestValidator->validate($request);
     if ($violations) {
       $this->violations = $violations;
       return [];

@@ -3,7 +3,7 @@
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\Validator;
+use Nu3\Service\Product\Action\RequestValidator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ErrorKey;
@@ -16,21 +16,25 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class Action extends ActionBase
 {
-  /** @var Validator */
-  private $validator;
-
-  /** @var EntityBuilder */
-  private $entityBuilder;
+  /** @var RequestValidator */
+  private $requestValidator;
 
   /** @var ValueFilter */
   private $valueFilter;
+
+  /** @var ProductValidator */
+  private $productValidator;
+
+  /** @var EntityBuilder */
+  private $entityBuilder;
 
   function __construct(Factory $factory)
   {
     parent::__construct($factory);
 
-    $this->validator = $factory->createValidator();
+    $this->requestValidator = $factory->createRequestValidator();
     $this->valueFilter = $factory->createValueFilter();
+    $this->productValidator = $factory->createProductValidator();
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -53,39 +57,28 @@ class Action extends ActionBase
    */
   private function handleRequest(Request $request) : array
   {
-    $violations = $this->validator->validateRequest($request);
+    $violations = $this->requestValidator->validate($request);
     if ($violations) return $violations;
 
-    $storedProduct = $this->productGateway->fetchProductById(intval($request->getId()));
-    if (!$storedProduct) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
+    $storedProductProperties = $this->productGateway->fetchProductById(intval($request->getId()));
+    if (!$storedProductProperties) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
     $dto = $this->factory->createDataTransferObject();
     $dto->applyRequestProperties($request);
-    $product = $this->mergeStoredPropertiesWithRequestedProperties($storedProduct, $dto);
-    $violations = $this->factory->createEntityValidator()->validate($product);
+    $violations = $this->productValidator->validate($storedProductProperties, $dto);
     if ($violations) return $violations;
 
-    $product = $this->buildRequestedProductEntity($storedProduct, $dto);
+    $product = $this->buildRequestedProductEntity($storedProductProperties, $dto);
 
     return $this->saveProduct($product);
   }
 
-  private function mergeStoredPropertiesWithRequestedProperties(array $storedProduct, TransferObject $dto) : Entity\Product
+  private function buildRequestedProductEntity(array $storedProductProperties, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
-    $this->entityBuilder->fillEntityFromDbArray($productEntity, $storedProduct);
-    $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
-    $this->valueFilter->filterEntity($productEntity);
-
-    return $productEntity;
-  }
-
-  private function buildRequestedProductEntity(array $storedProduct, TransferObject $dto) : Entity\Product
-  {
-    $productEntity = $this->factory->createProductEntity();
-    $productEntity->id = $storedProduct[Property::PRODUCT_ID];
-    $productEntity->sku = $storedProduct[Property::PRODUCT_SKU];
-    $productEntity->type = $storedProduct[Property::PRODUCT_TYPE];
+    $productEntity->id = $storedProductProperties[Property::PRODUCT_ID];
+    $productEntity->sku = $storedProductProperties[Property::PRODUCT_SKU];
+    $productEntity->type = $storedProductProperties[Property::PRODUCT_TYPE];
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
     $this->valueFilter->filterEntity($productEntity);
 

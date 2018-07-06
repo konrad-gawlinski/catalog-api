@@ -16,3 +16,9 @@ product:
     validation_rules: config.yml
   bundle:
     validation_rules: bundle.yml
+shop:
+  region_configurations:
+    - ['de', 'de_de']
+    - ['fr', 'fr_fr']
+    - ['at', 'at_de']
+    - ['at', 'de_de']

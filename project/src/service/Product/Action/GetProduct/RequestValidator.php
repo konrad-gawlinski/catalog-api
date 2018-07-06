@@ -5,7 +5,7 @@ namespace Nu3\Service\Product\Action\GetProduct;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\Feature\RequiredIdValidator;
 
-class Validator implements \Nu3\Service\Product\Action\Validator
+class RequestValidator implements \Nu3\Service\Product\Action\RequestValidator
 {
   use RequiredIdValidator;
 
@@ -14,7 +14,7 @@ class Validator implements \Nu3\Service\Product\Action\Validator
    *
    * @return Violation[] array
    */
-  function validateRequest($request) : array
+  function validate($request) : array
   {
     return $this->validateRequiredId($request->getId());
   }

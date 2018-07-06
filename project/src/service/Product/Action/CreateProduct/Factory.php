@@ -17,9 +17,9 @@ class Factory extends \Nu3\Service\Product\Factory
     return $entityBuilder;
   }
 
-  function createValidator() : Validator
+  function createRequestValidator() : RequestValidator
   {
-    $object = new Validator();
+    $object = new RequestValidator();
     $object->setConfig($this->config());
 
     return $object;

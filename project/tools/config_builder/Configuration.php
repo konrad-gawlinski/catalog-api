@@ -28,6 +28,9 @@ class Configuration implements ConfigurationInterface
           ->arrayNode('language')->prototype('scalar')->end()->end()
         ->end()->end()
         ->variableNode('product')->end()
+        ->arrayNode('shop')->children()
+          ->arrayNode('region_configurations')->arrayPrototype()->prototype('scalar')->end()->end()->end()
+        ->end()->end()
       ->end()
       ->end();
 

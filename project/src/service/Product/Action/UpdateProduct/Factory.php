@@ -4,10 +4,17 @@ namespace Nu3\Service\Product\Action\UpdateProduct;
 
 class Factory extends \Nu3\Service\Product\Factory
 {
-  function createValidator() : Validator
+  function createRequestValidator() : RequestValidator
   {
-    $object = new Validator();
+    $object = new RequestValidator();
 
+    return $object;
+  }
+
+  function createProductValidator() : ProductValidator
+  {
+    $object = new ProductValidator($this);
+    $object->setConfig($this->config());
     return $object;
   }
 }

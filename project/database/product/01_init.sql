@@ -28,8 +28,3 @@ CREATE INDEX product_relations__child_id
 
 CREATE INDEX product_relations__parent_id
   ON <schema_name>.product_relations USING BTREE (parent_id);
-
-CREATE AGGREGATE <schema_name>.jsonb_merge (JSONB) (
-sfunc = jsonb_concat,
-stype = JSONB
-);

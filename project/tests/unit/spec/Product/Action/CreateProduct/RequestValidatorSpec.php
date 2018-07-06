@@ -9,14 +9,14 @@ use Nu3\Spec\App;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ValidatorSpec extends ObjectBehavior
+class RequestValidatorSpec extends ObjectBehavior
 {
   function it_should_succeed(ProductGateway $productGateway, Request $request)
   {
     $this->mockDependencies($productGateway, false);
     $this->setupRequestMock($request, $this->getValidPayload());
 
-    $this->validateRequest($request)->shouldHaveCount(0);
+    $this->validate($request)->shouldHaveCount(0);
   }
 
   function it_should_fail_given_no_sku(ProductGateway $productGateway, Request $request)
@@ -26,7 +26,7 @@ class ValidatorSpec extends ObjectBehavior
     unset($payload[Property::PRODUCT_SKU]);
     $this->setupRequestMock($request, $payload);
 
-    $this->validateRequest($request)->shouldHaveCount(1);
+    $this->validate($request)->shouldHaveCount(1);
   }
 
   function it_should_fail_given_no_type(ProductGateway $productGateway, Request $request)
@@ -36,7 +36,7 @@ class ValidatorSpec extends ObjectBehavior
     unset($payload[Property::PRODUCT_TYPE]);
     $this->setupRequestMock($request, $payload);
 
-    $this->validateRequest($request)->shouldHaveCount(1);
+    $this->validate($request)->shouldHaveCount(1);
   }
 
   function it_should_fail_given_wrong_type(ProductGateway $productGateway, Request $request)
@@ -46,7 +46,7 @@ class ValidatorSpec extends ObjectBehavior
     $payload[Property::PRODUCT_TYPE] = 'wrong_type';
     $this->setupRequestMock($request, $payload);
 
-    $this->validateRequest($request)->shouldHaveCount(1);
+    $this->validate($request)->shouldHaveCount(1);
   }
 
   function it_should_fail_given_product_does_exist(ProductGateway $productGateway, Request $request)
@@ -54,7 +54,7 @@ class ValidatorSpec extends ObjectBehavior
     $this->mockDependencies($productGateway, true);
     $this->setupRequestMock($request, $this->getValidPayload());
 
-    $this->validateRequest($request)->shouldHaveCount(1);
+    $this->validate($request)->shouldHaveCount(1);
   }
 
   function it_should_fail_causing_2_violations(ProductGateway $productGateway, Request $request)
@@ -64,7 +64,7 @@ class ValidatorSpec extends ObjectBehavior
     $payload[Property::PRODUCT_TYPE] = 'wrong_type';
     $this->setupRequestMock($request, $payload);
 
-    $this->validateRequest($request)->shouldHaveCount(2);
+    $this->validate($request)->shouldHaveCount(2);
   }
 
   private function mockDependencies(ProductGateway $productGateway, bool $productExists)

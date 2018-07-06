@@ -13,7 +13,7 @@ define('OPTS_SEARCH_PATH', 'search_path');
 define ('ENV_PGBIN', 'PG_BIN');
 
 require_once APPLICATION_ROOT . '/vendor/autoload.php';
-require __DIR__ .'/../Helper/Database.php';
+require __DIR__ .'/../src/Helper/Database.php';
 
 use \Robo\Collection\CollectionBuilder;
 

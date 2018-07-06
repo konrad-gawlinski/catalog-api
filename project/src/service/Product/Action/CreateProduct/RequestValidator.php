@@ -9,7 +9,7 @@ use Nu3\Config;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Property;
 
-class Validator implements \Nu3\Service\Product\Action\Validator
+class RequestValidator implements \Nu3\Service\Product\Action\RequestValidator
 {
   use ConfigFeature;
 
@@ -21,7 +21,7 @@ class Validator implements \Nu3\Service\Product\Action\Validator
    *
    * @return Violation[] array
    */
-  function validateRequest($request) : array
+  function validate($request) : array
   {
     $payload = $request->getPayload();
     $violations = $this->validateRequiredSku($payload);

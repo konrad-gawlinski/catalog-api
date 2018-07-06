@@ -2,22 +2,30 @@
 
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
+use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Core\Violation;
-use Nu3\Service\Product\Action\CUValidator;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\Feature\RequiredIdValidator;
 use Nu3\Service\Product\Property;
 
-class Validator extends CUValidator
+class RequestValidator implements \Nu3\Service\Product\Action\RequestValidator
 {
   use RequiredIdValidator;
+
+  /** @var ProductGateway */
+  protected $productGateway;
+
+  function setProductGateway(ProductGateway $productGateway)
+  {
+    $this->productGateway = $productGateway;
+  }
 
   /**
    * @param Request $request
    *
    * @return Violation[] array
    */
-  function validateRequest($request) : array
+  function validate($request) : array
   {
     $violations = $this->validateRequiredId($request->getId());
     $violations = array_merge($violations, $this->rejectEmptyBody($request->getPayload()));
