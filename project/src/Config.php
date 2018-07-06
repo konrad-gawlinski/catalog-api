@@ -23,4 +23,7 @@ interface Config
   const BUNDLE = 'bundle';
   const DEFAULT_VALUES = 'default_values';
   const VALIDATION_RULES = 'validation_rules';
+
+  const SHOP = 'shop';
+  const REGION_COMBINATIONS = 'region_combinations';
 }

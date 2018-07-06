@@ -4,7 +4,7 @@ namespace spec\Product\Nu3\Service\Product;
 
 use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\TransferObject;
-use Nu3\Core\RegionCheck;
+use Nu3\Core\RegionUtils;
 use Nu3\Service\Product\PropertyMap;
 use Nu3\Spec\App;
 use PhpSpec\ObjectBehavior;
@@ -16,7 +16,7 @@ class EntityBuilderSpec extends ObjectBehavior
   {
     $this->setConfig(App::getInstance()->getConfig());
     $this->setPropertyMap(new PropertyMap());
-    $this->setRegionCheck(new RegionCheck());
+    $this->setRegionUtils(new RegionUtils());
   }
 
   function it_should_apply_dto_attributes_to_entity(TransferObject $dto, Product $product)

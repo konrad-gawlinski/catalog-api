@@ -15,6 +15,8 @@ class Factory extends \Nu3\Service\Product\Factory
   {
     $object = new ProductValidator($this);
     $object->setConfig($this->config());
+    $object->setRegionUtils($this->regionUtils());
+
     return $object;
   }
 }

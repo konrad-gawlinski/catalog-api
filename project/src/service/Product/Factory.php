@@ -2,23 +2,23 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Core\Database\Gateway\Product as DatabaseGateway;
+use Nu3\Core\Database\Gateway\Product as ProductGateway;
 
 class Factory
 {
   use \Nu3\Feature\Config;
   use \Nu3\Feature\DatabaseConnection;
   use \Nu3\Feature\PropertyMap;
-  use \Nu3\Feature\RegionCheck;
+  use \Nu3\Feature\RegionUtils;
 
   function createDataTransferObject() : TransferObject
   {
     return new TransferObject();
   }
 
-  function createProductGateway() : DatabaseGateway
+  function createProductGateway() : ProductGateway
   {
-    return new DatabaseGateway($this->databaseConnection());
+    return new ProductGateway($this->databaseConnection());
   }
 
   function createProductEntity() : Entity\Product
@@ -34,7 +34,7 @@ class Factory
     $entityBuilder =  new EntityBuilder();
     $entityBuilder->setConfig($this->config());
     $entityBuilder->setPropertyMap($this->propertyMap());
-    $entityBuilder->setRegionCheck($this->regionCheck());
+    $entityBuilder->setRegionUtils($this->regionUtils());
     
     return $entityBuilder;
   }

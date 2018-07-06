@@ -2,7 +2,7 @@
 
 namespace Nu3\Core;
 
-class RegionCheck
+class RegionUtils
 {
   function isGlobal(string $region) : bool
   {

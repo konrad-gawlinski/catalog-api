@@ -5,7 +5,7 @@ namespace Nu3\Service\Product;
 use Nu3\Config;
 use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Feature\PropertyMap as PropertyMapFeature;
-use Nu3\Feature\RegionCheck as RegionCheckFeature;
+use Nu3\Feature\RegionUtils as RegionUtilsFeature;
 use Nu3\Service\Product\Entity\Product;
 
 class EntityBuilder
@@ -17,7 +17,7 @@ class EntityBuilder
 
   use ConfigFeature;
   use PropertyMapFeature;
-  use RegionCheckFeature;
+  use RegionUtilsFeature;
 
   function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
   {
@@ -84,9 +84,9 @@ class EntityBuilder
 
   private function pickRegionSpecificMap(string $region, array $attributesMap) : array
   {
-    if ($this->regionCheck()->isGlobal($region)) return $attributesMap[self::REGION_GLOBAL];
-    if ($this->regionCheck()->isCountry($region)) return $attributesMap[self::REGION_COUNTRY];
-    if ($this->regionCheck()->isLanguage($region)) return $attributesMap[self::REGION_LANGUAGE];
+    if ($this->regionUtils()->isGlobal($region)) return $attributesMap[self::REGION_GLOBAL];
+    if ($this->regionUtils()->isCountry($region)) return $attributesMap[self::REGION_COUNTRY];
+    if ($this->regionUtils()->isLanguage($region)) return $attributesMap[self::REGION_LANGUAGE];
 
     return [];
   }

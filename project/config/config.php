@@ -45,7 +45,7 @@ return array (
   ),
   'shop' => 
   array (
-    'region_configurations' => 
+    'region_combinations' => 
     array (
       0 => 
       array (

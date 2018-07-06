@@ -7,11 +7,15 @@ use Nu3\Core\Violation;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ValueFilter;
+use Nu3\Core\Database\Gateway\Product as ProductGateway;
+use Nu3\Config;
 use Nu3\Feature\Config as ConfigFeature;
+use Nu3\Feature\RegionUtils;
 
 class ProductValidator
 {
     use ConfigFeature;
+    use RegionUtils;
 
     /** @var EntityBuilder */
     private $entityBuilder;
@@ -21,6 +25,9 @@ class ProductValidator
 
     /** @var ValueFilter */
     private $valueFilter;
+
+    /** @var ProductGateway */
+    protected $productGateway;
 
     /** @var Factory */
     protected $factory;
@@ -32,6 +39,7 @@ class ProductValidator
         $this->entityValidator = $factory->createEntityValidator();
         $this->entityBuilder = $factory->createEntityBuilder();
         $this->valueFilter = $factory->createValueFilter();
+        $this->productGateway = $factory->createProductGateway();
     }
 
     /**
@@ -46,6 +54,22 @@ class ProductValidator
         return [];
     }
 
+    public function extractRegionCombinationsToValidate(array $touchedRegions, array $regionCombinations)
+    {
+        $result = [];
+        foreach ($regionCombinations as $combination) {
+            foreach ($touchedRegions as $region) {
+                list($country, $language) = $combination;
+                $uniqueKey = $country . '-' . $language;
+                if ($country === $region || $language === $region) {
+                    $result[$uniqueKey] = $combination;
+                }
+            }
+        }
+
+        return array_values($result);
+    }
+
     private function mergeStoredPropertiesWithRequestedProperties(array $storedProductProperties, TransferObject $dto) : Entity\Product
     {
         $productEntity = $this->factory->createProductEntity();
@@ -54,5 +78,10 @@ class ProductValidator
         $this->valueFilter->filterEntity($productEntity);
 
         return $productEntity;
+    }
+
+    function setProductGateway(ProductGateway $productGateway)
+    {
+        $this->productGateway = $productGateway;
     }
 }

@@ -5,7 +5,7 @@ namespace spec\Product\Nu3\Service\Product\Action\CreateProduct;
 use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\Entity\ProductStatus;
 use Nu3\Service\Product\Property as P;
-use Nu3\Core\RegionCheck;
+use Nu3\Core\RegionUtils;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -13,7 +13,7 @@ class BuilderSpec extends ObjectBehavior
 {
   function let()
   {
-    $this->setRegionCheck(new RegionCheck());
+    $this->setRegionUtils(new RegionUtils());
   }
 
   function it_should_force_status_new_for_specific_regions(Product $product)

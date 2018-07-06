@@ -1,4 +1,10 @@
 suites:
+    core:
+        namespace: Nu3\Core
+        psr4_prefix: Nu3\Core
+        src_path: %paths.config%/../../../src/core
+        spec_path: %paths.config%
+        spec_prefix: spec\Core
     product:
         namespace: Nu3\Service\Product
         psr4_prefix: Nu3\Service\Product
