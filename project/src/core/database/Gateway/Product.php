@@ -128,7 +128,7 @@ QUERY;
   /**
    * @throws DatabaseException
    */
-  public function addAddToRelationBranch(int $childId, array $branchParentIds) : int
+  public function addToRelationBranch(int $childId, array $branchParentIds) : int
   {
     return $this->runQueryFunction(
       function() use ($childId, $branchParentIds) {

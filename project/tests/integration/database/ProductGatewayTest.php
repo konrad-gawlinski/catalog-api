@@ -219,7 +219,7 @@ QUERY;
 
   private function createRelationsAndAssertCount(int $childId, array $branchParentIds)
   {
-    $totalInsertedRows = $this::$productGateway->addAddToRelationBranch($childId, $branchParentIds);
+    $totalInsertedRows = $this::$productGateway->addToRelationBranch($childId, $branchParentIds);
     $this->assertEquals(count($branchParentIds), $totalInsertedRows);
   }
 }

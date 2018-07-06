@@ -20,7 +20,7 @@
       "Nu3\\Service\\": "src/service/",
       "Nu3\\Feature\\": "src/feature/",
       "Nu3\\Core\\Database\\": "src/core/database/",
-      "Nu3\\Robo\\Task\\": "robo/task/",
+      "Nu3\\Robo\\Task\\": "extensions/robo/task/",
 
       "Nu3\\Spec\\": "tests/unit/src/"
     }

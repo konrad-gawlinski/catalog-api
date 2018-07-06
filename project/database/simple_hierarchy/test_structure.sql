@@ -1,4 +1,4 @@
-INSERT INTO products VALUES
+INSERT INTO products(id, sku, type, global, de, at, de_de, at_de) VALUES
   (1, 'id_1', 'simple', '{"name":"id_1","color": "red"}','{"color":"black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
   (31, null, 'config', '{"id_31":true, "brand": "Audi", "model": "A6"}', null, null, null, null),
 
