@@ -1,9 +1,9 @@
 <?php
 
-use Nu3\Core\Database\Gateway\Product as ProductGateway;
+use Nu3\Core\Database\QueryRunner\Product as ProductGateway;
 use Nu3\Core\Database\Exception as DatabaseException;
 
-class ProductGatewayTest extends \Codeception\Test\Unit
+class ProductQueryRunnerTest extends \Codeception\Test\Unit
 {
   /**
    * @var \DatabaseTester

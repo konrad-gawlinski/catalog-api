@@ -2,7 +2,7 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Core\Database\Gateway\Product as ProductGateway;
+use Nu3\Core\Database\QueryRunner\Product as ProductGateway;
 
 class Factory
 {

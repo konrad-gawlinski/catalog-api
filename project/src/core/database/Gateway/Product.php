@@ -2,7 +2,6 @@
 
 namespace Nu3\Core\Database\Gateway;
 
-use Nu3\Core\Database\Exception as DatabaseException;
 use Nu3\Core\Database\Connection;
 use Nu3\Core\Database\QueryBuilder;
 
@@ -18,17 +17,7 @@ class Product extends Base
     $this->queryBuilder = new QueryBuilder();
   }
 
-  function productExists(string $sku)
-  {
-    return $this->runQueryFunction(
-      function() use ($sku) {
-        return $this->queryProductExists($sku);
-      },
-      'Product existence could not be verified'
-    );
-  }
-
-  private function queryProductExists(string $sku) : bool
+  function productExists(string $sku) : bool
   {
     $_sku = pg_escape_literal($sku);
 
@@ -41,22 +30,9 @@ class Product extends Base
   }
 
   /**
-   * @throws DatabaseException
-   */
-  function createProduct(?string $sku, string $type, array $properties) : int
-  {
-    return $this->runQueryFunction(
-      function() use ($sku, $type, $properties) {
-        return $this->queryCreateProduct($sku, $type, $properties);
-      },
-      'Product could not be created'
-    );
-  }
-
-  /**
    * @throws \Exception
    */
-  private function queryCreateProduct(?string $sku, string $type, array $properties) : int
+  function createProduct(?string $sku, string $type, array $properties) : int
   {
     $queryColumns = 'sku,type';
     $_sku = is_null($sku) ? 'null' : pg_escape_literal($sku);
@@ -76,19 +52,6 @@ class Product extends Base
    */
   function updateProduct(int $id, array $properties) : int
   {
-    return $this->runQueryFunction(
-      function() use ($id, $properties) {
-        return $this->queryUpdateProduct($id, $properties);
-      },
-      'Product could not be updated'
-    );
-  }
-
-  /**
-   * @throws \Exception
-   */
-  private function queryUpdateProduct(int $id, array $properties) : int
-  {
     $querySetStatement = $this->queryBuilder->buildJsonMergeUpdateList($properties);
 
     $query = <<<QUERY
@@ -104,41 +67,16 @@ QUERY;
   }
 
   /**
-   * @throws DatabaseException
-   */
-  public function createNode(int $productId) {
-    return $this->runQueryFunction(
-      function() use ($productId) {
-        $this->queryCreateNode($productId);
-      },
-      'Product node could not be created'
-    );
-  }
-
-  /**
    * @throws \Exception
    */
-  private function queryCreateNode(int $productId)
+  function createNode(int $productId)
   {
     pg_query($this->dbConnection->connectionRes(),
       "INSERT INTO product_relations VALUES ({$productId}, {$productId}, 0)"
     );
   }
 
-  /**
-   * @throws DatabaseException
-   */
-  public function addToRelationBranch(int $childId, array $branchParentIds) : int
-  {
-    return $this->runQueryFunction(
-      function() use ($childId, $branchParentIds) {
-        return $this->queryAddToRelationBranch($childId, $branchParentIds);
-      },
-      'Relation could not be created'
-    );
-  }
-  
-  private function queryAddToRelationBranch(int $childId, array $branchParentIds) : int
+  function addToRelationBranch(int $childId, array $branchParentIds) : int
   {
     if (!$branchParentIds) return 0;
 
@@ -161,16 +99,6 @@ QUERY;
   }
 
   function fetchProductById(int $productId) : array
-  {
-    return $this->runQueryFunction(
-      function() use ($productId) {
-        return $this->queryFetchProductById($productId);
-      },
-      'Product could not be fetched'
-    );
-  }
-
-  private function queryFetchProductById(int $productId) : array
   {
     $result = pg_query($this->dbConnection->connectionRes(),
       "SELECT * FROM products WHERE id={$productId}"

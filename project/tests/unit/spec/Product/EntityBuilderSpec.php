@@ -59,7 +59,7 @@ class EntityBuilderSpec extends ObjectBehavior
     $dtoMock = $this->mockDto($dto, 'nu3_36', 'config', [
       'de_de' => [
         'name' => 'some name',
-        "status" => "new" //it is not allowed to set status for language regions
+        'status' => 'new' //it is not allowed to set status for language regions
       ]
     ]);
 

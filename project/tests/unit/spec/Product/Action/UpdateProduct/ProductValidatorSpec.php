@@ -17,7 +17,7 @@ class ProductValidatorSpec extends ObjectBehavior
             $entityValidator->beADoubleOf('Nu3\Service\Product\Entity\Validator');
             $entityBuilder->beADoubleOf('Nu3\Service\Product\EntityBuilder');
             $valueFilter->beADoubleOf('Nu3\Service\Product\ValueFilter');
-            $productGateway->beADoubleOf('Nu3\Core\Database\Gateway\Product');
+            $productGateway->beADoubleOf('Nu3\Core\Database\QueryRunner\Product');
 
             $factory->createEntityValidator()->willReturn($entityValidator);
             $factory->createEntityBuilder()->willReturn($entityBuilder);
