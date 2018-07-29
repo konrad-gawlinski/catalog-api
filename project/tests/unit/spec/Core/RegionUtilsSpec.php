@@ -49,4 +49,27 @@ class RegionUtilsSpec extends ObjectBehavior
     $this->isLanguage('de')->shouldBe(false);
     $this->isLanguage('FR')->shouldBe(false);
   }
+
+  function it_should_find_all_possible_region_combinations()
+  {
+    $touchedRegions = [
+      'de',
+      'at_de',
+      'de_de'
+    ];
+
+    $regionCombinations = [
+      ['de', 'de_de'],
+      ['at', 'de_de'],
+      ['dk', 'dk_dk'],
+      ['at', 'at_de'],
+      ['fr', 'fr_fr']
+    ];
+
+    $this->intersectValidRegionCombinations($touchedRegions, $regionCombinations)->shouldReturn([
+      ['de', 'de_de'],
+      ['at', 'de_de'],
+      ['at', 'at_de'],
+    ]);
+  }
 }

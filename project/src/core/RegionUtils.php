@@ -29,4 +29,20 @@ class RegionUtils
   {
     return strlen($region) === 5;
   }
+
+  function intersectValidRegionCombinations(array $regions, array $regionCombinations)
+  {
+    $result = [];
+    foreach ($regionCombinations as $combination) {
+      foreach ($regions as $region) {
+        list($country, $language) = $combination;
+        $uniqueKey = $country . '-' . $language;
+        if ($country === $region || $language === $region) {
+          $result[$uniqueKey] = $combination;
+        }
+      }
+    }
+
+    return array_values($result);
+  }
 }

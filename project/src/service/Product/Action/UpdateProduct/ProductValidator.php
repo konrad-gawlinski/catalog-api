@@ -54,22 +54,6 @@ class ProductValidator
         return [];
     }
 
-    public function extractRegionCombinationsToValidate(array $touchedRegions, array $regionCombinations)
-    {
-        $result = [];
-        foreach ($regionCombinations as $combination) {
-            foreach ($touchedRegions as $region) {
-                list($country, $language) = $combination;
-                $uniqueKey = $country . '-' . $language;
-                if ($country === $region || $language === $region) {
-                    $result[$uniqueKey] = $combination;
-                }
-            }
-        }
-
-        return array_values($result);
-    }
-
     private function mergeStoredPropertiesWithRequestedProperties(array $storedProductProperties, TransferObject $dto) : Entity\Product
     {
         $productEntity = $this->factory->createProductEntity();
