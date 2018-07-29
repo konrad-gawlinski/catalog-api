@@ -4,6 +4,8 @@ Nu3\Service\Product\Entity\Product:
       - All:
         - Collection:
             fields:
+              final_gross_price:
+                - Required: null
               children:
                 - NotBlank: ~
                 - Type: array

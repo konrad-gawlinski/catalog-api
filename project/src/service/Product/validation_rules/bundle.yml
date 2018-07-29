@@ -6,6 +6,17 @@ Nu3\Service\Product\Entity\Product:
           -
             Collection:
               fields:
+                final_gross_price:
+                  -
+                    Required: null
+                    Optional:
+                      -
+                        Type: integer
+                      -
+                        Range:
+                          min: 1
+                          groups:
+                            - sellable
                 children:
                   -
                     NotBlank: null
@@ -22,16 +33,6 @@ Nu3\Service\Product\Entity\Product:
                 name:
                   -
                     NotBlank: null
-                final_gross_price:
-                  -
-                    Optional:
-                      -
-                        Type: integer
-                      -
-                        Range:
-                          min: 1
-                          groups:
-                            - sellable
                 tax_rate:
                   -
                     Optional:
