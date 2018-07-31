@@ -73,7 +73,7 @@ class RequestValidator implements \Nu3\Service\Product\Action\RequestValidator
       $sku = $payload[Property::PRODUCT_SKU];
 
       if ($this->productGateway->productExists($sku))
-        return [new Violation(ErrorKey::PRODUCT_CREATION_FORBIDDEN)];
+        return [new Violation(ErrorKey::PRODUCT_ALREADY_CREATED)];
     }
 
     return [];

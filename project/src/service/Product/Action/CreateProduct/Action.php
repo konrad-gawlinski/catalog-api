@@ -94,7 +94,7 @@ class Action extends ActionBase
       case ErrorKey::INVALID_COUNTRY_VALUE:
       case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::NEW_PRODUCT_REQUIRES_TYPE:
-      case ErrorKey::PRODUCT_CREATION_FORBIDDEN:
+      case ErrorKey::PRODUCT_ALREADY_CREATED:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
         return 400;
 

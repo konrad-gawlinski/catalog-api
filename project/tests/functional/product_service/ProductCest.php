@@ -45,7 +45,7 @@ class ProductCest
     $I->haveHttpHeader('Content-Type', 'application/json');
     $I->sendPOST("/product/create", $this->createProductJson());
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-    $I->seeResponseEquals('["product_creation_forbidden"]');
+    $I->seeResponseEquals('["product_already_created"]');
   }
 
   function it_should_succeed_updating_product(Product_serviceTester $I)
