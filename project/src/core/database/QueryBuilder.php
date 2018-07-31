@@ -60,4 +60,21 @@ class QueryBuilder
 
     return $queryList;
   }
+
+  /**
+   * @param string $regionsCSV comma separated list of regions e.g. 'de,de_de,com'
+   * @return array
+   */
+  function buildRegionMergeColumns(string $regionsCSV) : array
+  {
+    $regions = explode(',', $regionsCSV);
+    $queryStatements = array_map(function($region) {
+      return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";
+    }, $regions);
+
+    return [
+      implode(' || ', $regions),
+      implode(',', $queryStatements)
+    ];
+  }
 }

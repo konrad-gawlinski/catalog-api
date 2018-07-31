@@ -54,7 +54,7 @@ class Action extends ActionBase
       return [];
     }
 
-    $productProperties = $this->productGateway->fetchProductById(intval($request->getId()));
+    $productProperties = $this->productGateway->fetchRawProductById(intval($request->getId()));
     if (!$productProperties) {
       $this->violations = [new Violation(ErrorKey::PRODUCT_NOT_FOUND)];
       return [];

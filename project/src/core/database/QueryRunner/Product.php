@@ -83,12 +83,26 @@ class Product extends ProductGateway
   /**
    * @throws DatabaseException
    */
-  function fetchProductById(int $productId) : array
+  function fetchRawProductById(int $productId) : array
   {
     return $this->runQueryFunction(
       function() use ($productId) {
-        return parent::fetchProductById($productId);
+        return parent::fetchRawProductById($productId);
       },
-      'Product could not be fetched'
+      'Raw product could not be fetched'
     );
-  }}
+  }
+
+  /**
+   * @throws DatabaseException
+   */
+  function fetchProductById(int $productId, string $regions) : array
+  {
+    return $this->runQueryFunction(
+      function() use ($productId, $regions) {
+        return parent::fetchProductById($productId, $regions);
+      },
+      'Raw product could not be fetched'
+    );
+  }
+}

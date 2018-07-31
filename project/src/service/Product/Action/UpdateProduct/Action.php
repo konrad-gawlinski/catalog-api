@@ -60,7 +60,7 @@ class Action extends ActionBase
     $violations = $this->requestValidator->validate($request);
     if ($violations) return $violations;
 
-    $storedProductProperties = $this->productGateway->fetchProductById(intval($request->getId()));
+    $storedProductProperties = $this->productGateway->fetchRawProductById(intval($request->getId()));
     if (!$storedProductProperties) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
 
     $dto = $this->factory->createDataTransferObject();

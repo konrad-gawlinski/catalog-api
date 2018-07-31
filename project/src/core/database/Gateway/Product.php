@@ -98,11 +98,39 @@ QUERY;
       return $totalInsertedRows;
   }
 
-  function fetchProductById(int $productId) : array
+  function fetchRawProductById(int $productId) : array
   {
     $result = pg_query($this->dbConnection->connectionRes(),
       "SELECT * FROM products WHERE id={$productId}"
     );
+
+    $row = pg_fetch_assoc($result);
+    return $row ?: [];
+  }
+
+  /**
+   * @param int $productId
+   * @param string $regions comma separated list of regions e.g. 'de,de_de,com'
+   * @return array
+   */
+  function fetchProductById(int $productId, string $regions) : array
+  {
+    $regionsMergeColumns = $this->queryBuilder->buildRegionMergeColumns($regions);
+    $query = <<<QUERY
+SELECT parent_id as id, sku, type, global || {$regionsMergeColumns[0]} as properties FROM (
+  SELECT parent_id,
+   (array_agg(sku ORDER BY depth ASC))[1] as sku,
+   (array_agg(type ORDER BY depth ASC))[1] as type,
+   jsonb_merge(global ORDER BY depth DESC) as global,
+   {$regionsMergeColumns[1]}
+   
+FROM product_relations JOIN products ON child_id = id
+WHERE parent_id = {$productId} AND (sku IS NULL OR depth = 0)
+GROUP BY parent_id
+) AS product;
+QUERY;
+
+    $result = pg_query($this->dbConnection->connectionRes(), $query);
 
     $row = pg_fetch_assoc($result);
     return $row ?: [];

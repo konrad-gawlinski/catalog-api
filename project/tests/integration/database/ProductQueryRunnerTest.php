@@ -72,14 +72,14 @@ class ProductQueryRunnerTest extends \Codeception\Test\Unit
   /**
    * @test
    */
-  function it_should_update_product()
+  function it_should_update_raw_product()
   {
     $pg = $this::$productGateway;
 
     $this->tester->startTransaction();
     $productId = $pg->createProduct('sku_123', 'simple', ['global'=> ['name'=>'sample name', 'status'=>'new']]);
     $totalAffectedRows = $pg->updateProduct($productId, ['global'=> ['name'=>'new name']]);
-    $product = $pg->fetchProductById($productId);
+    $product = $pg->fetchRawProductById($productId);
     $this->tester->rollbackTransaction();
 
     $this->assertEquals(1, $totalAffectedRows);
@@ -96,6 +96,11 @@ class ProductQueryRunnerTest extends \Codeception\Test\Unit
     $productId = $this::$productGateway->createProduct('sku_123', 'simple', []);
     //it should not throw an exception
     $this::$productGateway->createNode($productId);
+
+    $queryInsertedData = "SELECT * FROM product_relations WHERE parent_id={$productId}";
+    $queryExpectedData = "SELECT {$productId}, {$productId}, 0";
+    $totalMatches = $this->tester->assertQueryResult($queryInsertedData, $queryExpectedData);
+    $this->assertEquals(1, $totalMatches);
 
     $this->tester->rollbackTransaction();
   }
@@ -171,12 +176,12 @@ QUERY;
   /**
    * @test
    */
-  function it_should_fetch_product_by_id()
+  function it_should_fetch_raw_product_by_id()
   {
     $pg = $this::$productGateway;
     $this->tester->startTransaction();
     $productId = $pg->createProduct('sku_123', 'simple', []);
-    $product = $pg->fetchProductById($productId);
+    $product = $pg->fetchRawProductById($productId);
     $this->tester->rollbackTransaction();
 
     unset($product['created_at']);
@@ -197,21 +202,58 @@ QUERY;
   /**
    * @test
    */
-  function it_should_fail_fetching_product_given_non_existing_id()
+  function it_should_fail_fetching_raw_product_given_non_existing_id()
   {
     $pg = $this::$productGateway;
     $this->tester->startTransaction();
-    $product = $pg->fetchProductById(999432423);
+    $product = $pg->fetchRawProductById(999432423);
     $this->tester->rollbackTransaction();
 
     $this->assertEquals([], $product);
+  }
+
+  /**
+   * @test
+   * Test following structure simple <- config1 <- config2
+   */
+  function it_should_fetch_product_with_all_inherited_properties()
+  {
+    $this->tester->startTransaction();
+
+    list($simpleId, $config1Id, $config2Id) = $this->createProductsWithNodes([
+      ['sku_123', 'simple', [
+        'global' => ['name' => 'sample name', 'icon_bio' => true],
+        'de' => ['status' => 'new']
+      ]],
+      [null, 'config', [
+        'global' => ['icon_dye' => true],
+        'de_de' => ['manufacturer' => 'nu3']
+      ]],
+      [null, 'config', []]
+    ]);
+    $this->createRelationsAndAssertCount($config1Id, [$simpleId]);
+    $this->createRelationsAndAssertCount($config2Id, [$config1Id, $simpleId]);
+
+    $this->assertEquals(
+      [
+        'id' => "{$simpleId}",
+        'sku' => 'sku_123',
+        'type' => 'simple',
+        'properties' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
+      ],
+      $this::$productGateway->fetchProductById($simpleId, 'de,de_de')
+    );
+
+    $this->tester->rollbackTransaction();
   }
 
   private function createProductsWithNodes(array $products) : array
   {
     $ids = [];
     foreach ($products as list($sku, $type, $properties)) {
-      $ids[] = $this::$productGateway->createProduct($sku, $type, $properties);
+      $id = $this::$productGateway->createProduct($sku, $type, $properties);
+      $this::$productGateway->createNode($id);
+      $ids[] = $id;
     }
 
     return $ids;

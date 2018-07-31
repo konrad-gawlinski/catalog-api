@@ -81,4 +81,16 @@ class QueryBuilderSpec extends ObjectBehavior
     $this->buildJsonMergeUpdateList(['global'=>['name' => 'sample_\'name']])
       ->shouldReturn('"global"="global" || \'{"name":"sample_\'\'name"}\'');
   }
+
+  function it_should_build_region_merge_columns()
+  {
+    $this->buildRegionMergeColumns('de,de_de,com')->shouldReturn(
+      [
+        'de || de_de || com',
+         'jsonb_merge(de ORDER BY depth DESC) as de,'
+        .'jsonb_merge(de_de ORDER BY depth DESC) as de_de,'
+        .'jsonb_merge(com ORDER BY depth DESC) as com'
+      ]
+    );
+  }
 }
