@@ -46,7 +46,7 @@ class QueryBuilder
     return $result;
   }
 
-  function buildJsonMergeUpdateList(array $properties)
+  function buildJsonMergeUpdateList(array $properties) : string
   {
     $queryList = '';
     $comma = '';
@@ -62,19 +62,37 @@ class QueryBuilder
   }
 
   /**
-   * @param string $regionsCSV comma separated list of regions e.g. 'de,de_de,com'
+   * @param array $regionPairs region pairs e.g. ['de,de_de' ,com,en_gb']
    * @return array
    */
-  function buildRegionMergeColumns(string $regionsCSV) : array
+  function buildRegionMergeColumns(array $regionPairs) : array
   {
-    $regions = explode(',', $regionsCSV);
-    $queryStatements = array_map(function($region) {
-      return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";
-    }, $regions);
+    $selectStatements = $this->buildRegionMergeColumnsSelectStatement($regionPairs);
+    $queryStatements = $this->buildRegionMergeColumnsQueryStatement($regionPairs);
 
     return [
-      implode(' || ', $regions),
-      implode(',', $queryStatements)
+      implode(', ', $selectStatements),
+      implode(', ', $queryStatements)
     ];
+  }
+
+  /**
+   * @return array e.g. ['global || de || de_de', 'global || com || en_gb']
+   */
+  private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
+  {
+    return array_map(function($regionPair) {
+      return 'global || ' . implode(' || ', explode(',', $regionPair));
+    }, $regionPairs);
+  }
+
+  private function buildRegionMergeColumnsQueryStatement(array $regionPairs) : array
+  {
+    $allRegions = explode(',', implode(',', $regionPairs));
+    $uniqueRegions = array_unique($allRegions);
+
+    return array_map(function($region) {
+      return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";
+    }, $uniqueRegions);
   }
 }

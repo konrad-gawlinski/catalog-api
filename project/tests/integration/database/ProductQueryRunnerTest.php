@@ -241,7 +241,7 @@ QUERY;
         'type' => 'simple',
         'properties' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
       ],
-      $this::$productGateway->fetchProductById($simpleId, 'de,de_de')
+      $this::$productGateway->fetchProductById($simpleId, ['de,de_de'])
     );
 
     $this->tester->rollbackTransaction();

@@ -109,15 +109,14 @@ QUERY;
   }
 
   /**
-   * @param int $productId
-   * @param string $regions comma separated list of regions e.g. 'de,de_de,com'
+   * @param array $regionPairs comma separated list of region pairs e.g. 'de,de_de,com'
    * @return array
    */
-  function fetchProductById(int $productId, string $regions) : array
+  function fetchProductById(int $productId, array $regionPairs) : array
   {
-    $regionsMergeColumns = $this->queryBuilder->buildRegionMergeColumns($regions);
+    $regionsMergeColumns = $this->queryBuilder->buildRegionMergeColumns($regionPairs);
     $query = <<<QUERY
-SELECT parent_id as id, sku, type, global || {$regionsMergeColumns[0]} as properties FROM (
+SELECT parent_id as id, sku, type, {$regionsMergeColumns[0]} as properties FROM (
   SELECT parent_id,
    (array_agg(sku ORDER BY depth ASC))[1] as sku,
    (array_agg(type ORDER BY depth ASC))[1] as type,

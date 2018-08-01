@@ -94,13 +94,14 @@ class Product extends ProductGateway
   }
 
   /**
+   * @param array $regionPairs comma separated list of region pairs e.g. 'de,de_de,com'
    * @throws DatabaseException
    */
-  function fetchProductById(int $productId, string $regions) : array
+  function fetchProductById(int $productId, array $regionPairs) : array
   {
     return $this->runQueryFunction(
-      function() use ($productId, $regions) {
-        return parent::fetchProductById($productId, $regions);
+      function() use ($productId, $regionPairs) {
+        return parent::fetchProductById($productId, $regionPairs);
       },
       'Raw product could not be fetched'
     );

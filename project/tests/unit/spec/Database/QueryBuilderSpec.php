@@ -84,12 +84,13 @@ class QueryBuilderSpec extends ObjectBehavior
 
   function it_should_build_region_merge_columns()
   {
-    $this->buildRegionMergeColumns('de,de_de,com')->shouldReturn(
+    $this->buildRegionMergeColumns(['de,de_de', 'com,en_gb'], ['de,de_de', 'com,en_gb'])->shouldReturn(
       [
-        'de || de_de || com',
-         'jsonb_merge(de ORDER BY depth DESC) as de,'
-        .'jsonb_merge(de_de ORDER BY depth DESC) as de_de,'
-        .'jsonb_merge(com ORDER BY depth DESC) as com'
+        'global || de || de_de, global || com || en_gb',
+         'jsonb_merge(de ORDER BY depth DESC) as de, '
+        .'jsonb_merge(de_de ORDER BY depth DESC) as de_de, '
+        .'jsonb_merge(com ORDER BY depth DESC) as com, '
+        .'jsonb_merge(en_gb ORDER BY depth DESC) as en_gb'
       ]
     );
   }
