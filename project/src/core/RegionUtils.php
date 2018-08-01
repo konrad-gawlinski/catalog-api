@@ -30,15 +30,15 @@ class RegionUtils
     return strlen($region) === 5;
   }
 
-  function intersectValidRegionCombinations(array $regions, array $regionCombinations)
+  function intersectValidRegionPairs(array $regions, array $regionPairs)
   {
     $result = [];
-    foreach ($regionCombinations as $combination) {
+    foreach ($regionPairs as $regionPair) {
       foreach ($regions as $region) {
-        list($country, $language) = $combination;
+        list($country, $language) = $regionPair;
         $uniqueKey = $country . '-' . $language;
         if ($country === $region || $language === $region) {
-          $result[$uniqueKey] = $combination;
+          $result[$uniqueKey] = $regionPair;
         }
       }
     }

@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
         ->end()->end()
         ->variableNode('product')->end()
         ->arrayNode('shop')->children()
-          ->arrayNode('region_combinations')->arrayPrototype()->prototype('scalar')->end()->end()->end()
+          ->arrayNode('region_pairs')->arrayPrototype()->prototype('scalar')->end()->end()->end()
         ->end()->end()
       ->end()
       ->end();

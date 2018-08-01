@@ -17,7 +17,7 @@ product:
   bundle:
     validation_rules: bundle.yml
 shop:
-  region_combinations:
+  region_pairs:
     - ['de', 'de_de']
     - ['fr', 'fr_fr']
     - ['at', 'at_de']

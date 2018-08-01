@@ -25,5 +25,5 @@ interface Config
   const VALIDATION_RULES = 'validation_rules';
 
   const SHOP = 'shop';
-  const REGION_COMBINATIONS = 'region_combinations';
+  const REGION_PAIRS = 'region_pairs';
 }
