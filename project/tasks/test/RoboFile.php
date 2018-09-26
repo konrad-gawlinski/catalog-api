@@ -6,13 +6,12 @@
  */
 class RoboFile extends \Robo\Tasks
 {
-  function runUnitTests()
+  function runUnitTests($opts = [])
   {
-    $this->taskExec('./phpspec')
-      ->dir('../../tests/unit/')
-      ->arg('run')
-      ->args('--no-interaction')
-      ->run();
+    $task = $this->taskExec('./phpspec')->dir('../../tests/unit/')->arg('run')->option('no-interaction');
+    if ($opts['verbose']) $task->option('verbose');
+
+    $task->run();
   }
 
   function runIntegrationTests()
