@@ -77,14 +77,14 @@ class QueryBuilder
   }
 
   /**
-   * @return array e.g. ['global || de || de_de', 'global || com || en_gb']
+   * @return array e.g. ['global || de || de_de as de-de_de', 'global || com || en_gb as com-en_gb']
    */
   private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
   {
     return array_map(function($regionPairCsv) {
-      $regionPair = explode(',', $regionPairCsv);
+      list($country, $language) = explode(',', $regionPairCsv);
 
-      return "global || {$regionPair[0]} || {$regionPair[1]}";
+      return "global || {$country} || {$language} as \"{$country}-{$language}\"";
     }, $regionPairs);
   }
 

@@ -100,3 +100,5 @@ INSERT INTO product_relations VALUES
   (13, 3, 1),
   (13, 5, 1)
 ;
+
+SELECT setval('products_id_seq', (SELECT max(id) from products));

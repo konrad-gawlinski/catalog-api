@@ -57,6 +57,11 @@ class DatabaseTester extends \Codeception\Actor
     pg_query($this->dbConnection()->connectionRes(), 'ROLLBACK');
   }
 
+  function commitTransaction()
+  {
+    pg_query($this->dbConnection()->connectionRes(), 'COMMIT');
+  }
+
   function rethrowExceptionInsideTransaction(callable $codeToRun)
   {
     $this->startTransaction();

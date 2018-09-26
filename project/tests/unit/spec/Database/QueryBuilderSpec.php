@@ -86,7 +86,7 @@ class QueryBuilderSpec extends ObjectBehavior
   {
     $this->buildRegionMergeColumns(['de,de_de', 'com,en_gb'])->shouldReturn(
       [
-        'global || de || de_de, global || com || en_gb',
+        'global || de || de_de as "de-de_de", global || com || en_gb as "com-en_gb"',
          'jsonb_merge(de ORDER BY depth DESC) as de, '
         .'jsonb_merge(de_de ORDER BY depth DESC) as de_de, '
         .'jsonb_merge(com ORDER BY depth DESC) as com, '

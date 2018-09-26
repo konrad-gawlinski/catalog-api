@@ -189,13 +189,13 @@ QUERY;
       'id' => "{$productId}",
       'sku' => 'sku_123',
       'type' => 'simple',
-      'global' => null,
-      'de' => null,
-      'de_de' => null,
-      'fr' => null,
-      'fr_fr' => null,
-      'at' => null,
-      'at_de' => null
+      'global' => '{}',
+      'de' => '{}',
+      'de_de' => '{}',
+      'fr' => '{}',
+      'fr_fr' => '{}',
+      'at' => '{}',
+      'at_de' => '{}'
     ], $product);
   }
 
@@ -242,7 +242,8 @@ QUERY;
     list($simpleId, $config1Id, $config2Id) = $this->createProductsWithNodes([
       ['sku_123', 'simple', [
         'global' => ['name' => 'sample name', 'icon_bio' => true],
-        'de' => ['status' => 'new']
+        'de' => ['status' => 'new'],
+        'fr' => ['status' => 'new']
       ]],
       [null, 'config', [
         'global' => ['icon_dye' => true],
@@ -258,9 +259,10 @@ QUERY;
         'id' => "{$simpleId}",
         'sku' => 'sku_123',
         'type' => 'simple',
-        'properties' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
+        'de-de_de' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
+        'fr-fr_fr' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true}',
       ],
-      $this::$productGateway->fetchProductById($simpleId, ['de,de_de'])
+      $this::$productGateway->fetchProductById($simpleId, ['de,de_de', 'fr,fr_fr'])
     );
 
     $this->tester->rollbackTransaction();

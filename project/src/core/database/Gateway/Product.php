@@ -116,7 +116,7 @@ QUERY;
   {
     $regionsMergeColumns = $this->queryBuilder->buildRegionMergeColumns($regionPairs);
     $query = <<<QUERY
-SELECT parent_id as id, sku, type, {$regionsMergeColumns[0]} as properties FROM (
+SELECT parent_id as id, sku, type, {$regionsMergeColumns[0]} FROM (
   SELECT parent_id,
    (array_agg(sku ORDER BY depth ASC))[1] as sku,
    (array_agg(type ORDER BY depth ASC))[1] as type,
