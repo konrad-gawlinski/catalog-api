@@ -81,16 +81,16 @@ class QueryBuilder
    */
   private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
   {
-    return array_map(function($regionPair) {
+    return array_map(function($regionPairCsv) {
+      $regionPair = explode(',', $regionPairCsv);
+
       return "global || {$regionPair[0]} || {$regionPair[1]}";
     }, $regionPairs);
   }
 
   private function buildRegionMergeColumnsQueryStatement(array $regionPairs) : array
   {
-    $allRegions = array_map(function($regionPair) {
-      return "{$regionPair[0]},{$regionPair[1]}";
-    }, $regionPairs);
+    $allRegions = explode(',', implode(',', $regionPairs));
     $uniqueRegions = array_unique(explode(',', implode(',', $allRegions)));
 
     return array_map(function($region) {
