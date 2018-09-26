@@ -4,13 +4,13 @@ CREATE TABLE <schema_name>.products (
   id SERIAL PRIMARY KEY,
   sku VARCHAR UNIQUE,
   type <schema_name>.product_type NOT NULL,
-  global JSONB,
-  de JSONB,
-  at JSONB,
-  fr JSONB,
-  de_de JSONB,
-  fr_fr JSONB,
-  at_de JSONB,
+  global JSONB DEFAULT '{}' NOT NULL,
+  de JSONB DEFAULT '{}' NOT NULL,
+  at JSONB DEFAULT '{}' NOT NULL,
+  fr JSONB DEFAULT '{}' NOT NULL,
+  de_de JSONB DEFAULT '{}' NOT NULL,
+  fr_fr JSONB DEFAULT '{}' NOT NULL,
+  at_de JSONB DEFAULT '{}' NOT NULL,
   created_at TIMESTAMP DEFAULT now()
 );
 

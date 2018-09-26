@@ -1,27 +1,27 @@
 INSERT INTO products(id, sku, type, global, de, at, de_de, at_de) VALUES
-  (1, 'id_1', 'simple', '{"name":"id_1","color": "red"}','{"color":"black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
-  (31, null, 'config', '{"id_31":true, "brand": "Audi", "model": "A6"}', null, null, null, null),
+  (1, 'id_1', 'simple', '{"name":"id_1","color": "red"}','{"color":"black"}', '{}', '{"check":"failed"}', '{"check":"passed"}'),
+  (31, null, 'config', '{"id_31":true, "brand": "Audi", "model": "A6"}', '{}', '{}', '{}', '{}'),
 
-  (2, 'id_2', 'simple', '{"id_2":true, "name":"id_2", "brand": "BMW", "model": "X6"}', '{"color":"black"}', null, '{"check":"passed"}', null),
-  (32, null, 'config', '{"id_32":true, "brand":"BMW", "package":"family"}', null, null, null, null),
-  (33, null, 'config', '{"id_33":true, "brand": "BMW"}', null, null, null, null),
+  (2, 'id_2', 'simple', '{"id_2":true, "name":"id_2", "brand": "BMW", "model": "X6"}', '{"color":"black"}', '{}', '{"check":"passed"}', '{}'),
+  (32, null, 'config', '{"id_32":true, "brand":"BMW", "package":"family"}', '{}', '{}', '{}', '{}'),
+  (33, null, 'config', '{"id_33":true, "brand": "BMW"}', '{}', '{}', '{}', '{}'),
 
-  (3, 'id_3', 'simple', '{"name":"id_3", "brand":"Mercedes", "model":"AMG W124"}','{"color":"diamond black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
-  (34, null, 'config', '{"id_34":true, "brand": "Mercedes", "model": "AMG"}', null, '{"color":"silver"}', '{"check":"unknown"}', '{"check":"unknown"}'),
-  (35, null, 'config', '{"id_35":true, "brand": "Mercedes", "package":"double"}', null, null, null, null),
-  (36, null, 'config', '{"id_36":true, "brand": "Mercedes", "package":"double"}', null, null, null, null),
+  (3, 'id_3', 'simple', '{"name":"id_3", "brand":"Mercedes", "model":"AMG W124"}','{"color":"diamond black"}', '{}', '{"check":"failed"}', '{"check":"passed"}'),
+  (34, null, 'config', '{"id_34":true, "brand": "Mercedes", "model": "AMG"}', '{}', '{"color":"silver"}', '{"check":"unknown"}', '{"check":"unknown"}'),
+  (35, null, 'config', '{"id_35":true, "brand": "Mercedes", "package":"double"}', '{}', '{}', '{}', '{}'),
+  (36, null, 'config', '{"id_36":true, "brand": "Mercedes", "package":"double"}', '{}', '{}', '{}', '{}'),
 
-  (4, 'id_4', 'simple', '{"name":"id_4", "brand":"Mercedes", "model":"AMG W124"}','{"color":"diamond black"}', null, '{"check":"failed"}', '{"check":"passed"}'),
-  (37, null, 'config', '{"id_37":true, "brand": "Mercedes", "model": "AMG"}', null, '{"color":"silver"}', '{"check":"unknown"}', '{"check":"unknown"}'),
-  (38, null, 'config', '{"id_38":true, "brand": "Mercedes", "package":"double"}', null, null, null, null),
-  (39, null, 'config', '{"id_39":true, "brand": "Mercedes"}', null, null, null, null),
-  (40, null, 'config', '{"id_40":true, "brand": "Mercedes", "package":"sport"}', '{"power": "a lot"}', null, null, null),
+  (4, 'id_4', 'simple', '{"name":"id_4", "brand":"Mercedes", "model":"AMG W124"}','{"color":"diamond black"}', '{}', '{"check":"failed"}', '{"check":"passed"}'),
+  (37, null, 'config', '{"id_37":true, "brand": "Mercedes", "model": "AMG"}', '{}', '{"color":"silver"}', '{"check":"unknown"}', '{"check":"unknown"}'),
+  (38, null, 'config', '{"id_38":true, "brand": "Mercedes", "package":"double"}', '{}', '{}', '{}', '{}'),
+  (39, null, 'config', '{"id_39":true, "brand": "Mercedes"}', '{}', '{}', '{}', '{}'),
+  (40, null, 'config', '{"id_40":true, "brand": "Mercedes", "package":"sport"}', '{"power": "a lot"}', '{}', '{}', '{}'),
 
-  (5, 'id_5', 'simple', '{"name":"id_5", "naked":true}',null, null, null, null),
+  (5, 'id_5', 'simple', '{"name":"id_5", "naked":true}','{}', '{}', '{}', '{}'),
 
-  (11, 'id_11', 'bundle', '{"name":"id_11", "package":"sport"}', '{"speed":"supper"}', null, '{"speed":"moderate"}', null),
+  (11, 'id_11', 'bundle', '{"name":"id_11", "package":"sport"}', '{"speed":"supper"}', '{}', '{"speed":"moderate"}', '{}'),
 
-  (12, 'id_12', 'bundle', '{"name":"id_12", "package":"sport"}', '{"speed":"supper"}', null, '{"speed":"moderate"}', null),
+  (12, 'id_12', 'bundle', '{"name":"id_12", "package":"sport"}', '{"speed":"supper"}', '{}', '{"speed":"moderate"}', '{}'),
 
   (13, 'id_13', 'bundle', '{"name":"id_13", "package":"total mix"}', '{"speed":"supper"}', '{"color":"custom"}', '{"speed":"moderate"}', '{"color":"custom"}')
 
