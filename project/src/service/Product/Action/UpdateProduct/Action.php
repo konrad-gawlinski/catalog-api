@@ -61,7 +61,7 @@ class Action extends ActionBase
     if ($violations) return $violations;
 
     $storedProductProperties = $this->productGateway->fetchRawProductById(intval($request->getId()));
-    if (!$storedProductProperties) return [new Violation(ErrorKey::PRODUCT_UPDATE_FORBIDDEN)];
+    if (!$storedProductProperties) return [new Violation(ErrorKey::PRODUCT_DOES_NOT_EXIST)];
 
     $dto = $this->factory->createDataTransferObject();
     $dto->applyRequestProperties($request);
@@ -106,7 +106,7 @@ class Action extends ActionBase
       case ErrorKey::ID_HAS_TO_BE_A_NUMBER:
       case ErrorKey::INVALID_LANGUAGE_VALUE:
       case ErrorKey::INVALID_COUNTRY_VALUE:
-      case ErrorKey::PRODUCT_UPDATE_FORBIDDEN:
+      case ErrorKey::PRODUCT_DOES_NOT_EXIST:
       case ErrorKey::INVALID_PRODUCT_TYPE:
       case ErrorKey::PRODUCT_VALIDATION_ERROR:
       case ErrorKey::EMPTY_PRODUCT_PROPERTIES:

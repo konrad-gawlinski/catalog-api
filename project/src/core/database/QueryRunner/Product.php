@@ -83,18 +83,18 @@ class Product extends ProductGateway
   /**
    * @throws DatabaseException
    */
-  function fetchRawProductById(int $productId) : array
+  function fetchRawProductById(int $productId,  string $columns = '*') : array
   {
     return $this->runQueryFunction(
-      function() use ($productId) {
-        return parent::fetchRawProductById($productId);
+      function() use ($productId, $columns) {
+        return parent::fetchRawProductById($productId, $columns);
       },
       'Raw product could not be fetched'
     );
   }
 
   /**
-   * @param array $regionPairs comma separated list of region pairs e.g. 'de,de_de,com'
+   * @param array $regionPairs e.g. ['de,de_de','com,en_gb']
    * @throws DatabaseException
    */
   function fetchProductById(int $productId, array $regionPairs) : array
@@ -103,7 +103,7 @@ class Product extends ProductGateway
       function() use ($productId, $regionPairs) {
         return parent::fetchProductById($productId, $regionPairs);
       },
-      'Raw product could not be fetched'
+      'Product could not be fetched'
     );
   }
 }

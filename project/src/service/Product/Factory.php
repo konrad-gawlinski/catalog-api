@@ -11,7 +11,7 @@ class Factory
   use \Nu3\Feature\PropertyMap;
   use \Nu3\Feature\RegionUtils;
 
-  function createDataTransferObject() : TransferObject
+  function createDataTransferObject()
   {
     return new TransferObject();
   }

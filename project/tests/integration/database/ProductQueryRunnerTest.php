@@ -202,6 +202,25 @@ QUERY;
   /**
    * @test
    */
+  function it_should_fetch_raw_product_by_id_with_specific_columns()
+  {
+    $pg = $this::$productGateway;
+    $this->tester->startTransaction();
+    $productId = $pg->createProduct('sku_123', 'simple', []);
+    $product = $pg->fetchRawProductById($productId, 'id, sku, type');
+    $this->tester->rollbackTransaction();
+
+    unset($product['created_at']);
+    $this->assertEquals([
+      'id' => "{$productId}",
+      'sku' => 'sku_123',
+      'type' => 'simple',
+    ], $product);
+  }
+
+  /**
+   * @test
+   */
   function it_should_fail_fetching_raw_product_given_non_existing_id()
   {
     $pg = $this::$productGateway;

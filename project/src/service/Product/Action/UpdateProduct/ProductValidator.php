@@ -2,13 +2,13 @@
 
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
+use Nu3\Config;
 use Nu3\Service\Product\Entity;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ValueFilter;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
-use Nu3\Config;
 use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Feature\RegionUtils;
 
@@ -47,6 +47,13 @@ class ProductValidator
      */
     function validate(array $storedProductProperties, TransferObject $dto) : array
     {
+        $allowedRegionPairs = $this->config()[Config::SHOP][Config::REGION_PAIRS];
+        $targetRegionPairs = $this->regionUtils->intersectValidRegionPairs(
+          array_keys($dto->properties), $allowedRegionPairs
+        );
+
+        $this->productGateway->fetchProductById($dto->id, $targetRegionPairs);
+        exit();
         $product = $this->mergeStoredPropertiesWithRequestedProperties($storedProductProperties, $dto);
         $violations = $this->factory->createEntityValidator()->validate($product);
         if ($violations) return $violations;

@@ -82,14 +82,16 @@ class QueryBuilder
   private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
   {
     return array_map(function($regionPair) {
-      return 'global || ' . implode(' || ', explode(',', $regionPair));
+      return "global || {$regionPair[0]} || {$regionPair[1]}";
     }, $regionPairs);
   }
 
   private function buildRegionMergeColumnsQueryStatement(array $regionPairs) : array
   {
-    $allRegions = explode(',', implode(',', $regionPairs));
-    $uniqueRegions = array_unique($allRegions);
+    $allRegions = array_map(function($regionPair) {
+      return "{$regionPair[0]},{$regionPair[1]}";
+    }, $regionPairs);
+    $uniqueRegions = array_unique(explode(',', implode(',', $allRegions)));
 
     return array_map(function($region) {
       return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";

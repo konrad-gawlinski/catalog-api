@@ -98,10 +98,10 @@ QUERY;
       return $totalInsertedRows;
   }
 
-  function fetchRawProductById(int $productId) : array
+  function fetchRawProductById(int $productId, string $columns = '*') : array
   {
     $result = pg_query($this->dbConnection->connectionRes(),
-      "SELECT * FROM products WHERE id={$productId}"
+      "SELECT {$columns} FROM products WHERE id={$productId}"
     );
 
     $row = pg_fetch_assoc($result);
@@ -109,7 +109,7 @@ QUERY;
   }
 
   /**
-   * @param array $regionPairs comma separated list of region pairs e.g. 'de,de_de,com'
+   * @param array $regionPairs '[de,de_de],[com,en_gb]'
    * @return array
    */
   function fetchProductById(int $productId, array $regionPairs) : array

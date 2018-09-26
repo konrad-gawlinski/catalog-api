@@ -6,8 +6,13 @@ use Nu3\Service\Product\Feature\RequestPayload;
 
 class TransferObject
 {
+  /** @var int */
+  public $id = 0;
+
   /** @var string */
   public $sku = '';
+
+  /** @var string */
   public $type = '';
 
   /** @var array */

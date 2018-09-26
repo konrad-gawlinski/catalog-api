@@ -10,7 +10,7 @@ interface ErrorKey
   const ID_IS_REQUIRED = 'id_is_required';
   const ID_HAS_TO_BE_A_NUMBER = 'id_has_to_be_a_number';
   const SKU_IS_REQUIRED = 'sku_is_required';
-  const PRODUCT_UPDATE_FORBIDDEN = 'product_update_forbidden';
+  const PRODUCT_DOES_NOT_EXIST = 'product_does_not_exist';
   const PRODUCT_ALREADY_CREATED = 'product_already_created';
   const INVALID_COUNTRY_VALUE = 'invalid_country_value';
   const INVALID_LANGUAGE_VALUE = 'invalid_language_value';
