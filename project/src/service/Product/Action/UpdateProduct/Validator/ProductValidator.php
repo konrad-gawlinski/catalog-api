@@ -20,9 +20,6 @@ class ProductValidator
   /** @var array */
   private $validatorsMap = null;
 
-  /** @var ValidatableProduct[] */
-  private $validatorsCache = [];
-
   function __construct(Factory $factory)
   {
     $this->factory = $factory;
@@ -53,10 +50,6 @@ class ProductValidator
 
   private function pickValidator(string $productType) : ValidatableProduct
   {
-    if (!isset($this->validatorsCache[$productType])) {
-      $this->validatorsCache[$productType] = new $this->validatorsMap[$productType];
-    }
-
-    return $this->validatorsCache[$productType];
+    return $this->validatorsMap[$productType];
   }
 }

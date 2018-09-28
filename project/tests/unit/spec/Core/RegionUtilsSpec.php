@@ -53,6 +53,7 @@ class RegionUtilsSpec extends ObjectBehavior
   function it_should_find_all_possible_region_pairs()
   {
     $touchedRegions = [
+      'global',
       'de',
       'at_de',
       'de_de'

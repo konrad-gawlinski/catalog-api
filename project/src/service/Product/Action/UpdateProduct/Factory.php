@@ -27,6 +27,6 @@ class Factory extends \Nu3\Service\Product\Factory
 
   function createProductSimpleValidator() : Validator\ProductSimple
   {
-    return new Validator\ProductSimple();
+    return new Validator\ProductSimple($this);
   }
 }

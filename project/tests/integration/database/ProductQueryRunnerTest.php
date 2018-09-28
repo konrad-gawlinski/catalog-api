@@ -262,7 +262,7 @@ QUERY;
         'de-de_de' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
         'fr-fr_fr' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true}',
       ],
-      $this::$productGateway->fetchProductById($simpleId, ['de,de_de', 'fr,fr_fr'])
+      $this::$productGateway->fetchProductById($simpleId, [['de','de_de'], ['fr','fr_fr']])
     );
 
     $this->tester->rollbackTransaction();

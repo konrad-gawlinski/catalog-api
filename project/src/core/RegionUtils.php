@@ -30,6 +30,11 @@ class RegionUtils
     return strlen($region) === 5;
   }
 
+  /**
+   * @param array $regions e.g ['de', 'de_de', 'en_gb']
+   * @param array $regionPairs e.g [['de', 'de_de'], ['fr', 'fr_fr']
+   * @return array e.g [[['de', 'de_de'], ['fr', 'fr_fr']
+   */
   function intersectValidRegionPairs(array $regions, array $regionPairs)
   {
     $result = [];

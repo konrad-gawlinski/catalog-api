@@ -109,7 +109,7 @@ QUERY;
   }
 
   /**
-   * @param array $regionPairs '[de,de_de],[com,en_gb]'
+   * @param array $regionPairs [['de','de_de'],['com','en_gb']]
    * @return array
    */
   function fetchProductById(int $productId, array $regionPairs) : array

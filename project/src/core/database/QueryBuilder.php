@@ -62,7 +62,7 @@ class QueryBuilder
   }
 
   /**
-   * @param array $regionPairs region pairs e.g. ['de,de_de' ,com,en_gb']
+   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
    * @return array
    */
   function buildRegionMergeColumns(array $regionPairs) : array
@@ -77,21 +77,29 @@ class QueryBuilder
   }
 
   /**
+   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
    * @return array e.g. ['global || de || de_de as de-de_de', 'global || com || en_gb as com-en_gb']
    */
   private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
   {
-    return array_map(function($regionPairCsv) {
-      list($country, $language) = explode(',', $regionPairCsv);
+    return array_map(function($regionPair) {
+      list($country, $language) = $regionPair;
 
       return "global || {$country} || {$language} as \"{$country}-{$language}\"";
     }, $regionPairs);
   }
 
+  /**
+   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
+   * @return array
+   */
   private function buildRegionMergeColumnsQueryStatement(array $regionPairs) : array
   {
-    $allRegions = explode(',', implode(',', $regionPairs));
-    $uniqueRegions = array_unique(explode(',', implode(',', $allRegions)));
+    $regionPairsCsv = array_map(function($regionPair) {
+      return "{$regionPair[0]},{$regionPair[1]}";
+    }, $regionPairs);
+    $allRegions = explode(',', implode(',', $regionPairsCsv));
+    $uniqueRegions = array_unique($allRegions);
 
     return array_map(function($region) {
       return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";

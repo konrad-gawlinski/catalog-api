@@ -94,7 +94,7 @@ class Product extends ProductGateway
   }
 
   /**
-   * @param array $regionPairs e.g. ['de,de_de','com,en_gb']
+   * @param array $regionPairs e.g. [['de','de_de'],['com','en_gb']]
    * @throws DatabaseException
    */
   function fetchProductById(int $productId, array $regionPairs) : array
