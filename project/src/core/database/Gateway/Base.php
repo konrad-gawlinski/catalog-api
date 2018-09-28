@@ -15,4 +15,19 @@ class Base
   {
     $this->dbConnection = $dbConnection;
   }
+
+  function startTransaction()
+  {
+    $this->dbConnection->startTransaction();
+  }
+
+  function commitTransaction()
+  {
+    $this->dbConnection->commitTransaction();
+  }
+
+  function rollbackTransaction()
+  {
+    $this->dbConnection->rollbackTransaction();
+  }
 }

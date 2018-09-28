@@ -19,8 +19,9 @@ interface Config
   const LANGUAGE_REGION = 'language';
 
   const PRODUCT = 'product';
-  const CONFIG = 'config';
-  const BUNDLE = 'bundle';
+  const PRODUCT_TYPE_CONFIG = 'config';
+  const PRODUCT_TYPE_SIMPLE = 'simple';
+  const PRODUCT_TYPE_BUNDLE = 'bundle';
   const DEFAULT_VALUES = 'default_values';
   const VALIDATION_RULES = 'validation_rules';
 

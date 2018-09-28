@@ -7,10 +7,8 @@ use Nu3\Service\Product\Action\RequestValidator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ErrorKey;
-use Nu3\Service\Product\Property;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
-use Nu3\Core\Database;
 use Nu3\Service\Product\ValueFilter;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
@@ -22,7 +20,7 @@ class Action extends ActionBase
   /** @var ValueFilter */
   private $valueFilter;
 
-  /** @var ProductValidator */
+  /** @var Validator\ProductValidator */
   private $productValidator;
 
   /** @var EntityBuilder */
@@ -60,25 +58,30 @@ class Action extends ActionBase
     $violations = $this->requestValidator->validate($request);
     if ($violations) return $violations;
 
-    $storedProductProperties = $this->productGateway->fetchRawProductById(intval($request->getId()));
-    if (!$storedProductProperties) return [new Violation(ErrorKey::PRODUCT_DOES_NOT_EXIST)];
+    $productArray = $this->productGateway->fetchRawProductById(intval($request->getId()));
+    if (!$productArray) return [new Violation(ErrorKey::PRODUCT_DOES_NOT_EXIST)];
 
     $dto = $this->factory->createDataTransferObject();
     $dto->applyRequestProperties($request);
-    $violations = $this->productValidator->validate($storedProductProperties, $dto);
-    if ($violations) return $violations;
+    $product = $this->buildRequestedProductEntity($productArray, $dto);
 
-    $product = $this->buildRequestedProductEntity($storedProductProperties, $dto);
+    $this->productGateway->startTransaction();
+    $violations = $this->saveProduct($product);
+    if (!$violations) {
+      $violations = $this->productValidator->validate($product);
+    }
+    if (!$violations) {
+      $this->productGateway->commitTransaction();
+      return [];
+    }
 
-    return $this->saveProduct($product);
+    $this->productGateway->rollbackTransaction();
+    return $violations;
   }
 
-  private function buildRequestedProductEntity(array $storedProductProperties, TransferObject $dto) : Entity\Product
+  private function buildRequestedProductEntity(array $productArray, TransferObject $dto) : Entity\Product
   {
-    $productEntity = $this->factory->createProductEntity();
-    $productEntity->id = $storedProductProperties[Property::PRODUCT_ID];
-    $productEntity->sku = $storedProductProperties[Property::PRODUCT_SKU];
-    $productEntity->type = $storedProductProperties[Property::PRODUCT_TYPE];
+    $productEntity = $this->entityBuilder->createEntityFromProductArray($productArray);
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
     $this->valueFilter->filterEntity($productEntity);
 
@@ -92,7 +95,8 @@ class Action extends ActionBase
   {
     try {
       $this->productGateway->updateProduct($product->id, $product->properties);
-    } catch (Database\Exception $exception) {
+    } catch (\Exception $exception) {
+      //TODO: extends the violation object to allow passing error details that can be used for internal logging and are not shown to a user
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
 

@@ -6,7 +6,7 @@ use Nu3\Config;
 use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Feature\PropertyMap as PropertyMapFeature;
 use Nu3\Feature\RegionUtils as RegionUtilsFeature;
-use Nu3\Service\Product\Entity\Product;
+use Nu3\Service\Product\Entity\Product as ProductEntity;
 
 class EntityBuilder
 {
@@ -19,8 +19,9 @@ class EntityBuilder
   use PropertyMapFeature;
   use RegionUtilsFeature;
 
-  function applyDtoAttributesToEntity(TransferObject $dto, Product $entity) : Product
+  function applyDtoAttributesToEntity(TransferObject $dto, ProductEntity $entity) : ProductEntity
   {
+    $entity->id = $entity->id ?: $dto->id;
     $entity->sku = $entity->sku ?: $dto->sku;
     $entity->type = $entity->type ?: $dto->type;
 
@@ -29,7 +30,7 @@ class EntityBuilder
     return $entity;
   }
 
-  private function applyAttributesFromDtoToEntity(TransferObject $dto, Product $entity)
+  private function applyAttributesFromDtoToEntity(TransferObject $dto, ProductEntity $entity)
   {
     $attributesMap = [
       self::REGION_ANY => array_flip($this->propertyMap()->db2Dto_AnyRegion()),
@@ -41,8 +42,9 @@ class EntityBuilder
     $this->applyAttributes($dto->properties, $entity->properties, $attributesMap);
   }
 
-  function applyEntityAttributesToDto(Product $entity, TransferObject $dto) : TransferObject
+  function applyEntityAttributesToDto(ProductEntity $entity, TransferObject $dto) : TransferObject
   {
+    $dto->id = $entity->id ?: $dto->id;
     $dto->sku = $entity->sku ?: $dto->sku;
     $dto->type = $entity->type ?: $dto->type;
 
@@ -51,7 +53,7 @@ class EntityBuilder
     return $dto;
   }
 
-  private function applyAttributesFromEntityToDto(Product $entity, TransferObject $dto)
+  private function applyAttributesFromEntityToDto(ProductEntity $entity, TransferObject $dto)
   {
     $attributesMap = [
       self::REGION_ANY => $this->propertyMap()->db2Dto_AnyRegion(),
@@ -91,13 +93,23 @@ class EntityBuilder
     return [];
   }
 
-  function fillEntityFromDbArray(Product $entity, array $input)
+  function createEntityFromProductArray(array $productArray) : ProductEntity
+  {
+    $entity = new ProductEntity();
+    $this->fillEntityFromProductArray($entity, $productArray);
+
+    return $entity;
+  }
+
+  private function fillEntityFromProductArray(ProductEntity $entity, array $input)
   {
     $entity->id = $input[Property::PRODUCT_ID];
     $entity->sku = $input[Property::PRODUCT_SKU];
     $entity->type = $input[Property::PRODUCT_TYPE];
     foreach ($this->getRegionNames() as $region) {
-      $entity->properties[$region] = json_decode($input[$region], true);
+      if (!empty($input[$region])) {
+        $entity->properties[$region] = json_decode($input[$region], true);
+      }
     }
   }
 

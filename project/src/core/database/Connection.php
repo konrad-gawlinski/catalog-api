@@ -28,4 +28,19 @@ class Connection
   {
     return $this->connection;
   }
+
+  function startTransaction()
+  {
+    pg_query($this->connection, "START TRANSACTION");
+  }
+
+  function commitTransaction()
+  {
+    pg_query($this->connection, "COMMIT");
+  }
+
+  function rollbackTransaction()
+  {
+    pg_query($this->connection, "ROLLBACK");
+  }
 }

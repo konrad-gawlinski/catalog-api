@@ -1,18 +1,20 @@
 <?php
 namespace Nu3\Feature;
 
-use Nu3\Core\RegionUtils as RegionUtilsObject;
+use Nu3\Core\RegionUtils as RegionUtilsInstance;
 
 trait RegionUtils
 {
+
+  /** @var RegionUtilsInstance */
   private $regionUtils;
 
-  function setRegionUtils(RegionUtilsObject $regionCheck)
+  function setRegionUtils(RegionUtilsInstance $regionCheck)
   {
     $this->regionUtils = $regionCheck;
   }
 
-  protected function regionUtils() : RegionUtilsObject
+  protected function regionUtils() : RegionUtilsInstance
   {
     return $this->regionUtils;
   }

@@ -8,7 +8,6 @@ use Nu3\Core\RegionUtils;
 use Nu3\Service\Product\PropertyMap;
 use Nu3\Spec\App;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class EntityBuilderSpec extends ObjectBehavior
 {
@@ -21,15 +20,15 @@ class EntityBuilderSpec extends ObjectBehavior
 
   function it_should_apply_dto_attributes_to_entity(TransferObject $dto, Product $product)
   {
-    $dtoMock = $this->mockDto($dto, 'nu3_36', 'config', [
+    $dtoMock = $this->mockDto($dto, 12, 'sku_36', 'config', [
       'global' => [
         'name' => 'some name'
       ]
     ]);
 
-    $_entity = $this->applyDtoAttributesToEntity($dtoMock, $product);
+    $productEntity = $this->applyDtoAttributesToEntity($dtoMock, $product);
 
-    $this->verifyExpectedAttributes($_entity, 'nu3_36', 'config', [
+    $this->verifyExpectedAttributes($productEntity, 12, 'sku_36', 'config', [
       'global' => [
         'name' => 'some name'
       ]
@@ -38,7 +37,7 @@ class EntityBuilderSpec extends ObjectBehavior
 
   function it_should_ignore_unknown_property(TransferObject $dto, Product $product)
   {
-    $dtoMock = $this->mockDto($dto, 'nu3_36', 'config', [
+    $dtoMock = $this->mockDto($dto, 12, 'sku_36', 'config', [
       'global' => [
         'name' => 'some name',
         'unknown' => 'value'
@@ -47,7 +46,7 @@ class EntityBuilderSpec extends ObjectBehavior
 
     $_product = $this->applyDtoAttributesToEntity($dtoMock, $product);
 
-    $this->verifyExpectedAttributes($_product, 'nu3_36', 'config', [
+    $this->verifyExpectedAttributes($_product, 12, 'sku_36', 'config', [
       'global' => [
         'name' => 'some name'
       ]
@@ -56,7 +55,7 @@ class EntityBuilderSpec extends ObjectBehavior
 
   function it_should_ignore_region_specific_property(TransferObject $dto, Product $product)
   {
-    $dtoMock = $this->mockDto($dto, 'nu3_36', 'config', [
+    $dtoMock = $this->mockDto($dto, 12, 'sku_36', 'config', [
       'de_de' => [
         'name' => 'some name',
         'status' => 'new' //it is not allowed to set status for language regions
@@ -65,15 +64,32 @@ class EntityBuilderSpec extends ObjectBehavior
 
     $_product = $this->applyDtoAttributesToEntity($dtoMock, $product);
 
-    $this->verifyExpectedAttributes($_product, 'nu3_36', 'config', [
+    $this->verifyExpectedAttributes($_product, 12, 'sku_36', 'config', [
       'de_de' => [
         'name' => 'some name'
       ]
     ]);
   }
 
-  private function mockDto(TransferObject $dto, string $sku, string $type, array $properties)
+  function it_should_create_product_entity_from_product_array()
   {
+    $productEntity = $this->createEntityFromProductArray([
+      'id' => 12,
+      'sku' => 'sku_36',
+      'type' => 'simple',
+      'de_de' => '{"name": "Product name"}'
+    ]);
+
+    $this->verifyExpectedAttributes($productEntity, 12, 'sku_36', 'simple', [
+      'de_de' => [
+        'name' => 'Product name'
+      ]
+    ]);
+  }
+
+  private function mockDto(TransferObject $dto, int $id, string $sku, string $type, array $properties)
+  {
+    $dto->id = $id;
     $dto->sku = $sku;
     $dto->type = $type;
     $dto->properties = $properties;
@@ -83,10 +99,12 @@ class EntityBuilderSpec extends ObjectBehavior
 
   private function verifyExpectedAttributes(
     Product $entity,
+    int $id,
     string $sku,
     string $type,
     array $expectedProperties
   ) {
+    $entity->__get('id')->shouldReturn($id);
     $entity->__get('sku')->shouldReturn($sku);
     $entity->__get('type')->shouldReturn($type);
     $entity->__get('properties')->shouldReturn($expectedProperties);

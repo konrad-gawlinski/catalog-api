@@ -63,21 +63,18 @@ class Action extends ActionBase
     return $productProperties;
   }
 
-  private function buildSuccessResponseBody(array $productProperties) : string
+  private function buildSuccessResponseBody(array $productArray) : string
   {
-    $productEntity = $this->factory->createProductEntity();
-    $this->entityBuilder->fillEntityFromDbArray($productEntity, $productProperties);
-    $dto = $this->factory->createDataTransferObject();
-    $this->factory->createEntityBuilder()->applyEntityAttributesToDto($productEntity, $dto);
+    $productEntity = $this->entityBuilder->createEntityFromProductArray($productArray);
 
-    $productArray = [
+    $productProperties = [
       Property::PRODUCT_ID => $productEntity->id,
       Property::PRODUCT_SKU => $productEntity->sku,
       Property::PRODUCT_TYPE => $productEntity->type,
       Property::PRODUCT_PROPERTIES => $productEntity->properties
     ];
 
-    return json_encode($productArray);
+    return json_encode($productProperties);
   }
 
   protected function errorKey2HttpCode(string $errorKey) : int
