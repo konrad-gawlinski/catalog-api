@@ -1,9 +1,0 @@
-formatter.name: pretty
-
-suites:
-  filter:
-    namespace: Kwg\Filter
-    psr4_prefix: Kwg\Filter
-    spec_prefix: spec\
-    src_path: ../src
-    spec_path: ../test
