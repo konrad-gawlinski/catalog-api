@@ -39,13 +39,14 @@ class ProductValidator
    */
   function validate(Entity\Product $productEntity) : array
   {
-    $allowedRegionPairs = $this->config()[Config::SHOP][Config::REGION_PAIRS];
-    $targetRegionPairs = $this->regionUtils->intersectValidRegionPairs(
-      array_keys($productEntity->properties), $allowedRegionPairs
+    $config = $this->config()[Config::REGION];
+    $allowedRegions = array_merge(
+      $config[Config::COUNTRY_REGION],
+      $config[Config::LANGUAGE_REGION]
     );
     $validator = $this->pickValidator($productEntity->type);
 
-    return $validator->validate($productEntity->id, $targetRegionPairs);
+    return $validator->validate($productEntity->id, $allowedRegions);
   }
 
   private function pickValidator(string $productType) : ValidatableProduct

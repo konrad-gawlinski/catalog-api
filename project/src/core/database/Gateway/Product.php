@@ -112,26 +112,44 @@ QUERY;
    * @param array $regionPairs [['de','de_de'],['com','en_gb']]
    * @return array
    */
-  function fetchProductById(int $productId, array $regionPairs) : array
+  function fetchProductByIdByRegionPairs(int $productId, array $regionPairs) : array
   {
-    $regionsMergeColumns = $this->queryBuilder->buildRegionMergeColumns($regionPairs);
-    $query = <<<QUERY
-SELECT parent_id as id, sku, type, {$regionsMergeColumns[0]} FROM (
-  SELECT parent_id,
-   (array_agg(sku ORDER BY depth ASC))[1] as sku,
-   (array_agg(type ORDER BY depth ASC))[1] as type,
-   jsonb_merge(global ORDER BY depth DESC) as global,
-   {$regionsMergeColumns[1]}
-   
-FROM product_relations JOIN products ON child_id = id
-WHERE parent_id = {$productId} AND (sku IS NULL OR depth = 0)
-GROUP BY parent_id
-) AS product;
-QUERY;
+    $queryParts = $this->queryBuilder->buildProductQueryPartsByRegionPairs($regionPairs);
+    $query = $this->buildFetchProductQuery($productId, $queryParts);
 
     $result = pg_query($this->dbConnection->connectionRes(), $query);
 
     $row = pg_fetch_assoc($result);
     return $row ?: [];
+  }
+
+  /**
+   * @param array $regions e.g. ['global', 'de', 'en_gb', 'fr']
+   */
+  function fetchProductByIdByRegions(int $productId, array $regions) : array
+  {
+    $queryParts = $this->queryBuilder->buildProductQueryPartsByRegions($regions);
+    $query = $this->buildFetchProductQuery($productId, $queryParts);
+
+    $result = pg_query($this->dbConnection->connectionRes(), $query);
+
+    $row = pg_fetch_assoc($result);
+    return $row ?: [];
+  }
+
+  private function buildFetchProductQuery(int $productId, array $queryParts) : string
+  {
+    return <<<QUERY
+SELECT parent_id as id, sku, type, {$queryParts[0]} FROM (
+  SELECT parent_id,
+   (array_agg(sku ORDER BY depth ASC))[1] as sku,
+   (array_agg(type ORDER BY depth ASC))[1] as type,
+   {$queryParts[1]}
+
+FROM product_relations JOIN products ON child_id = id
+WHERE parent_id = {$productId} AND (sku IS NULL OR depth = 0)
+GROUP BY parent_id
+) AS product;
+QUERY;
   }
 }

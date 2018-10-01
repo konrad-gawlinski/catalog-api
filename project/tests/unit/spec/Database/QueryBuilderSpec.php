@@ -82,16 +82,31 @@ class QueryBuilderSpec extends ObjectBehavior
       ->shouldReturn('"global"="global" || \'{"name":"sample_\'\'name"}\'');
   }
 
-  function it_should_build_region_merge_columns()
+  function it_should_build_product_query_parts_by_regions()
   {
-    $this->buildRegionMergeColumns([['de','de_de'], ['com','en_gb']])->shouldReturn(
+    $this->buildProductQueryPartsByRegions(['de', 'de_de', 'com', 'en_gb'])->shouldReturn(
       [
-        'global || de || de_de as "de-de_de", global || com || en_gb as "com-en_gb"',
-         'jsonb_merge(de ORDER BY depth DESC) as de, '
+        'global,de,de_de,com,en_gb',
+         'jsonb_merge(global ORDER BY depth DESC) as global, '
+        .'jsonb_merge(de ORDER BY depth DESC) as de, '
         .'jsonb_merge(de_de ORDER BY depth DESC) as de_de, '
         .'jsonb_merge(com ORDER BY depth DESC) as com, '
         .'jsonb_merge(en_gb ORDER BY depth DESC) as en_gb'
       ]
     );
+  }
+
+  function it_should_build_product_query_parts_by_region_pairs()
+  {
+      $this->buildProductQueryPartsByRegionPairs([['de','de_de'], ['com','en_gb']])->shouldReturn(
+        [
+          'global || de || de_de as "de-de_de", global || com || en_gb as "com-en_gb"',
+           'jsonb_merge(global ORDER BY depth DESC) as global, '
+          .'jsonb_merge(de ORDER BY depth DESC) as de, '
+          .'jsonb_merge(de_de ORDER BY depth DESC) as de_de, '
+          .'jsonb_merge(com ORDER BY depth DESC) as com, '
+          .'jsonb_merge(en_gb ORDER BY depth DESC) as en_gb'
+        ]
+      );
   }
 }

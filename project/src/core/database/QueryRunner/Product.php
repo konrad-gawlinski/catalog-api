@@ -97,13 +97,28 @@ class Product extends ProductGateway
    * @param array $regionPairs e.g. [['de','de_de'],['com','en_gb']]
    * @throws DatabaseException
    */
-  function fetchProductById(int $productId, array $regionPairs) : array
+  function fetchProductByIdByRegionPairs(int $productId, array $regionPairs) : array
   {
     return $this->runQueryFunction(
       function() use ($productId, $regionPairs) {
-        return parent::fetchProductById($productId, $regionPairs);
+        return parent::fetchProductByIdByRegionPairs($productId, $regionPairs);
       },
       'Product could not be fetched'
     );
   }
+
+  /**
+   * @param array $regions e.g. ['global', 'de', 'en_gb', 'fr']
+   * @throws DatabaseException
+   */
+  function fetchProductByIdByRegions(int $productId, array $regions) : array
+  {
+    return $this->runQueryFunction(
+      function() use ($productId, $regions) {
+        return parent::fetchProductByIdByRegions($productId, $regions);
+      },
+      'Product could not be fetched'
+    );
+  }
+
 }

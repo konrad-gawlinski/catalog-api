@@ -235,7 +235,7 @@ QUERY;
    * @test
    * Test following structure simple <- config1 <- config2
    */
-  function it_should_fetch_product_with_all_inherited_properties()
+  function it_should_fetch_product_by_region_pairs_with_all_inherited_properties()
   {
     $this->tester->startTransaction();
 
@@ -262,7 +262,47 @@ QUERY;
         'de-de_de' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true, "manufacturer": "nu3"}',
         'fr-fr_fr' => '{"name": "sample name", "status": "new", "icon_bio": true, "icon_dye": true}',
       ],
-      $this::$productGateway->fetchProductById($simpleId, [['de','de_de'], ['fr','fr_fr']])
+      $this::$productGateway->fetchProductByIdByRegionPairs($simpleId, [['de','de_de'], ['fr','fr_fr']])
+    );
+
+    $this->tester->rollbackTransaction();
+  }
+
+  /**
+   * @test
+   * Test following structure simple <- config1 <- config2
+   */
+  function it_should_fetch_product_by_regions_with_all_inherited_properties()
+  {
+    $this->tester->startTransaction();
+
+    list($simpleId, $config1Id, $config2Id) = $this->createProductsWithNodes([
+      ['sku_123', 'simple', [
+        'global' => ['name' => 'sample name', 'icon_bio' => true],
+        'de' => ['status' => 'new'],
+        'fr' => ['status' => 'new']
+      ]],
+      [null, 'config', [
+        'global' => ['icon_dye' => true],
+        'de' => ["tax_rate" => 19],
+        'de_de' => ['manufacturer' => 'nu3']
+      ]],
+      [null, 'config', []]
+    ]);
+    $this->createRelationsAndAssertCount($config1Id, [$simpleId]);
+    $this->createRelationsAndAssertCount($config2Id, [$config1Id, $simpleId]);
+
+    $this->assertEquals(
+      [
+        'id' => "{$simpleId}",
+        'sku' => 'sku_123',
+        'type' => 'simple',
+        'global' => '{"name": "sample name", "icon_bio": true, "icon_dye": true}',
+        'de' => '{"status": "new", "tax_rate": 19}',
+        'fr' => '{"status": "new"}',
+        'de_de' => '{"manufacturer": "nu3"}'
+      ],
+      $this::$productGateway->fetchProductByIdByRegions($simpleId, ['de', 'fr', 'de_de'])
     );
 
     $this->tester->rollbackTransaction();

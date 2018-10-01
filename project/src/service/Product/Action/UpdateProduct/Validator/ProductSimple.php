@@ -36,9 +36,9 @@ class ProductSimple implements ValidatableProduct
    * @return Violation[]
    * @throws DatabaseException
    */
-  function validate(int $productId, array $regionPairs) : array
+  function validate(int $productId, array $regions) : array
   {
-    $productArray = $this->productGateway->fetchProductById($productId, $regionPairs);
+    $productArray = $this->productGateway->fetchProductByIdByRegions($productId, $regions);
     $productEntity = $this->entityBuilder->createEntityFromProductArray($productArray);
     $violations = $this->entityValidator->validate($productEntity);
     if ($violations) return $violations;

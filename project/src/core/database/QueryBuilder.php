@@ -62,13 +62,29 @@ class QueryBuilder
   }
 
   /**
-   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
+   * @param array $regions e.g. ['global', 'de', 'en_gb', 'fr']
+   */
+  function buildProductQueryPartsByRegions(array $regions) : array
+  {
+    $allRegions = array_merge(['global'], $regions);
+    $selectStatements = implode(',', $allRegions);
+    $queryStatements = $this->buildProductMergeColumnsQueryStatement($allRegions);
+
+    return [
+      $selectStatements,
+      implode(', ', $queryStatements)
+    ];
+  }
+
+  /**
+   * @param array $regionPairs e.g. [['de','de_de'],['com','en_gb']]
    * @return array
    */
-  function buildRegionMergeColumns(array $regionPairs) : array
+  function buildProductQueryPartsByRegionPairs(array $regionPairs) : array
   {
-    $selectStatements = $this->buildRegionMergeColumnsSelectStatement($regionPairs);
-    $queryStatements = $this->buildRegionMergeColumnsQueryStatement($regionPairs);
+    $selectStatements = $this->buildProductMergeRegionsSelectionColumns($regionPairs);
+    $uniqueRegions = array_merge(['global'], $this->extractUniqueRegionsFromRegionPairs($regionPairs));
+    $queryStatements = $this->buildProductMergeColumnsQueryStatement($uniqueRegions);
 
     return [
       implode(', ', $selectStatements),
@@ -77,10 +93,10 @@ class QueryBuilder
   }
 
   /**
-   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
+   * @param array $regionPairs e.g. [['de','de_de'],['com','en_gb']]
    * @return array e.g. ['global || de || de_de as de-de_de', 'global || com || en_gb as com-en_gb']
    */
-  private function buildRegionMergeColumnsSelectStatement(array $regionPairs) : array
+  private function buildProductMergeRegionsSelectionColumns(array $regionPairs) : array
   {
     return array_map(function($regionPair) {
       list($country, $language) = $regionPair;
@@ -90,19 +106,25 @@ class QueryBuilder
   }
 
   /**
-   * @param array $regionPairs region pairs e.g. [['de','de_de'],['com','en_gb']]
-   * @return array
+   * @param array $regionPairs e.g. [['de','de_de'],['com','en_gb']]
    */
-  private function buildRegionMergeColumnsQueryStatement(array $regionPairs) : array
+  private function extractUniqueRegionsFromRegionPairs(array $regionPairs) : array
   {
     $regionPairsCsv = array_map(function($regionPair) {
       return "{$regionPair[0]},{$regionPair[1]}";
     }, $regionPairs);
     $allRegions = explode(',', implode(',', $regionPairsCsv));
-    $uniqueRegions = array_unique($allRegions);
+    return array_unique($allRegions);
+  }
 
+  /**
+   * @param array $regions e.g. ['de', 'de_de', 'com', 'en_gb']
+   */
+  private function buildProductMergeColumnsQueryStatement(array $regions) : array
+  {
     return array_map(function($region) {
-      return "jsonb_merge({$region} ORDER BY depth DESC) as {$region}";
-    }, $uniqueRegions);
+      $trimmedRegion = trim($region);
+      return "jsonb_merge({$trimmedRegion} ORDER BY depth DESC) as {$trimmedRegion}";
+    }, $regions);
   }
 }
