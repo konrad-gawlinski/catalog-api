@@ -15,18 +15,4 @@ class Factory extends \Nu3\Service\Product\Factory
 
     return $object;
   }
-
-  function createProductValidator() : Validator\ProductValidator
-  {
-    $object = new Validator\ProductValidator($this);
-    $object->setConfig($this->config());
-    $object->setRegionUtils($this->regionUtils());
-
-    return $object;
-  }
-
-  function createProductSimpleValidator() : Validator\ProductSimple
-  {
-    return new Validator\ProductSimple($this);
-  }
 }

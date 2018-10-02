@@ -2,6 +2,8 @@
 
 namespace Nu3\Service\Product\Action\GetProduct;
 
+use Nu3\Config;
+use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Service\Product\Action\ActionBase;
 use Nu3\Core\Violation;
 use Nu3\Service\Product\EntityBuilder;
@@ -11,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class Action extends ActionBase
 {
+  use ConfigFeature;
+
   private $violations = [];
 
   /** @var EntityBuilder */
@@ -54,7 +58,9 @@ class Action extends ActionBase
       return [];
     }
 
-    $productProperties = $this->productGateway->fetchRawProductById(intval($request->getId()));
+    $config = $this->config()[Config::REGION];
+    $allRegions = array_merge($config[Config::COUNTRY_REGION], $config[Config::LANGUAGE_REGION]);
+    $productProperties = $this->productGateway->fetchProductByIdByRegions(intval($request->getId()), $allRegions);
     if (!$productProperties) {
       $this->violations = [new Violation(ErrorKey::PRODUCT_NOT_FOUND)];
       return [];

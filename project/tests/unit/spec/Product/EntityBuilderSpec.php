@@ -6,14 +6,12 @@ use Nu3\Service\Product\Entity\Product;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\RegionUtils;
 use Nu3\Service\Product\PropertyMap;
-use Nu3\Spec\App;
 use PhpSpec\ObjectBehavior;
 
 class EntityBuilderSpec extends ObjectBehavior
 {
   function let()
   {
-    $this->setConfig(App::getInstance()->getConfig());
     $this->setPropertyMap(new PropertyMap());
     $this->setRegionUtils(new RegionUtils());
   }

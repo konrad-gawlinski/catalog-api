@@ -2,8 +2,6 @@
 
 namespace Nu3\Service\Product;
 
-use Nu3\Config;
-use Nu3\Feature\Config as ConfigFeature;
 use Nu3\Feature\PropertyMap as PropertyMapFeature;
 use Nu3\Feature\RegionUtils as RegionUtilsFeature;
 use Nu3\Service\Product\Entity\Product as ProductEntity;
@@ -15,7 +13,6 @@ class EntityBuilder
   private const REGION_COUNTRY = 'country';
   private const REGION_LANGUAGE = 'language';
 
-  use ConfigFeature;
   use PropertyMapFeature;
   use RegionUtilsFeature;
 
@@ -103,24 +100,16 @@ class EntityBuilder
 
   private function fillEntityFromProductArray(ProductEntity $entity, array $input)
   {
+    $scalarProperties = [Property::PRODUCT_ID, Property::PRODUCT_SKU, Property::PRODUCT_TYPE];
+
     $entity->id = $input[Property::PRODUCT_ID];
     $entity->sku = $input[Property::PRODUCT_SKU];
     $entity->type = $input[Property::PRODUCT_TYPE];
-    foreach ($this->getRegionNames() as $region) {
-      if (!empty($input[$region])) {
-        $entity->properties[$region] = json_decode($input[$region], true);
+
+    foreach ($input as $propertyName => $value) {
+      if (!in_array($propertyName, $scalarProperties) && !empty($value)) {
+        $entity->properties[$propertyName] = json_decode($value, true);
       }
     }
-  }
-
-  private function getRegionNames()
-  {
-    $config = $this->config()[Config::REGION];
-
-    return array_merge(
-      $config[Config::GLOBAL_REGION],
-      $config[Config::COUNTRY_REGION],
-      $config[Config::LANGUAGE_REGION]
-    );
   }
 }

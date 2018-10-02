@@ -1,8 +1,8 @@
 <?php
 
-namespace Nu3\Service\Product\Action\UpdateProduct\Validator;
+namespace Nu3\Service\Product\Validator;
 
-use Nu3\Service\Product\Action\UpdateProduct\Factory;
+use Nu3\Service\Product\Factory;
 use Nu3\Core\Database\Gateway\Product as ProductGateway;
 use Nu3\Service\Product\Entity\Validator as EntityValidator;
 use Nu3\Service\Product\EntityBuilder;
@@ -33,12 +33,13 @@ class ProductSimple implements ValidatableProduct
   }
 
   /**
+   * @param array $regionPairs [['de','de_de'],['com','en_gb']]
    * @return Violation[]
    * @throws DatabaseException
    */
-  function validate(int $productId, array $regions) : array
+  function validate(int $productId, array $regionPairs) : array
   {
-    $productArray = $this->productGateway->fetchProductByIdByRegions($productId, $regions);
+    $productArray = $this->productGateway->fetchProductByIdByRegionPairs($productId, $regionPairs);
     $productEntity = $this->entityBuilder->createEntityFromProductArray($productArray);
     $violations = $this->entityValidator->validate($productEntity);
     if ($violations) return $violations;

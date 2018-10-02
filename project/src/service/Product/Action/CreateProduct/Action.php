@@ -3,6 +3,7 @@
 namespace Nu3\Service\Product\Action\CreateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
+use Nu3\Service\Product\Validator\ProductValidator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
@@ -15,6 +16,9 @@ class Action extends ActionBase
   /** @var RequestValidator */
   private $requestValidator;
 
+  /** @var ProductValidator */
+  private $productValidator;
+
   private $violations = [];
 
   /** @var Builder */
@@ -26,6 +30,7 @@ class Action extends ActionBase
     
     $this->requestValidator = $factory->createRequestValidator();
     $this->requestValidator->setProductGateway($this->productGateway);
+    $this->productValidator = $factory->createProductValidator();
     $this->entityBuilder = $factory->createEntityBuilder();
   }
 
@@ -55,33 +60,44 @@ class Action extends ActionBase
 
     $dto = $this->factory->createDataTransferObject();
     $dto->applyRequestProperties($request);
+    $productEntity = $this->buildProductEntity($dto);
+    $productId = $this->saveProduct($productEntity);
 
-    $product = $this->buildProduct($dto);
-    $this->violations = $this->factory->createEntityValidator()->validate($product);
-    if ($this->violations) return 0;
-
-    $this->factory->createValueFilter()->filterEntity($product);
-
-    return $this->saveProduct($product);
+    return $productId;
   }
 
-  private function buildProduct(TransferObject $dto) : Entity\Product
+  private function buildProductEntity(TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->factory->createProductEntity();
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
     $this->entityBuilder->applyDefaultAttributesValues($productEntity);
+    $this->factory->createValueFilter()->filterEntity($productEntity);
 
     return $productEntity;
   }
 
-  private function saveProduct(Entity\Product $product) : int
+  private function saveProduct(Entity\Product $productEntity) : int
   {
+    $this->productGateway->startTransaction();
+
     try {
-      return $this->productGateway->createProduct($product->sku, $product->type, $product->properties);
+      $productId = $this->productGateway->createProduct($productEntity->sku, $productEntity->type, $productEntity->properties);
+      $this->productGateway->createNode($productId);
     } catch (Database\Exception $exception) {
       $this->violations = [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
       return 0;
     }
+
+    $productEntity->id = $productId;
+    $this->violations = $this->productValidator->validate($productEntity);
+
+    if (!$this->violations) {
+      $this->productGateway->commitTransaction();
+      return $productId;
+    }
+
+    $this->productGateway->rollbackTransaction();
+    return 0;
   }
 
   protected function errorKey2HttpCode(string $errorKey) : int

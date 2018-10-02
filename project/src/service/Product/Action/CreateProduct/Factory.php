@@ -10,7 +10,6 @@ class Factory extends \Nu3\Service\Product\Factory
   function createEntityBuilder()
   {
     $entityBuilder =  new Builder();
-    $entityBuilder->setConfig($this->config());
     $entityBuilder->setPropertyMap($this->propertyMap());
     $entityBuilder->setRegionUtils($this->regionUtils());
 

@@ -67,5 +67,8 @@ $app['product.update_action'] = function() use ($app) {
 };
 
 $app['product.get_action'] = function() use ($app) {
-  return new Nu3\Service\Product\Action\GetProduct\Action($app['product.service.get.factory']);
+  $action =  new Nu3\Service\Product\Action\GetProduct\Action($app['product.service.get.factory']);
+  $action->setConfig($app['config']);
+
+  return $action;
 };

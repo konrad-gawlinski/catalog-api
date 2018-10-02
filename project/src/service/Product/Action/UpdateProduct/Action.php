@@ -3,13 +3,12 @@
 namespace Nu3\Service\Product\Action\UpdateProduct;
 
 use Nu3\Service\Product\Action\ActionBase;
-use Nu3\Service\Product\Action\RequestValidator;
+use Nu3\Service\Product\Validator\ProductValidator;
 use Nu3\Service\Product\Entity;
 use Nu3\Service\Product\EntityBuilder;
 use Nu3\Service\Product\ErrorKey;
 use Nu3\Service\Product\TransferObject;
 use Nu3\Core\Violation;
-use Nu3\Service\Product\ValueFilter;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class Action extends ActionBase
@@ -17,10 +16,7 @@ class Action extends ActionBase
   /** @var RequestValidator */
   private $requestValidator;
 
-  /** @var ValueFilter */
-  private $valueFilter;
-
-  /** @var Validator\ProductValidator */
+  /** @var ProductValidator */
   private $productValidator;
 
   /** @var EntityBuilder */
@@ -31,7 +27,6 @@ class Action extends ActionBase
     parent::__construct($factory);
 
     $this->requestValidator = $factory->createRequestValidator();
-    $this->valueFilter = $factory->createValueFilter();
     $this->productValidator = $factory->createProductValidator();
     $this->entityBuilder = $factory->createEntityBuilder();
   }
@@ -64,26 +59,17 @@ class Action extends ActionBase
     $dto = $this->factory->createDataTransferObject();
     $dto->applyRequestProperties($request);
     $product = $this->buildRequestedProductEntity($productArray, $dto);
+    $this->factory->createValueFilter()->filterEntity($product);
 
-    $this->productGateway->startTransaction();
-    $violations = $this->saveProduct($product);
-    if (!$violations) {
-      $violations = $this->productValidator->validate($product);
-    }
-    if (!$violations) {
-      $this->productGateway->commitTransaction();
-      return [];
-    }
-
-    $this->productGateway->rollbackTransaction();
-    return $violations;
+    return $this->saveProduct($product, $dto);
   }
 
   private function buildRequestedProductEntity(array $productArray, TransferObject $dto) : Entity\Product
   {
     $productEntity = $this->entityBuilder->createEntityFromProductArray($productArray);
+    $productEntity->properties = [];
     $this->entityBuilder->applyDtoAttributesToEntity($dto, $productEntity);
-    $this->valueFilter->filterEntity($productEntity);
+    $this->factory->createValueFilter()->filterEntity($productEntity);
 
     return $productEntity;
   }
@@ -91,16 +77,26 @@ class Action extends ActionBase
   /**
    * @return Violation[]
    */
-  private function saveProduct(Entity\Product $product) : array
+  private function saveProduct(Entity\Product $product, TransferObject $dto) : array
   {
+    $this->productGateway->startTransaction();
+
     try {
-      $this->productGateway->updateProduct($product->id, $product->properties);
+      $properties = array_intersect_key($product->properties, $dto->properties);
+      $this->productGateway->updateProduct($product->id, $properties);
     } catch (\Exception $exception) {
       //TODO: extends the violation object to allow passing error details that can be used for internal logging and are not shown to a user
       return [new Violation(ErrorKey::PRODUCT_SAVE_STORAGE_ERROR)];
     }
 
-    return [];
+    $violations = $this->productValidator->validate($product);
+    if (!$violations) {
+      $this->productGateway->commitTransaction();
+      return [];
+    }
+
+    $this->productGateway->rollbackTransaction();
+    return $violations;
   }
 
   protected function errorKey2HttpCode(string $errorKey) : int
