@@ -14,7 +14,7 @@ class ProductCest
   private function generateRandomSku() : string
   {
     $maxRand = mt_getrandmax();
-    return 'nu3_'. mt_rand($maxRand - 100000, $maxRand);
+    return 'id_'. mt_rand($maxRand - 100000, $maxRand);
   }
 
   function it_should_fail_creating_product_missing_required_fields(Product_serviceTester $I)
@@ -26,7 +26,12 @@ class ProductCest
     $I->haveHttpHeader('Content-Type', 'application/json');
     $I->sendPOST("/product/create", $payload);
     $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST);
-    $I->seeResponseContains('"This field is missing. properties[global][name]"');
+    $I->seeResponseContains(
+      '["This field is missing. properties[de-de_de][name]"'.
+      ',"This field is missing. properties[fr-fr_fr][name]"'.
+      ',"This field is missing. properties[at-at_de][name]"'.
+      ',"This field is missing. properties[at-de_de][name]"]'
+    );
   }
 
   function it_should_succeed_creating_product(Product_serviceTester $I)
@@ -78,7 +83,7 @@ JSON;
     $expectedResponse = $this->readProductJson($this->productId);
     $I->seeResponseEquals($expectedResponse);
   }
-//
+
   function it_should_fail_getting_non_existing_id(Product_serviceTester $I)
   {
     $I->sendGet('/product/99994932432');
@@ -99,7 +104,7 @@ JSON;
     return <<<JSON
 {
   "sku": "{$this->randSku}",
-  "type": "config",
+  "type": "simple",
   "properties": {
     "global": {
       "name": " Silly Hodgin",
@@ -132,7 +137,7 @@ JSON;
   private function readProductJson(int $id)
   {
     return <<<JSON
-{"id":"{$id}","sku":"{$this->randSku}","type":"config","properties":{"global":{"name":"Mad Hodgin","status":"new","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699},"de":{"name":"Silly Hodgin","status":"new","tax_rate":19},"fr":null,"at":null,"de_de":{"name":"Silly Hodgin","description":"Your neighbours will visit you more often","short_description":"curved 55\" tv"},"fr_fr":null,"at_de":null}}
+{"id":"{$id}","sku":"{$this->randSku}","type":"simple","properties":{"global":{"name":"Mad Hodgin","status":"new","manufacturer":"samsung","is_gluten_free":false,"label_language":["en","it"],"final_gross_price":699},"de":{"name":"Silly Hodgin","status":"new","tax_rate":19},"fr":[],"at":[],"de_de":{"name":"Silly Hodgin","description":"Your neighbours will visit you more often","short_description":"curved 55\" tv"},"fr_fr":[],"at_de":[]}}
 JSON;
   }
 }

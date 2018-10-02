@@ -32,7 +32,6 @@ class Factory
   function createEntityBuilder()
   {
     $entityBuilder =  new EntityBuilder();
-    $entityBuilder->setConfig($this->config());
     $entityBuilder->setPropertyMap($this->propertyMap());
     $entityBuilder->setRegionUtils($this->regionUtils());
     
@@ -50,5 +49,19 @@ class Factory
   function createValueFilter() : ValueFilter
   {
     return new ValueFilter();
+  }
+
+  function createProductValidator() : Validator\ProductValidator
+  {
+    $object = new Validator\ProductValidator($this);
+    $object->setConfig($this->config());
+    $object->setRegionUtils($this->regionUtils());
+
+    return $object;
+  }
+
+  function createProductSimpleValidator() : Validator\ProductSimple
+  {
+    return new Validator\ProductSimple($this);
   }
 }

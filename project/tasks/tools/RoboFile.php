@@ -17,4 +17,11 @@ class RoboFile extends \Robo\Tasks
         ->dir('../../tools/config_builder/')
         ->run();
   }
+
+  function runBuildProductValidationRules()
+  {
+    $this->taskExec('php run.php')
+      ->dir('../../tools/validation_builder/')
+      ->run();
+  }
 }

@@ -81,7 +81,7 @@ Nu3\Service\Product\Entity\Product:
       -
         NotBlank: null
       -
-        Regex: '/^nu3_[1-9][0-9]*$/'
+        Regex: '/^id_[1-9][0-9]*$/'
     type:
       -
         NotBlank: null
