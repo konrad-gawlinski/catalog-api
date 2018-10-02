@@ -43,7 +43,6 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "./container", "/container", disabled:false
   config.vm.synced_folder "./shared", "/shared", disabled:false
   config.vm.synced_folder "./project", "/var/project", disabled:false
-  config.vm.synced_folder "./kwg", "/var/kwg", disabled:false
   config.vm.synced_folder ".", '/vagrant', disabled:true
 
   # Provider-specific configuration so you can fine-tune various
