@@ -6,11 +6,11 @@ define('APPLICATION_ROOT', __DIR__.'/../../');
 define('APP_ENV', getenv('APP_ENV'));
 
 /** @var \Composer\Autoload\ClassLoader() $loader */
-$loader = require_once APPLICATION_ROOT.'vendor/autoload.php';
+$loader = require_once APPLICATION_ROOT .'vendor/autoload.php';
 $loader->addPsr4('Nu3\\Configuration\\', APPLICATION_ROOT.'tools/config_builder');
 
-$configDefault = Yaml::parse(file_get_contents(APPLICATION_ROOT.'config/default.yml'));
-$configLocal = Yaml::parse(file_get_contents(APPLICATION_ROOT.'config/'.APP_ENV.'.yml"));
+$configDefault = Yaml::parse(file_get_contents(APPLICATION_ROOT .'config/default.yml'));
+$configLocal = Yaml::parse(file_get_contents(APPLICATION_ROOT .'config/'. APP_ENV .'.yml'));
 
 $configProcessor = new \Nu3\Configuration\Processor();
 $config = var_export($configProcessor->run([$configDefault, $configLocal]), true);
