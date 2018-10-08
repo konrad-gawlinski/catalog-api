@@ -1,10 +1,8 @@
-.vagrant
 .idea
 vendor
-project/cache
+cache
 *.log
-project/tools/product_migration/*.json
-project/tools/product_migration/data
-project/tests/functional/_data
-project/tests/functional/_output
-container/solr/bin
+tools/product_migration/*.json
+tools/product_migration/data
+tests/functional/_data
+tests/functional/_output

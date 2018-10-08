@@ -1,0 +1,2 @@
+#!/bin/bash
+robo --load-from ./tools run:build-config
