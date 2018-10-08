@@ -2,6 +2,7 @@
 vendor
 cache
 *.log
+config/config.php
 tools/product_migration/*.json
 tools/product_migration/data
 tests/functional/_data
