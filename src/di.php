@@ -41,7 +41,7 @@ $app['product.service.get.factory'] = function() use ($app) {
 $app['database.connection'] = function() use ($app) {
   $config = $app['config'][Config::DB];
   $db = new Nu3\Core\Database\Connection();
-  //TODO: use parse_url(getenv(CATALOG_SERVICE_DB_DSN));
+  var_dump(parse_url(getenv('CATALOG_SERVICE_DB_DSN')));
 
   $db->connect(
     $config[Config::DB_HOST],

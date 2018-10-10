@@ -1,8 +1,4 @@
 database:
-  username: user
-  password: pass
-  host: localhost
-  database: default
   data_schema: catalog
   procedures_schema: catalog_sp
 region:
