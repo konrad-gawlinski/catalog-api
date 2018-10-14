@@ -1,0 +1,2 @@
+database:
+  dsn: pgsql://catalogapi_user:123456@catalog-api-database_dev_01-01:5432/catalog_api

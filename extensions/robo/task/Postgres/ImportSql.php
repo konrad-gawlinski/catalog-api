@@ -54,10 +54,9 @@ class ImportSql extends \Robo\Task\BaseTask implements
   {
     $dbCSHost = "{$this->host}:{$this->port}/{$this->database}?connect_timeout=1";
     $connectionString = "postgresql://{$this->user}:{$this->password}@{$dbCSHost}";
-    $protectedConnectionString = "postgresql://xxx:xxx@{$dbCSHost}";
 
     $this->printTaskInfo('Importing file {file}', ['file' => $filePath]);
-    $this->printTaskInfo('Connection string: {cs}', ['cs' => $protectedConnectionString]);
+    $this->printTaskInfo('Connection string: {cs}', ['cs' => $connectionString]);
 
     /** @var Result $result */
     $result = $this->collectionBuilder()

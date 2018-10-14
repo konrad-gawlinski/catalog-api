@@ -41,13 +41,13 @@ $app['product.service.get.factory'] = function() use ($app) {
 $app['database.connection'] = function() use ($app) {
   $config = $app['config'][Config::DB];
   $db = new Nu3\Core\Database\Connection();
-  var_dump(parse_url(getenv('CATALOG_SERVICE_DB_DSN')));
+  $tokens = parse_url($config[Config::DB_DSN]);
 
   $db->connect(
-    $config[Config::DB_HOST],
-    $config[Config::DB_NAME],
-    $config[Config::DB_USER],
-    $config[Config::DB_PASS]
+    $tokens['host'],
+    ltrim($tokens['path'], '/'),
+    $tokens['user'],
+    $tokens['pass']
   );
   
   $db->setSearchPath("{$config[Config::DB_PROCEDURES_SCHEMA]}, {$config[Config::DB_DATA_SCHEMA]}");

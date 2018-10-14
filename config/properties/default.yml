@@ -1,4 +1,6 @@
+app_env: development
 database:
+  dsn: pgsql://webappuser-xyz:passwd@host:5432/catalog-api
   data_schema: catalog
   procedures_schema: catalog_sp
 region:

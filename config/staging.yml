@@ -1,5 +1,0 @@
-database:
-  username: postgres-staging
-  password: postgres-staging
-  host:  172.18.0.3
-  database: catalog_api

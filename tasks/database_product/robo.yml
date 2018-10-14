@@ -1,9 +1,9 @@
 command:
   product:
     options:
-      host: 172.18.0.3
+      host: catalog-api-database_dev_01-01
       port: 5432
       database: catalog_api
-      user: postgres
-      password: postgres
-      search_path: catalog_sp,catalog
+      user: catalogapi_user
+      password: 123456
+      schema: catalog

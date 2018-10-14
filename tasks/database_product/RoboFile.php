@@ -56,8 +56,7 @@ class RoboFile extends \Robo\Tasks
     OPTS_DB => null,
     OPTS_USER => null,
     OPTS_PASSWORD => null,
-    OPTS_SCHEMA => null,
-    OPTS_SEARCH_PATH => null,
+    OPTS_SCHEMA => null
   ]) : bool
   {
     return $this->handleTask($options, function($options) {
@@ -115,7 +114,7 @@ class RoboFile extends \Robo\Tasks
 
     $collection = $this->collectionBuilder();
     $this->addCloneAndReplaceInFileTasks($collection, $inputFile, $outputFile, $options[OPTS_SCHEMA]);
-    $this->addCreateSchemaAndImportSqlTask($collection, $connectionConfig, $outputFile, $options);
+    $this->addImportSqlTask($collection, $connectionConfig, $outputFile);
 
     return $collection->run();
   }
@@ -142,20 +141,6 @@ class RoboFile extends \Robo\Tasks
       ->taskReplaceInFile($outputFilePath)
         ->from('<schema_name>')
         ->to($schema);
-  }
-
-  private function addCreateSchemaAndImportSqlTask(
-    CollectionBuilder $collection, array $connectionConfig, string $filePath, array $options
-  )
-  {
-    $collection->taskReplaceInFile($filePath)
-      ->from('<search_path>')
-      ->to($options[OPTS_SEARCH_PATH]);
-
-    $collection->taskPostgresConnect($connectionConfig)
-      ->taskCreateSchema($options[OPTS_SCHEMA])
-      ->taskImportSqlFile($connectionConfig, $filePath)
-      ->psqlExecPath(getenv(ENV_PGBIN));
   }
 
   private function addImportSqlTask(
