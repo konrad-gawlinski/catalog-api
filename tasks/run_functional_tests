@@ -1,2 +1,2 @@
 #!/bin/bash
-robo --load-from ./test run:functional-tests
+./robo --load-from ./test run:functional-tests
