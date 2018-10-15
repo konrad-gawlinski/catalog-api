@@ -1,6 +1,5 @@
 <?php
-define('APPLICATION_ROOT', __DIR__ . '/../');
-define('APPLICATION_SRC', __DIR__ . '/../src/');
+define('APPLICATION_SRC', APPLICATION_ROOT . 'src/');
 
 require_once APPLICATION_ROOT . 'vendor/autoload.php';
 

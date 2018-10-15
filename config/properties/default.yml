@@ -1,8 +1,11 @@
 app_env: development
 database:
-  dsn: pgsql://webappuser-xyz:passwd@host:5432/catalog-api
-  data_schema: catalog
-  procedures_schema: catalog_sp
+  host: MISSING
+  port: MISSING
+  name: MISSING
+  user: MISSING
+  pass: MISSING
+  schema: MISSING
 region:
   global: ['global']
   country: ['de', 'fr', 'at']

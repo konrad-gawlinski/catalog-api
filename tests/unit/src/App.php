@@ -4,6 +4,8 @@ namespace Nu3\Spec;
 
 use Nu3\Core\Database\Connection as DatabaseConnection;
 
+define('APPLICATION_ROOT', __DIR__ . '/../../../');
+
 class App
 {
   private static $app;
@@ -14,7 +16,7 @@ class App
 
   private function __construct()
   {
-    $this::$app = require __DIR__.'/../../../src/bootstrap.php';
+    $this::$app = require __DIR__ . '/../../../src/bootstrap.php';
   }
 
   static function getInstance()

@@ -1,16 +1,10 @@
 <?php
 
-define('APPLICATION_ROOT', __DIR__ . '/../..');
+use Nu3\Config;
 
-define('OPTS_HOST', 'host');
-define('OPTS_PORT', 'port');
-define('OPTS_DB', 'database');
-define('OPTS_USER', 'user');
-define('OPTS_PASSWORD', 'password');
+define('APPLICATION_ROOT', __DIR__ . '/../../');
 
-define ('ENV_PGBIN', 'PG_BIN');
-
-require_once APPLICATION_ROOT . '/vendor/autoload.php';
+require_once APPLICATION_ROOT . 'vendor/autoload.php';
 require __DIR__ . '/../src/Helper/Database.php';
 
 /**
@@ -25,67 +19,57 @@ class RoboFile extends \Robo\Tasks
   /** @var \Nu3\Task\Helper\Database */
   private $dbHelper;
 
+  private const TMP_DIR = '/tmp/';
+
   function __construct()
   {
-    $this->dbHelper = new Nu3\Task\Helper\Database();
+    $app = require_once APPLICATION_ROOT .'src/bootstrap.php';
+    $dbConfig = $app['config'][Config::DB];
+    $this->dbHelper = new Nu3\Task\Helper\Database([
+      'host' => $dbConfig[Config::DB_HOST],
+      'port' => $dbConfig[Config::DB_PORT],
+      'database' => $dbConfig[Config::DB_NAME],
+      'user' => $dbConfig[Config::DB_USER],
+      'password' => $dbConfig[Config::DB_PASS],
+      'schema' => $dbConfig[Config::DB_SCHEMA]
+    ]);
   }
 
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   */
-  function databaseCreate($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-  ]) : bool
-  {
-    $inputFile = APPLICATION_ROOT . '/database/01_create.sql';
-
-    return $this->importSqlFile($options, $inputFile);
-  }
-
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   */
-  function databaseInit($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-  ]) : bool
-  {
-    $inputFile = APPLICATION_ROOT . '/database/02_init.sql';
-
-    return $this->importSqlFile($options, $inputFile);
-  }
-
-  private function importSqlFile(array $options, string $filePath) : bool
+  function databaseInit() : bool
   {
     if (!$this->dbHelper->validatePsqlExec()) {
       return false;
     }
 
-    $connectionConfig = $this->dbHelper->buildConnectionConfig($options);
+    $inputFile = APPLICATION_ROOT . 'database/init.sql';
+    $fileToImport = self::TMP_DIR . 'database_init.sql';
+    $this->prepareFile($inputFile, $fileToImport);
+
+    return $this->importSqlFile($fileToImport);
+  }
+
+  private function prepareFile(string $inputFile, string $outputFile) : bool
+  {
+    $collection = $this->collectionBuilder();
+    $collection
+      ->taskFilesystemStack()
+      ->copy($inputFile, $outputFile, true)
+      ->taskReplaceInFile($outputFile)
+      ->from('<schema_name>')
+      ->to($this->dbHelper->getSchema());
+
+    $result = $collection->run();
+    if ($result->wasSuccessful()) return true;
+
+    return false;
+  }
+
+  private function importSqlFile(string $filePath) : bool
+  {
+    $connectionConfig = $this->dbHelper->getConnectionConfig();
     $result = $this->collectionBuilder()
       ->taskImportSqlFile($connectionConfig, $filePath)
-      ->psqlExecPath(getenv(ENV_PGBIN))
+      ->psqlExecPath(getenv('PG_BIN'))
       ->run();
 
     if ($result->wasSuccessful()) return true;

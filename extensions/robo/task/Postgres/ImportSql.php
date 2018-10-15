@@ -57,6 +57,7 @@ class ImportSql extends \Robo\Task\BaseTask implements
 
     $this->printTaskInfo('Importing file {file}', ['file' => $filePath]);
     $this->printTaskInfo('Connection string: {cs}', ['cs' => $connectionString]);
+    $this->printTaskInfo('Command: '. "{$this->psqlExec} {$connectionString} < {$filePath}");
 
     /** @var Result $result */
     $result = $this->collectionBuilder()

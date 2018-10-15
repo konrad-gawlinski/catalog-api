@@ -1,5 +1,6 @@
 <?php
 
+define('APPLICATION_ROOT', __DIR__ . '/../../../');
 
 /**
  * Inherited Methods

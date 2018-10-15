@@ -1,21 +1,12 @@
 <?php
 
-define('APPLICATION_ROOT', __DIR__ . '/../..');
-
-define('OPTS_HOST', 'host');
-define('OPTS_PORT', 'port');
-define('OPTS_DB', 'database');
-define('OPTS_USER', 'user');
-define('OPTS_PASSWORD', 'password');
-define('OPTS_SCHEMA', 'schema');
-define('OPTS_SEARCH_PATH', 'search_path');
-
-define ('ENV_PGBIN', 'PG_BIN');
-
-require_once APPLICATION_ROOT . '/vendor/autoload.php';
-require __DIR__ .'/../src/Helper/Database.php';
-
 use \Robo\Collection\CollectionBuilder;
+use Nu3\Config;
+
+define('APPLICATION_ROOT', __DIR__ . '/../../');
+
+require_once APPLICATION_ROOT . 'vendor/autoload.php';
+require __DIR__ . '/../src/Helper/Database.php';
 
 /**
  * This is project's console commands configuration for Robo task runner.
@@ -26,113 +17,83 @@ class RoboFile extends \Robo\Tasks
 {
   use Nu3\Robo\Task\Postgres\loadTasks;
 
-  private const TMP_DIR = '/tmp';
+  private const TMP_DIR = '/tmp/';
 
   /** @var \Nu3\Task\Helper\Database */
   private $dbHelper;
 
   public function __construct()
   {
-    $this->dbHelper = new Nu3\Task\Helper\Database();
-
-    \Robo\Robo::loadConfiguration([__DIR__ . '/robo.yml']);
+    $app = require_once APPLICATION_ROOT .'src/bootstrap.php';
+    $dbConfig = $app['config'][Config::DB];
+    $this->dbHelper = new Nu3\Task\Helper\Database([
+      'host' => $dbConfig[Config::DB_HOST],
+      'port' => $dbConfig[Config::DB_PORT],
+      'database' => $dbConfig[Config::DB_NAME],
+      'user' => $dbConfig[Config::DB_USER],
+      'password' => $dbConfig[Config::DB_PASS],
+      'schema' => $dbConfig[Config::DB_SCHEMA]
+    ]);
   }
 
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   * @option $schema schema name to create for storing tables
-   * @option $search_path
-   */
-  function productCreateTables($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-    OPTS_SCHEMA => null
-  ]) : bool
+  function productCreateTables() : bool
   {
-    return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/01_init.sql';
-      $fileToImport = self::TMP_DIR . '/product_tables.sql';
+    return $this->handleTask(function() {
+      $inputFile = APPLICATION_ROOT . 'database/product/01_init.sql';
+      $fileToImport = self::TMP_DIR . 'product_tables.sql';
 
-      return $this->runCreateCollection($options, $inputFile, $fileToImport);
+      return $this->runCreateCollection($inputFile, $fileToImport);
     });
   }
 
-  /**
-   * Create schema and define database tables
-   *
-   * @param array $options
-   * @option $host database host to connect to
-   * @option $port database port to connect to
-   * @option $database database name to connect to
-   * @option $user database user
-   * @option $password database password
-   * @option $schema schema name to remove
-   */
-  function productDropTables($options = [
-    OPTS_HOST => 'localhost',
-    OPTS_PORT => 5432,
-    OPTS_DB => null,
-    OPTS_USER => null,
-    OPTS_PASSWORD => null,
-    OPTS_SCHEMA => null
-  ]) : bool
+  function productDropTables() : bool
   {
-    return $this->handleTask($options, function($options) {
-      $inputFile = APPLICATION_ROOT . '/database/product/01_cleanup.sql';
-      $fileToImport = self::TMP_DIR . '/product_drop_tables.sql';
+    return $this->handleTask(function() {
+      $inputFile = APPLICATION_ROOT . 'database/product/01_cleanup.sql';
+      $fileToImport = self::TMP_DIR . 'product_drop_tables.sql';
 
-      return $this->runDropCollection($options, $inputFile, $fileToImport);
+      return $this->runDropCollection($inputFile, $fileToImport);
     });
   }
 
-  private function handleTask(array $options, callable $callback) : bool
+  private function handleTask(callable $callback) : bool
   {
     if (!$this->dbHelper->validatePsqlExec()) {
       return false;
     }
 
-    $result = $callback($options);
+    $result = $callback();
     if ($result->wasSuccessful()) return true;
 
     return false;
   }
 
-  private function runCreateCollection(array $options, string $inputFile, string $outputFile) : \Robo\Result
+  private function runCreateCollection(string $inputFile, string $outputFile) : \Robo\Result
   {
     $this->stopOnFail(true);
-    $connectionConfig = $this->dbHelper->buildConnectionConfig($options);
+    $connectionConfig = $this->dbHelper->getConnectionConfig();
 
     $collection = $this->collectionBuilder();
-    $this->addCloneAndReplaceInFileTasks($collection, $inputFile, $outputFile, $options[OPTS_SCHEMA]);
+    $this->addCloneAndReplaceInFileTasks($collection, $inputFile, $outputFile);
     $this->addImportSqlTask($collection, $connectionConfig, $outputFile);
 
     return $collection->run();
   }
 
-  private function runDropCollection(array $options, string $inputFile, string $outputFile) : \Robo\Result
+  private function runDropCollection(string $inputFile, string $outputFile) : \Robo\Result
   {
     $this->stopOnFail(true);
-    $connectionConfig = $this->dbHelper->buildConnectionConfig($options);
+    $connectionConfig = $this->dbHelper->getConnectionConfig();
 
     $collection = $this->collectionBuilder();
-    $this->addCloneAndReplaceInFileTasks($collection, $inputFile, $outputFile, $options[OPTS_SCHEMA]);
+    $this->addCloneAndReplaceInFileTasks($collection, $inputFile, $outputFile);
     $this->addImportSqlTask($collection, $connectionConfig, $outputFile);
 
     return $collection->run();
   }
 
   private function addCloneAndReplaceInFileTasks(
-    CollectionBuilder $collection, string $inputFilePath, string $outputFilePath, string $schema
+    CollectionBuilder $collection, string $inputFilePath, string $outputFilePath
   )
   {
     $collection
@@ -140,7 +101,7 @@ class RoboFile extends \Robo\Tasks
         ->copy($inputFilePath, $outputFilePath, true)
       ->taskReplaceInFile($outputFilePath)
         ->from('<schema_name>')
-        ->to($schema);
+        ->to($this->dbHelper->getSchema());
   }
 
   private function addImportSqlTask(
@@ -149,6 +110,6 @@ class RoboFile extends \Robo\Tasks
   {
     $collection->taskPostgresConnect($connectionConfig)
       ->taskImportSqlFile($connectionConfig, $filePath)
-      ->psqlExecPath(getenv(ENV_PGBIN));
+      ->psqlExecPath(getenv('PG_BIN'));
   }
 }

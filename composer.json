@@ -12,6 +12,7 @@
     "symfony/config": "v3.*",
     "symfony/yaml": "v3.*",
     "symfony/validator": "v3.*",
+    "symfony/dotenv": "v4.*",
     "doctrine/cache": "v1.*"
   },
   "autoload": {

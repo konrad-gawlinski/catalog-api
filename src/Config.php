@@ -5,9 +5,12 @@ namespace Nu3;
 interface Config
 {
   const DB = 'database';
-  const DB_DSN = 'dsn';
-  const DB_DATA_SCHEMA = 'data_schema';
-  const DB_PROCEDURES_SCHEMA = 'procedures_schema';
+  const DB_HOST = 'host';
+  const DB_PORT = 'port';
+  const DB_NAME = 'name';
+  const DB_USER = 'user';
+  const DB_PASS = 'pass';
+  const DB_SCHEMA = 'schema';
 
   const REGION = 'region';
   const GLOBAL_REGION = 'global';

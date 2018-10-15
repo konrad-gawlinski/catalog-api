@@ -1,2 +1,7 @@
 database:
-  dsn: pgsql://catalogapi_user:123456@catalog-api-database_dev_01-01:5432/catalog_api
+  host: %CATALOG_API_DBHOST%
+  port: %CATALOG_API_DBPORT%
+  name: %CATALOG_API_DATABASE%
+  user: %CATALOG_API_DBUSER%
+  pass: %CATALOG_API_DBPASSWORD%
+  schema: %CATALOG_API_DBSCHEMA%

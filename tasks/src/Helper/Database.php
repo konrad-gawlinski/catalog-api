@@ -4,24 +4,35 @@ namespace Nu3\Task\Helper;
 
 class Database
 {
-  function buildConnectionConfig(array $options) : array
-  {
-    $o = $options;
+  private $connectionConfig = [];
 
-    return [
-      'host' => $o[OPTS_HOST],
-      'port' => $o[OPTS_PORT],
-      'database' => $o[OPTS_DB],
-      'user' => $o[OPTS_USER],
-      'password' => $o[OPTS_PASSWORD],
+  function __construct(array $connectionConfig)
+  {
+    $this->connectionConfig = [
+      'host' => $connectionConfig['host'],
+      'port' => $connectionConfig['port'],
+      'database' => $connectionConfig['database'],
+      'user' => $connectionConfig['user'],
+      'password' => $connectionConfig['password'],
+      'schema' => $connectionConfig['schema']
     ];
+  }
+
+  function getSchema() : string
+  {
+    return $this->connectionConfig['schema'];
+  }
+
+  function getConnectionConfig() : array
+  {
+    return $this->connectionConfig;
   }
 
   function validatePsqlExec() : bool
   {
-    $psql = getenv(ENV_PGBIN);
+    $psql = getenv('PG_BIN');
     if (empty($psql)) {
-      echo ("\n'". ENV_PGBIN ."' env variable not defined. It should provide path to psql executable\n");
+      echo ("\n PG_BIN env variable not defined. It should provide path to psql executable\n");
       return false;
     }
 

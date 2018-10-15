@@ -1,4 +1,6 @@
 <?php
+define('APPLICATION_ROOT', __DIR__ . '/../');
+
 $app = require __DIR__.'/../src/bootstrap.php';
 
 require APPLICATION_SRC . 'setup.php';

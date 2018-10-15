@@ -1,9 +1,0 @@
-command:
-  product:
-    options:
-      host: catalog-api-database_dev_01-01
-      port: 5432
-      database: catalog_api
-      user: catalogapi_user
-      password: 123456
-      schema: catalog
