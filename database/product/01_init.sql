@@ -1,9 +1,7 @@
-CREATE TYPE <schema_name>.product_type AS ENUM('simple', 'config', 'bundle');
-
 CREATE TABLE <schema_name>.products (
   id SERIAL PRIMARY KEY,
   sku VARCHAR UNIQUE,
-  type <schema_name>.product_type NOT NULL,
+  type VARCHAR(20) NOT NULL,
   global JSONB DEFAULT '{}' NOT NULL,
   de JSONB DEFAULT '{}' NOT NULL,
   at JSONB DEFAULT '{}' NOT NULL,
