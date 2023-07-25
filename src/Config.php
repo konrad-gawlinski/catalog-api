@@ -31,4 +31,5 @@ interface Config
 
   const COMPANY_NAME = 'Konrad Inc.';
   const NEWCONST = 'test';
+  const SHOP_REGION = 'Germany';
 }
