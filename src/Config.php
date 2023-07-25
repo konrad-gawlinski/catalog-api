@@ -26,4 +26,6 @@ interface Config
 
   const SHOP = 'shop';
   const REGION_PAIRS = 'region_pairs';
+
+  const SHOP_NAME = 'Konrad Electronics';
 }
