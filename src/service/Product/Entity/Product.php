@@ -8,4 +8,5 @@ class Product
   public $sku = '';
   public $type = '';
   public $properties = [];
+  public $price = '';
 }
