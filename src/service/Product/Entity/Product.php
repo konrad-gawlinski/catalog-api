@@ -9,4 +9,5 @@ class Product
   public $type = '';
   public $properties = [];
   public $price = '';
+  public $value = '';
 }
