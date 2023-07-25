@@ -30,4 +30,6 @@ interface Config
   const SHOP_NAME = 'Konrad Electronics';
 
   const COMPANY_NAME = 'Konrad Inc.';
+
+  const SHOP_REGION = 'Germany';
 }
