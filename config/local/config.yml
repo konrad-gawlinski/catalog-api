@@ -1,7 +1,0 @@
-database:
-  host: %CATALOG_API_DBHOST%
-  port: %CATALOG_API_DBPORT%
-  name: %CATALOG_API_DATABASE%
-  user: %CATALOG_API_DBUSER%
-  pass: %CATALOG_API_DBPASSWORD%
-  schema: %CATALOG_API_DBSCHEMA%
