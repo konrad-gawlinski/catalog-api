@@ -28,4 +28,6 @@ interface Config
   const REGION_PAIRS = 'region_pairs';
 
   const SHOP_NAME = 'Konrad Electronics';
+
+  const COMPANY_NAME = 'Konrad Inc.';
 }
